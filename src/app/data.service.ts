@@ -122,8 +122,25 @@ export class DataService {
     { id: 'g14',cli: 'c6',  srv: 's1',  prof: 'p4', data: '2026-06-08', hora: '15:00', status: 'cancelado', valor: 45 },
     { id: 'g15',cli: 'c1',  srv: 's2',  prof: 'p1', data: '2026-06-07', hora: '16:00', status: 'concluido', valor: 70 },
     { id: 'g16',cli: 'c8',  srv: 's4',  prof: 'p2', data: '2026-06-07', hora: '10:00', status: 'concluido', valor: 55 },
-    { id: 'g17',cli: 'c5',  srv: 's1',  prof: 'p1', data: '2026-06-07', hora: '13:00', status: 'faltou', valor: 45 },
+    { id: 'g17',cli: 'c5',  srv: 's1',  prof: 'p1', data: '2026-06-07', hora: '13:00', status: 'faltou',   valor: 45 },
     { id: 'g18',cli: 'c12', srv: 's3',  prof: 'p3', data: '2026-06-11', hora: '14:00', status: 'pendente', valor: 35 },
+    // Junho 3 (Qua)
+    { id: 'g27',cli: 'c1',  srv: 's4',  prof: 'p2', data: '2026-06-03', hora: '09:30', status: 'concluido', valor: 55 },
+    { id: 'g28',cli: 'c8',  srv: 's2',  prof: 'p1', data: '2026-06-03', hora: '11:00', status: 'concluido', valor: 70 },
+    { id: 'g29',cli: 'c12', srv: 's1',  prof: 'p4', data: '2026-06-03', hora: '14:00', status: 'concluido', valor: 45 },
+    { id: 'g30',cli: 'c6',  srv: 's7',  prof: 'p3', data: '2026-06-03', hora: '16:00', status: 'faltou',   valor: 15 },
+    // Junho 4 (Qui)
+    { id: 'g31',cli: 'c4',  srv: 's2',  prof: 'p1', data: '2026-06-04', hora: '09:00', status: 'concluido', valor: 70 },
+    { id: 'g32',cli: 'c2',  srv: 's6',  prof: 'p3', data: '2026-06-04', hora: '10:00', status: 'concluido', valor: 60 },
+    { id: 'g33',cli: 'c7',  srv: 's4',  prof: 'p2', data: '2026-06-04', hora: '12:00', status: 'concluido', valor: 55 },
+    { id: 'g34',cli: 'c11', srv: 's3',  prof: 'p3', data: '2026-06-04', hora: '14:00', status: 'concluido', valor: 35 },
+    { id: 'g35',cli: 'c9',  srv: 's1',  prof: 'p4', data: '2026-06-04', hora: '16:00', status: 'concluido', valor: 45 },
+    { id: 'g36',cli: 'c5',  srv: 's2',  prof: 'p1', data: '2026-06-04', hora: '17:00', status: 'cancelado', valor: 70 },
+    // Junho 6 (Sáb)
+    { id: 'g40',cli: 'c12', srv: 's2',  prof: 'p1', data: '2026-06-06', hora: '09:00', status: 'concluido', valor: 70 },
+    { id: 'g41',cli: 'c6',  srv: 's4',  prof: 'p2', data: '2026-06-06', hora: '11:00', status: 'concluido', valor: 55 },
+    { id: 'g42',cli: 'c2',  srv: 's3',  prof: 'p3', data: '2026-06-06', hora: '14:00', status: 'concluido', valor: 35 },
+    { id: 'g43',cli: 'c7',  srv: 's1',  prof: 'p1', data: '2026-06-06', hora: '16:00', status: 'cancelado', valor: 45 },
   ];
 
   // ---------- Histórico (para ficha do cliente) ----------
@@ -275,7 +292,7 @@ export class DataService {
 
   readonly horarios: string[] = (() => {
     const h: string[] = [];
-    for (let i = 9; i <= 20; i++) h.push(`${String(i).padStart(2, '0')}:00`);
+    for (let i = 8; i <= 18; i++) h.push(`${String(i).padStart(2, '0')}:00`);
     return h;
   })();
 
@@ -283,6 +300,51 @@ export class DataService {
     pendente: 'Pendente', confirmado: 'Confirmado', atendimento: 'Em atendimento',
     concluido: 'Concluído', faltou: 'Faltou', cancelado: 'Cancelado',
   };
+
+  updateServico(id: string, changes: Partial<Servico>) {
+    const s = this.servicos.find(s => s.id === id);
+    if (s) Object.assign(s, changes);
+  }
+
+  addServico(servico: Omit<Servico, 'id'>) {
+    this.servicos.push({ ...servico, id: 'sn' + Date.now() });
+  }
+
+  updateStaff(id: string, changes: Partial<Staff>) {
+    const p = this.staff.find(p => p.id === id);
+    if (p) Object.assign(p, changes);
+  }
+
+  addStaff(staff: Omit<Staff, 'id' | 'vendido'>) {
+    this.staff.push({ ...staff, id: 'pn' + Date.now(), vendido: 0 });
+  }
+
+  updateCampanha(id: string, changes: Partial<Campanha>) {
+    const c = this.campanhas.find(c => c.id === id);
+    if (c) Object.assign(c, changes);
+  }
+
+  addCampanha(c: Omit<Campanha, 'id' | 'enviadas' | 'retorno' | 'taxa'>) {
+    this.campanhas.push({ ...c, id: 'cpn' + Date.now(), enviadas: 0, retorno: 0, taxa: 0 });
+  }
+
+  updateProduto(id: string, changes: Partial<Produto>) {
+    const p = this.produtos.find(p => p.id === id);
+    if (p) Object.assign(p, changes);
+  }
+
+  addProduto(p: Omit<Produto, 'id'>) {
+    this.produtos.push({ ...p, id: 'prn' + Date.now() });
+  }
+
+  registrarMov(prod: string, tipo: 'entrada' | 'saida', qtd: number, motivo: string) {
+    const now = new Date();
+    const data = now.toISOString().slice(0, 10);
+    const hora = now.toTimeString().slice(0, 5);
+    this.movEstoque.push({ id: 'mn' + Date.now(), prod, tipo, qtd, motivo, data, hora });
+    const p = this.produtos.find(p => p.id === prod);
+    if (p) p.qtd = tipo === 'entrada' ? p.qtd + qtd : Math.max(0, p.qtd - qtd);
+  }
 
   // ---------- helpers ----------
   prod = (id: string) => this.produtos.find(p => p.id === id)!;

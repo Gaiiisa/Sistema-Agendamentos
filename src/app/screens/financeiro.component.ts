@@ -92,15 +92,15 @@ import { DataService } from '../data.service';
         </div>
       </div>
 
-      <div class="grid-2" style="align-items:start">
+      <div class="grid-2" style="align-items:stretch">
 
         <!-- conferência por forma de pagamento -->
-        <div class="card">
+        <div class="card" style="display:flex;flex-direction:column">
           <div class="card-head">
             <app-icon name="coins" [size]="17" style="color:var(--text-2)"></app-icon>
             <div class="card-title">Conferência por forma de pagamento</div>
           </div>
-          <div style="padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="padding:18px;display:flex;flex-direction:column;justify-content:space-evenly;flex:1">
             @for (f of formaKeys; track f) {
               <div class="col" style="gap:7px">
                 <div class="row" style="gap:9px">

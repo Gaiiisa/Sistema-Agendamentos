@@ -57,7 +57,7 @@ const TITLES: { [k: string]: [string, string] } = {
         <div class="content">
           @switch (route) {
             @case ('dashboard') {
-              <app-dashboard (onNew)="showNew = true" (onNav)="route = $event"></app-dashboard>
+              <app-dashboard (onNew)="showNew = true" (onNav)="route = $event" (onOpen)="openAppt = $event"></app-dashboard>
             }
             @case ('agenda') {
               <app-agenda [appts]="appts" (onOpen)="openAppt = $event" (onNew)="showNew = true"></app-agenda>

@@ -111,7 +111,8 @@ import { DataService, Appt, Cliente } from '../data.service';
             @for (a of proximos; track a.id; let i = $index) {
               <div class="row"
                 [style.padding]="'13px 18px'" [style.gap.px]="13"
-                [style.borderBottom]="i < proximos.length - 1 ? '1px solid var(--border)' : 'none'">
+                [style.borderBottom]="i < proximos.length - 1 ? '1px solid var(--border)' : 'none'"
+                style="cursor:pointer" (click)="onOpen.emit(a)">
                 <div class="mono" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">{{ a.ini }}</div>
                 <div [style.width.px]="3" style="align-self:stretch;border-radius:99px" [style.background]="data.srv(a.srv).cor"></div>
                 <app-avatar [nome]="data.cli(a.cli).nome" [cor]="data.prof(a.prof).cor" [size]="36"></app-avatar>
@@ -201,6 +202,7 @@ import { DataService, Appt, Cliente } from '../data.service';
 export class DashboardComponent {
   @Output() onNew = new EventEmitter<void>();
   @Output() onNav = new EventEmitter<string>();
+  @Output() onOpen = new EventEmitter<Appt>();
 
   constructor(public data: DataService) {}
 

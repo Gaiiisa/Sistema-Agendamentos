@@ -85,16 +85,16 @@ import { DataService } from '../data.service';
   </div>
 
   <!-- Rankings: serviços + profissionais -->
-  <div class="grid-2" style="align-items:start;margin-bottom:16px">
+  <div class="grid-2" style="align-items:stretch;margin-bottom:16px">
 
     <!-- Ranking de serviços -->
-    <div class="card">
+    <div class="card" style="display:flex;flex-direction:column">
       <div class="card-head">
         <app-icon name="scissors" [size]="16" style="color:var(--text-2)"></app-icon>
         <div class="card-title">Ranking de serviços</div>
         <span class="muted" style="margin-left:auto;font-size:12.5px">por receita</span>
       </div>
-      <div style="padding:18px;display:flex;flex-direction:column;gap:15px">
+      <div style="padding:18px;display:flex;flex-direction:column;gap:15px;flex:1;justify-content:space-evenly">
         @for (x of r.rankingServicos; track x.srv) {
           <div class="col" style="gap:7px">
             <div class="row" style="gap:9px">
@@ -112,13 +112,13 @@ import { DataService } from '../data.service';
     </div>
 
     <!-- Ranking de profissionais -->
-    <div class="card">
+    <div class="card" style="display:flex;flex-direction:column">
       <div class="card-head">
         <app-icon name="team" [size]="16" style="color:var(--text-2)"></app-icon>
         <div class="card-title">Ranking de profissionais</div>
         <span class="muted" style="margin-left:auto;font-size:12.5px">faturamento</span>
       </div>
-      <div style="padding:8px 0">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-evenly">
         @for (p of staffRanked; track p.id; let i = $index) {
           <div class="row" style="gap:12px;padding:11px 18px">
             <span class="tnum" [style.color]="i===0 ? 'var(--accent)' : 'var(--text-3)'" style="font-weight:800;width:20px">#{{ i + 1 }}</span>
@@ -138,15 +138,15 @@ import { DataService } from '../data.service';
   </div>
 
   <!-- Bottom section: ocupação por dia + forma de pagamento + novos×recorrentes -->
-  <div class="grid-dash" style="align-items:start">
+  <div class="grid-dash" style="align-items:stretch">
 
     <!-- Ocupação por dia da semana -->
-    <div class="card">
+    <div class="card" style="display:flex;flex-direction:column">
       <div class="card-head">
         <app-icon name="calendar" [size]="16" style="color:var(--text-2)"></app-icon>
         <div class="card-title">Ocupação da agenda por dia</div>
       </div>
-      <div style="padding:28px 18px 16px;display:flex;gap:12px;align-items:flex-end;height:230px">
+      <div style="padding:28px 18px 16px;display:flex;gap:12px;align-items:flex-end;flex:1">
         @for (d of r.ocupacaoSemana; track d.dia) {
           <div class="col" style="flex:1;align-items:center;gap:8px;height:100%;justify-content:flex-end">
             <span class="tnum" [style.color]="d.pct >= 90 ? 'var(--accent-text)' : 'var(--text-3)'" style="font-size:12px;font-weight:700">{{ d.pct }}%</span>
