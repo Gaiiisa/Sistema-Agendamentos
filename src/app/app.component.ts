@@ -30,7 +30,7 @@ const TITLES: { [k: string]: [string, string] } = {
   clientes: ['Clientes', 'CRM — onde está o dinheiro recorrente'],
   servicos: ['Serviços', 'Catálogo, preços e margens'],
   equipe: ['Equipe', 'Profissionais, jornada e comissões'],
-  financeiro: ['Financeiro', 'Caixa, lançamentos e fluxo'],
+  financeiro: ['Financeiro', 'Visão geral, caixa, lançamentos e a receber'],
   comissoes: ['Comissões', 'Cálculo automático por profissional'],
   estoque: ['Estoque', 'Produtos, baixa automática e reposição'],
   fidelidade: ['Fidelidade & Marketing', 'Programa de pontos, campanhas e mensagens'],
@@ -132,6 +132,7 @@ export class AppComponent {
   addAppt(d: Partial<Appt>) {
     const id = 'a' + (this.appts.length + 100);
     this.appts = [...this.appts, { id, ...d } as Appt];
+    this.data.persistAppt({ id, ...d });
     this.showNew = false;
     this.notify('Agendamento criado para ' + this.data.cli(d.cli!).nome);
     if (this.route !== 'agenda') this.route = 'agenda';

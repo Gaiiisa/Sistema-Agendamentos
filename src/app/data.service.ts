@@ -4,6 +4,8 @@
    Porte do data.js original para um serviço Angular.
    ============================================================ */
 import { Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { ApiService } from './api.service';
 
 export interface Staff {
   id: string; nome: string; apelido: string; cor: string; especialidades: string[];
@@ -33,9 +35,22 @@ export interface Produto {
   preco: number | null; fornecedor: string; consumo: string | null;
 }
 export interface MovEstoque { id: string; prod: string; tipo: string; qtd: number; motivo: string; data: string; hora: string; }
-export interface Lancamento { id: string; tipo: string; cat: string; desc: string; valor: number; forma: string; hora: string; prof?: string; }
+export interface Lancamento { id: string; tipo: string; cat: string; desc: string; valor: number; forma: string; data: string; hora: string; prof?: string; }
 export interface AReceberItem { id: string; cli: string; desc: string; valor: number; venc: string; dias: number; }
 export interface FluxoItem { dia: string; rec: number; desp: number; }
+export interface CatItem { cat: string; valor: number; qtd: number; }
+export interface FormaItem { forma: string; label: string; valor: number; }
+export interface ProfReceita { prof: string; valor: number; qtd: number; }
+export interface Financeiro {
+  hoje: string;
+  fluxo: FluxoItem[];
+  receitaCategoria: CatItem[];
+  despesaCategoria: CatItem[];
+  receitaForma: FormaItem[];
+  porProfissional: ProfReceita[];
+  mes: { receita: number; despesa: number; resultado: number; ticketMedio: number; atendimentos: number };
+  mesAnterior: { receita: number; despesa: number; resultado: number };
+}
 export interface ComissaoItem { data: string; cli: string; srv: string; valor: number; }
 export interface Comissao { status: string; itens: ComissaoItem[]; }
 export interface Campanha { id: string; nome: string; tipo: string; alvo: string; publico: number; enviadas: number; retorno: number; taxa: number; status: string; cor: string; }
@@ -194,17 +209,18 @@ export class DataService {
 
   // ---------- FASE 2 · Caixa / Financeiro ----------
   readonly caixa = { aberto: true, abertura: '08:30', valorAbertura: 200, operador: 'Carlos Menezes' };
+  readonly hojeData = '2026-06-09';
   readonly lancamentos: Lancamento[] = [
-    { id: 'l1',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte + Barba — André Lima', valor: 70, forma: 'pix',     hora: '09:52', prof: 'p1' },
-    { id: 'l2',  tipo: 'receita', cat: 'Atendimento', desc: 'Pigmentação — Marcos Pereira', valor: 60, forma: 'cartao', hora: '10:18', prof: 'p3' },
-    { id: 'l3',  tipo: 'receita', cat: 'Atendimento', desc: 'Degradê — Matheus Ribeiro', valor: 55, forma: 'dinheiro', hora: '11:15', prof: 'p2' },
-    { id: 'l4',  tipo: 'receita', cat: 'Produto',     desc: 'Óleo para Barba (venda)', valor: 45, forma: 'cartao', hora: '11:20', prof: 'p1' },
-    { id: 'l5',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte + Barba — Eduardo Martins', valor: 70, forma: 'pix', hora: '11:48', prof: 'p1' },
-    { id: 'l6',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte Infantil — Pedro H.', valor: 40, forma: 'dinheiro', hora: '11:55', prof: 'p4' },
-    { id: 'l7',  tipo: 'receita', cat: 'Produto',     desc: 'Pomada Modeladora (venda)', valor: 35, forma: 'pix', hora: '12:05', prof: 'p2' },
-    { id: 'l8',  tipo: 'despesa', cat: 'Insumos',     desc: 'Reposição lâminas (SupplyMax)', valor: 150, forma: 'pix', hora: '08:40' },
-    { id: 'l9',  tipo: 'despesa', cat: 'Operacional', desc: 'Café e água — copa', valor: 48, forma: 'dinheiro', hora: '09:10' },
-    { id: 'l10', tipo: 'despesa', cat: 'Marketing',   desc: 'Impulsionamento Instagram', valor: 80, forma: 'cartao', hora: '10:30' },
+    { id: 'l1',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte + Barba — André Lima', valor: 70, forma: 'pix',     data: '2026-06-09', hora: '09:52', prof: 'p1' },
+    { id: 'l2',  tipo: 'receita', cat: 'Atendimento', desc: 'Pigmentação — Marcos Pereira', valor: 60, forma: 'cartao', data: '2026-06-09', hora: '10:18', prof: 'p3' },
+    { id: 'l3',  tipo: 'receita', cat: 'Atendimento', desc: 'Degradê — Matheus Ribeiro', valor: 55, forma: 'dinheiro', data: '2026-06-09', hora: '11:15', prof: 'p2' },
+    { id: 'l4',  tipo: 'receita', cat: 'Produto',     desc: 'Óleo para Barba (venda)', valor: 45, forma: 'cartao', data: '2026-06-09', hora: '11:20', prof: 'p1' },
+    { id: 'l5',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte + Barba — Eduardo Martins', valor: 70, forma: 'pix', data: '2026-06-09', hora: '11:48', prof: 'p1' },
+    { id: 'l6',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte Infantil — Pedro H.', valor: 40, forma: 'dinheiro', data: '2026-06-09', hora: '11:55', prof: 'p4' },
+    { id: 'l7',  tipo: 'receita', cat: 'Produto',     desc: 'Pomada Modeladora (venda)', valor: 35, forma: 'pix', data: '2026-06-09', hora: '12:05', prof: 'p2' },
+    { id: 'l8',  tipo: 'despesa', cat: 'Insumos',     desc: 'Reposição lâminas (SupplyMax)', valor: 150, forma: 'pix', data: '2026-06-09', hora: '08:40' },
+    { id: 'l9',  tipo: 'despesa', cat: 'Operacional', desc: 'Café e água — copa', valor: 48, forma: 'dinheiro', data: '2026-06-09', hora: '09:10' },
+    { id: 'l10', tipo: 'despesa', cat: 'Marketing',   desc: 'Impulsionamento Instagram', valor: 80, forma: 'cartao', data: '2026-06-09', hora: '10:30' },
   ];
   readonly aReceber: AReceberItem[] = [
     { id: 'r1', cli: 'c2',  desc: 'Corte + Barba (fiado)', valor: 70, venc: '2026-06-12', dias: 3 },
@@ -220,6 +236,34 @@ export class DataService {
     { dia: 'Seg 8', rec: 640, desp: 320 },
     { dia: 'Ter 9', rec: 375, desp: 278 },
   ];
+
+  // Agregados financeiros (substituídos pela API; mock = fallback resiliente)
+  readonly financeiro: Financeiro = {
+    hoje: '2026-06-09',
+    fluxo: this.fluxo,
+    receitaCategoria: [
+      { cat: 'Atendimento', valor: 4985, qtd: 79 },
+      { cat: 'Produto', valor: 875, qtd: 18 },
+    ],
+    despesaCategoria: [
+      { cat: 'Insumos', valor: 552, qtd: 4 },
+      { cat: 'Marketing', valor: 255, qtd: 3 },
+      { cat: 'Operacional', valor: 286, qtd: 4 },
+    ],
+    receitaForma: [
+      { forma: 'pix', label: 'Pix', valor: 2640 },
+      { forma: 'cartao', label: 'Cartão', valor: 2050 },
+      { forma: 'dinheiro', label: 'Dinheiro', valor: 1170 },
+    ],
+    porProfissional: [
+      { prof: 'p1', valor: 2380, qtd: 33 },
+      { prof: 'p2', valor: 1485, qtd: 24 },
+      { prof: 'p3', valor: 1240, qtd: 18 },
+      { prof: 'p4', valor: 755, qtd: 12 },
+    ],
+    mes: { receita: 5860, despesa: 1093, resultado: 4767, ticketMedio: 61, atendimentos: 79 },
+    mesAnterior: { receita: 5120, despesa: 1240, resultado: 3880 },
+  };
 
   // ---------- FASE 2 · Comissões ----------
   readonly periodoComissao = '01 – 15 de junho';
@@ -301,49 +345,118 @@ export class DataService {
     concluido: 'Concluído', faltou: 'Faltou', cancelado: 'Cancelado',
   };
 
+  constructor(private api: ApiService) {}
+
+  // ---------- Carga inicial (hidrata os arrays a partir do banco) ----------
+  // Chamado por um APP_INITIALIZER em main.ts, antes da UI renderizar.
+  // Se a API estiver fora do ar, mantém os dados mock (fallback resiliente).
+  async load(): Promise<void> {
+    try {
+      const b: any = await firstValueFrom(this.api.bootstrap());
+      Object.assign(this.estabelecimento, b.estabelecimento);
+      Object.assign(this.usuario, b.usuario);
+      this.fill(this.staff, b.staff);
+      this.fill(this.servicos, b.servicos);
+      this.fill(this.clientes, b.clientes);
+      this.fill(this.hoje, b.hoje);
+      this.fill(this.agendamentos, b.agendamentos);
+      this.refill(this.historico, b.historico);
+      Object.assign(this.kpis, b.kpis);
+      this.fill(this.produtos, b.produtos);
+      this.fill(this.movEstoque, b.movEstoque);
+      Object.assign(this.caixa, b.caixa);
+      this.fill(this.lancamentos, b.lancamentos);
+      this.fill(this.aReceber, b.aReceber);
+      if (b.financeiro) Object.assign(this.financeiro, b.financeiro);
+      this.refill(this.comissoes, b.comissoes);
+      Object.assign(this.fidelidade, b.fidelidade);
+      this.fill(this.campanhas, b.campanhas);
+      this.fill(this.modelos, b.modelos);
+    } catch (e) {
+      console.warn('[DataService] API indisponível — usando dados mock locais.', e);
+    }
+  }
+
+  /** substitui o conteúdo de um array preservando a referência */
+  private fill<T>(arr: T[], items: T[] | undefined) {
+    if (!items) return;
+    arr.length = 0;
+    arr.push(...items);
+  }
+  /** substitui as chaves de um objeto-mapa preservando a referência */
+  private refill(obj: any, src: any) {
+    if (!src) return;
+    for (const k of Object.keys(obj)) delete obj[k];
+    Object.assign(obj, src);
+  }
+
   updateServico(id: string, changes: Partial<Servico>) {
     const s = this.servicos.find(s => s.id === id);
     if (s) Object.assign(s, changes);
+    this.api.put('/servicos/' + id, changes).subscribe({ error: () => {} });
   }
 
   addServico(servico: Omit<Servico, 'id'>) {
-    this.servicos.push({ ...servico, id: 'sn' + Date.now() });
+    const novo = { ...servico, id: 'sn' + Date.now() } as Servico;
+    this.servicos.push(novo);
+    this.api.post('/servicos', novo).subscribe({ error: () => {} });
   }
 
   updateStaff(id: string, changes: Partial<Staff>) {
     const p = this.staff.find(p => p.id === id);
     if (p) Object.assign(p, changes);
+    this.api.put('/profissionais/' + id, changes).subscribe({ error: () => {} });
   }
 
   addStaff(staff: Omit<Staff, 'id' | 'vendido'>) {
-    this.staff.push({ ...staff, id: 'pn' + Date.now(), vendido: 0 });
+    const novo = { ...staff, id: 'pn' + Date.now(), vendido: 0 } as Staff;
+    this.staff.push(novo);
+    this.api.post('/profissionais', novo).subscribe({ error: () => {} });
   }
 
   updateCampanha(id: string, changes: Partial<Campanha>) {
     const c = this.campanhas.find(c => c.id === id);
     if (c) Object.assign(c, changes);
+    this.api.put('/campanhas/' + id, changes).subscribe({ error: () => {} });
   }
 
   addCampanha(c: Omit<Campanha, 'id' | 'enviadas' | 'retorno' | 'taxa'>) {
-    this.campanhas.push({ ...c, id: 'cpn' + Date.now(), enviadas: 0, retorno: 0, taxa: 0 });
+    const novo = { ...c, id: 'cpn' + Date.now(), enviadas: 0, retorno: 0, taxa: 0 } as Campanha;
+    this.campanhas.push(novo);
+    this.api.post('/campanhas', novo).subscribe({ error: () => {} });
   }
 
   updateProduto(id: string, changes: Partial<Produto>) {
     const p = this.produtos.find(p => p.id === id);
     if (p) Object.assign(p, changes);
+    this.api.put('/produtos/' + id, changes).subscribe({ error: () => {} });
   }
 
   addProduto(p: Omit<Produto, 'id'>) {
-    this.produtos.push({ ...p, id: 'prn' + Date.now() });
+    const novo = { ...p, id: 'prn' + Date.now() } as Produto;
+    this.produtos.push(novo);
+    this.api.post('/produtos', novo).subscribe({ error: () => {} });
   }
 
   registrarMov(prod: string, tipo: 'entrada' | 'saida', qtd: number, motivo: string) {
     const now = new Date();
     const data = now.toISOString().slice(0, 10);
     const hora = now.toTimeString().slice(0, 5);
-    this.movEstoque.push({ id: 'mn' + Date.now(), prod, tipo, qtd, motivo, data, hora });
+    const id = 'mn' + Date.now();
+    this.movEstoque.push({ id, prod, tipo, qtd, motivo, data, hora });
     const p = this.produtos.find(p => p.id === prod);
     if (p) p.qtd = tipo === 'entrada' ? p.qtd + qtd : Math.max(0, p.qtd - qtd);
+    this.api.post('/movimentacoes', { id, prod, tipo, qtd, motivo }).subscribe({ error: () => {} });
+  }
+
+  /** persiste um novo agendamento criado pela UI */
+  persistAppt(a: Partial<Appt> & { id: string }) {
+    const s = a.srv ? this.servicos.find(x => x.id === a.srv) : null;
+    this.api.post('/agendamentos', {
+      id: a.id, cli: a.cli, srv: a.srv, prof: a.prof, ini: a.ini,
+      status: a.status || 'confirmado', sinal: !!a.sinal,
+      valor: s ? s.preco : 0, _dur: s ? s.dur : 30,
+    }).subscribe({ error: () => {} });
   }
 
   // ---------- helpers ----------

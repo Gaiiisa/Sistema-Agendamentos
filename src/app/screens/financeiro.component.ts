@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { MenuComponent } from '../shared/menu.component';
-import { DataService } from '../data.service';
+import { DataService, Lancamento } from '../data.service';
 
 @Component({
   selector: 'app-financeiro',
@@ -15,10 +15,10 @@ import { DataService } from '../data.service';
   <!-- top bar: sub-tabs + actions -->
   <div class="row" style="margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div class="seg">
+      <button [class.on]="tab==='visao'"       (click)="tab='visao'">Visão geral</button>
       <button [class.on]="tab==='caixa'"       (click)="tab='caixa'">Caixa do dia</button>
       <button [class.on]="tab==='lancamentos'" (click)="tab='lancamentos'">Lançamentos</button>
       <button [class.on]="tab==='receber'"     (click)="tab='receber'">A receber</button>
-      <button [class.on]="tab==='fluxo'"       (click)="tab='fluxo'">Fluxo de caixa</button>
     </div>
     <div class="row" style="margin-left:auto;gap:8px">
       <button class="btn btn-ghost btn-sm" (click)="notify.emit('Lançamento adicionado')">
@@ -29,6 +29,211 @@ import { DataService } from '../data.service';
       </button>
     </div>
   </div>
+
+  <!-- ==================== TAB: VISÃO GERAL ==================== -->
+  @if (tab==='visao') {
+    <div class="col" style="gap:16px">
+
+      <!-- KPIs do mês -->
+      <div class="stat-grid">
+        <!-- Faturamento do mês -->
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">Faturamento (mês)</div>
+            <div class="stat-ico" style="background:var(--accent-soft)">
+              <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
+            </div>
+          </div>
+          <div class="stat-val tnum">{{ data.money(fin.mes.receita) }}</div>
+          <div class="stat-meta">
+            @if (recDelta !== null) {
+              <span [class.trend-up]="recDelta>=0" [class.trend-down]="recDelta<0">
+                <app-icon [name]="recDelta>=0 ? 'trend' : 'trendD'" [size]="13" style="display:inline;vertical-align:-2px;margin-right:3px"></app-icon>{{ (recDelta>=0 ? '+' : '') + recDelta + '%' }}</span>
+              vs. mês anterior
+            } @else {
+              <span class="muted">primeiro mês com dados</span>
+            }
+          </div>
+        </div>
+        <!-- Despesas do mês -->
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">Despesas (mês)</div>
+            <div class="stat-ico" style="background:var(--st-faltou-bg)">
+              <app-icon name="trendD" [size]="17" style="color:var(--st-faltou)"></app-icon>
+            </div>
+          </div>
+          <div class="stat-val tnum">{{ data.money(fin.mes.despesa) }}</div>
+          <div class="stat-meta">{{ pctDespesa }}% da receita do mês</div>
+        </div>
+        <!-- Resultado líquido -->
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">Resultado líquido</div>
+            <div class="stat-ico" style="background:var(--accent-soft)">
+              <app-icon name="chart" [size]="17" style="color:var(--accent)"></app-icon>
+            </div>
+          </div>
+          <div class="stat-val tnum">{{ data.money(fin.mes.resultado) }}</div>
+          <div class="stat-meta">margem de {{ margem }}%</div>
+        </div>
+        <!-- Ticket médio -->
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">Ticket médio</div>
+            <div class="stat-ico" style="background:var(--st-atendimento-bg)">
+              <app-icon name="coins" [size]="17" style="color:var(--st-atendimento)"></app-icon>
+            </div>
+          </div>
+          <div class="stat-val tnum">{{ data.money(fin.mes.ticketMedio) }}</div>
+          <div class="stat-meta">{{ fin.mes.atendimentos }} atendimentos no mês</div>
+        </div>
+      </div>
+
+      <!-- Fluxo de caixa (7 dias) + composição por forma -->
+      <div class="grid-dash" style="align-items:stretch">
+
+        <!-- Fluxo 7 dias -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-head">
+            <app-icon name="chart" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Fluxo de caixa · últimos 7 dias</div>
+            <div class="row" style="margin-left:auto;gap:14px;font-size:12.5px">
+              <span class="row" style="gap:6px">
+                <span style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></span> Receita
+              </span>
+              <span class="row" style="gap:6px">
+                <span style="width:10px;height:10px;border-radius:3px;background:var(--st-faltou)"></span> Despesa
+              </span>
+            </div>
+          </div>
+          <div style="padding:24px 18px 14px;display:flex;gap:12px;align-items:flex-end;flex:1;min-height:240px">
+            @for (f of fin.fluxo; track f.dia) {
+              <div class="col" style="flex:1;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+                <span class="tnum muted" style="font-size:11px;font-weight:700">{{ kfmt(f.rec) }}</span>
+                <div class="row" style="gap:4px;align-items:flex-end;height:100%;width:100%;justify-content:center">
+                  <div [title]="data.money(f.rec)"
+                       style="width:38%;max-width:24px;background:var(--accent);border-radius:5px 5px 0 0;transition:height .3s"
+                       [style.height]="barH(f.rec)"></div>
+                  <div [title]="data.money(f.desp)"
+                       style="width:38%;max-width:24px;background:var(--st-faltou);border-radius:5px 5px 0 0;opacity:0.88;transition:height .3s"
+                       [style.height]="barH(f.desp)"></div>
+                </div>
+                <span class="muted" style="font-size:12px;font-weight:600">{{ f.dia }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Receita por forma de pagamento (mês) -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-head">
+            <app-icon name="coins" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Receita por forma</div>
+          </div>
+          <div style="padding:18px;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:14px">
+            @for (f of fin.receitaForma; track f.forma) {
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:9px">
+                  <span [style.width.px]="9" [style.height.px]="9" [style.borderRadius.px]="3" [style.background]="FORMA_COR[f.forma] || 'var(--text-3)'"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">{{ f.label }}</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(f.valor) }}</span>
+                  <span class="muted tnum" style="font-size:12px;width:38px;text-align:right">{{ formaPct(f.valor) }}%</span>
+                </div>
+                <div class="progress">
+                  <span [style.width]="formaPct(f.valor)+'%'" [style.background]="FORMA_COR[f.forma] || 'var(--text-3)'"></span>
+                </div>
+              </div>
+            }
+            <div class="divider"></div>
+            <div class="row">
+              <span class="muted" style="font-size:13px;flex:1">Total recebido no mês</span>
+              <span class="tnum" style="font-weight:800;font-size:15px">{{ data.money(receitaFormaTotal) }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Receita por categoria + Despesas por categoria -->
+      <div class="grid-2" style="align-items:stretch">
+
+        <!-- Receita por categoria -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-head">
+            <app-icon name="trend" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Receita por categoria</div>
+            <span class="muted" style="margin-left:auto;font-size:12.5px">mês</span>
+          </div>
+          <div style="padding:18px;display:flex;flex-direction:column;gap:15px;flex:1;justify-content:space-evenly">
+            @for (c of fin.receitaCategoria; track c.cat) {
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:9px">
+                  <span [style.width.px]="8" [style.height.px]="8" [style.borderRadius.px]="3" [style.background]="catCor(c.cat)"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">{{ c.cat }}</span>
+                  <span class="muted tnum" style="font-size:12.5px">{{ c.qtd }}x</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(c.valor) }}</span>
+                </div>
+                <div class="progress">
+                  <span [style.width]="(c.valor / receitaCatMax * 100)+'%'" [style.background]="catCor(c.cat)"></span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Despesas por categoria -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-head">
+            <app-icon name="trendD" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Despesas por categoria</div>
+            <span class="muted" style="margin-left:auto;font-size:12.5px">{{ data.money(despesaTotal) }}</span>
+          </div>
+          <div style="padding:18px;display:flex;flex-direction:column;gap:15px;flex:1;justify-content:space-evenly">
+            @for (c of fin.despesaCategoria; track c.cat) {
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:9px">
+                  <span [style.width.px]="8" [style.height.px]="8" [style.borderRadius.px]="3" [style.background]="catCor(c.cat)"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">{{ c.cat }}</span>
+                  <span class="muted tnum" style="font-size:12.5px">{{ pctDe(c.valor, despesaTotal) }}%</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(c.valor) }}</span>
+                </div>
+                <div class="progress">
+                  <span [style.width]="(c.valor / despesaCatMax * 100)+'%'" [style.background]="catCor(c.cat)"></span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Receita por profissional -->
+      <div class="card">
+        <div class="card-head">
+          <app-icon name="team" [size]="16" style="color:var(--text-2)"></app-icon>
+          <div class="card-title">Receita por profissional</div>
+          <span class="muted" style="margin-left:auto;font-size:12.5px">mês · atendimentos</span>
+        </div>
+        @for (p of fin.porProfissional; track p.prof; let i = $index) {
+          <div class="row" style="gap:12px;padding:12px 18px"
+               [style.border-bottom]="i < fin.porProfissional.length - 1 ? '1px solid var(--border)' : 'none'">
+            <span class="tnum" [style.color]="i===0 ? 'var(--accent)' : 'var(--text-3)'" style="font-weight:800;width:20px">#{{ i + 1 }}</span>
+            <app-avatar [nome]="data.prof(p.prof).nome" [cor]="data.prof(p.prof).cor" [size]="34"></app-avatar>
+            <div class="col" style="flex:1;line-height:1.25;gap:5px;min-width:0">
+              <span style="font-weight:600;font-size:13.5px">{{ data.prof(p.prof).nome }}</span>
+              <div class="progress">
+                <span [style.width]="(p.valor / profMax * 100)+'%'" [style.background]="data.prof(p.prof).cor"></span>
+              </div>
+            </div>
+            <span class="muted tnum" style="font-size:12.5px;width:60px;text-align:right">{{ p.qtd }} atend.</span>
+            <span class="tnum" style="font-weight:700;width:96px;text-align:right">{{ data.money(p.valor) }}</span>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
 
   <!-- ==================== TAB: CAIXA DO DIA ==================== -->
   @if (tab==='caixa') {
@@ -48,9 +253,8 @@ import { DataService } from '../data.service';
         </span>
       </div>
 
-      <!-- KPIs -->
+      <!-- KPIs do dia -->
       <div class="stat-grid">
-        <!-- Saldo em caixa -->
         <div class="stat">
           <div class="stat-top">
             <div class="stat-label">Saldo em caixa</div>
@@ -58,37 +262,38 @@ import { DataService } from '../data.service';
               <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(saldo) }}</div>
+          <div class="stat-val tnum">{{ data.money(saldoHoje) }}</div>
+          <div class="stat-meta">abertura {{ data.money(data.caixa.valorAbertura) }} + movimento</div>
         </div>
-        <!-- Receitas do dia -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Receitas do dia</div>
+            <div class="stat-label">Entradas do dia</div>
             <div class="stat-ico" style="background:var(--accent-soft)">
               <app-icon name="trend" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totRec) }}</div>
+          <div class="stat-val tnum">{{ data.money(totRecHoje) }}</div>
+          <div class="stat-meta">{{ receitasHoje.length }} recebimentos</div>
         </div>
-        <!-- Despesas do dia -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Despesas do dia</div>
+            <div class="stat-label">Saídas do dia</div>
             <div class="stat-ico" style="background:var(--st-faltou-bg)">
               <app-icon name="trendD" [size]="17" style="color:var(--st-faltou)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totDesp) }}</div>
+          <div class="stat-val tnum">{{ data.money(totDespHoje) }}</div>
+          <div class="stat-meta">{{ despesasHoje.length }} despesas</div>
         </div>
-        <!-- Resultado líquido -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Resultado líquido</div>
+            <div class="stat-label">Resultado do dia</div>
             <div class="stat-ico" style="background:var(--st-atendimento-bg)">
               <app-icon name="chart" [size]="17" style="color:var(--st-atendimento)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totRec - totDesp) }}</div>
+          <div class="stat-val tnum">{{ data.money(totRecHoje - totDespHoje) }}</div>
+          <div class="stat-meta">entradas − saídas</div>
         </div>
       </div>
 
@@ -109,26 +314,26 @@ import { DataService } from '../data.service';
                     <app-icon [name]="FORMA[f].icon" [size]="15" [style.color]="FORMA[f].cor"></app-icon>
                   </div>
                   <span style="font-weight:600;font-size:14px">{{ FORMA[f].label }}</span>
-                  <span class="tnum" style="margin-left:auto;font-weight:700">{{ data.money(porForma[f] || 0) }}</span>
-                  <span class="muted tnum" style="font-size:12.5px;width:38px;text-align:right">{{ pct(f) }}%</span>
+                  <span class="tnum" style="margin-left:auto;font-weight:700">{{ data.money(porFormaHoje[f] || 0) }}</span>
+                  <span class="muted tnum" style="font-size:12.5px;width:38px;text-align:right">{{ pctHoje(f) }}%</span>
                 </div>
                 <div class="progress">
-                  <span [style.width]="pct(f)+'%'" [style.background]="FORMA[f].cor"></span>
+                  <span [style.width]="pctHoje(f)+'%'" [style.background]="FORMA[f].cor"></span>
                 </div>
               </div>
             }
           </div>
         </div>
 
-        <!-- resumo lançamentos -->
+        <!-- movimentações de hoje -->
         <div class="card">
           <div class="card-head">
             <app-icon name="list" [size]="17" style="color:var(--text-2)"></app-icon>
             <div class="card-title">Movimentações de hoje</div>
-            <span class="muted" style="margin-left:auto;font-size:13px">{{ receitas.length + despesas.length }} lançamentos</span>
+            <span class="muted" style="margin-left:auto;font-size:13px">{{ lancHoje.length }} lançamentos</span>
           </div>
           <div style="max-height:320px;overflow-y:auto">
-            @for (l of todosOrdenados; track l.id; let i = $index; let last = $last) {
+            @for (l of todosHojeOrdenados; track l.id; let last = $last) {
               <div class="row" style="gap:11px;padding:12px 18px"
                    [style.border-bottom]="last ? 'none' : '1px solid var(--border)'">
                 <div [style.width.px]="30" [style.height.px]="30" style="border-radius:8px;display:grid;place-items:center"
@@ -145,6 +350,8 @@ import { DataService } from '../data.service';
                   {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
                 </span>
               </div>
+            } @empty {
+              <div class="empty">Nenhum lançamento hoje ainda.</div>
             }
           </div>
         </div>
@@ -155,57 +362,86 @@ import { DataService } from '../data.service';
 
   <!-- ==================== TAB: LANÇAMENTOS ==================== -->
   @if (tab==='lancamentos') {
-    <div class="card">
-      <div class="filter-bar" style="padding:14px;border-bottom:1px solid var(--border)">
-        <div class="seg">
-          <button [class.on]="filtro==='todos'"   (click)="filtro='todos'">Todos</button>
-          <button [class.on]="filtro==='receita'" (click)="filtro='receita'">Receitas</button>
-          <button [class.on]="filtro==='despesa'" (click)="filtro='despesa'">Despesas</button>
+    <div class="col" style="gap:16px">
+
+      <!-- resumo do período filtrado -->
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat">
+          <div class="stat-top"><div class="stat-label">Entradas no período</div></div>
+          <div class="stat-val tnum" style="color:var(--accent-text)">{{ data.money(totalFiltrado.rec) }}</div>
         </div>
-        <button class="btn btn-ghost btn-sm" style="margin-left:auto">
-          <app-icon name="download" [size]="15"></app-icon> Exportar
-        </button>
+        <div class="stat">
+          <div class="stat-top"><div class="stat-label">Saídas no período</div></div>
+          <div class="stat-val tnum" style="color:var(--st-faltou)">{{ data.money(totalFiltrado.desp) }}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top"><div class="stat-label">Resultado</div></div>
+          <div class="stat-val tnum">{{ data.money(totalFiltrado.rec - totalFiltrado.desp) }}</div>
+        </div>
       </div>
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>Hora</th>
-            <th>Descrição</th>
-            <th>Categoria</th>
-            <th>Forma</th>
-            <th>Tipo</th>
-            <th>Valor</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (l of lancamentosRows; track l.id) {
+
+      <div class="card">
+        <div class="filter-bar" style="padding:14px;border-bottom:1px solid var(--border)">
+          <div class="seg">
+            <button [class.on]="periodo==='hoje'"  (click)="periodo='hoje'">Hoje</button>
+            <button [class.on]="periodo==='7d'"    (click)="periodo='7d'">7 dias</button>
+            <button [class.on]="periodo==='mes'"   (click)="periodo='mes'">Mês</button>
+            <button [class.on]="periodo==='todos'" (click)="periodo='todos'">Todos</button>
+          </div>
+          <div class="seg">
+            <button [class.on]="filtro==='todos'"   (click)="filtro='todos'">Todos</button>
+            <button [class.on]="filtro==='receita'" (click)="filtro='receita'">Receitas</button>
+            <button [class.on]="filtro==='despesa'" (click)="filtro='despesa'">Despesas</button>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" (click)="notify.emit('Lançamentos exportados em CSV')">
+            <app-icon name="download" [size]="15"></app-icon> Exportar
+          </button>
+        </div>
+        <table class="tbl">
+          <thead>
             <tr>
-              <td class="mono muted" style="font-size:13px">{{ l.hora }}</td>
-              <td style="font-weight:600">{{ l.desc }}</td>
-              <td class="muted">{{ l.cat }}</td>
-              <td>
-                <span class="tag" style="border-color:transparent"
-                      [style.background]="FORMA[l.forma].bg"
-                      [style.color]="FORMA[l.forma].cor">{{ FORMA[l.forma].label }}</span>
-              </td>
-              <td>
-                <span [class]="l.tipo==='receita' ? 'pill pill-confirmado' : 'pill pill-faltou'">
-                  <span class="pdot"></span>
-                  {{ l.tipo==='receita' ? 'Receita' : 'Despesa' }}
-                </span>
-              </td>
-              <td class="tnum" style="font-weight:700"
-                  [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
-                {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
-              </td>
-              <td>
-                <app-menu [items]="[{label:'Editar',icon:'edit'},{label:'Excluir',icon:'trash',danger:true}]"></app-menu>
-              </td>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Forma</th>
+              <th>Tipo</th>
+              <th style="text-align:right">Valor</th>
+              <th></th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (l of lancamentosRows; track l.id) {
+              <tr>
+                <td class="mono muted" style="font-size:13px">{{ data.fmtData(l.data) }}</td>
+                <td class="mono muted" style="font-size:13px">{{ l.hora }}</td>
+                <td style="font-weight:600">{{ l.desc }}</td>
+                <td class="muted">{{ l.cat }}</td>
+                <td>
+                  <span class="tag" style="border-color:transparent"
+                        [style.background]="FORMA[l.forma].bg"
+                        [style.color]="FORMA[l.forma].cor">{{ FORMA[l.forma].label }}</span>
+                </td>
+                <td>
+                  <span [class]="l.tipo==='receita' ? 'pill pill-confirmado' : 'pill pill-faltou'">
+                    <span class="pdot"></span>
+                    {{ l.tipo==='receita' ? 'Receita' : 'Despesa' }}
+                  </span>
+                </td>
+                <td class="tnum" style="font-weight:700;text-align:right"
+                    [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
+                  {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
+                </td>
+                <td>
+                  <app-menu [items]="[{label:'Editar',icon:'edit'},{label:'Excluir',icon:'trash',danger:true}]"></app-menu>
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="8"><div class="empty">Nenhum lançamento no período selecionado.</div></td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   }
 
@@ -214,8 +450,7 @@ import { DataService } from '../data.service';
     <div class="col" style="gap:16px">
 
       <!-- KPIs a receber -->
-      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-        <!-- Total a receber -->
+      <div class="stat-grid">
         <div class="stat">
           <div class="stat-top">
             <div class="stat-label">Total a receber</div>
@@ -224,32 +459,44 @@ import { DataService } from '../data.service';
             </div>
           </div>
           <div class="stat-val tnum">{{ data.money(totalAReceber) }}</div>
+          <div class="stat-meta">{{ data.aReceber.length }} títulos em aberto</div>
         </div>
-        <!-- Pendências -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Pendências</div>
-            <div class="stat-ico" style="background:var(--st-atendimento-bg)">
-              <app-icon name="clock" [size]="17" style="color:var(--st-atendimento)"></app-icon>
+            <div class="stat-label">A vencer</div>
+            <div class="stat-ico" style="background:var(--accent-soft)">
+              <app-icon name="clock" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.aReceber.length }}</div>
+          <div class="stat-val tnum">{{ data.money(totalAVencer) }}</div>
+          <div class="stat-meta">{{ aVencer.length }} títulos no prazo</div>
         </div>
-        <!-- Vencidas -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Vencidas</div>
+            <div class="stat-label">Vencido</div>
             <div class="stat-ico" style="background:var(--st-faltou-bg)">
               <app-icon name="alert" [size]="17" style="color:var(--st-faltou)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ vencidas.length }}</div>
+          <div class="stat-val tnum" [style.color]="vencidas.length ? 'var(--st-faltou)' : 'var(--text)'">{{ data.money(totalVencido) }}</div>
+          <div class="stat-meta">{{ vencidas.length }} títulos vencidos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">Prazo médio</div>
+            <div class="stat-ico" style="background:var(--st-atendimento-bg)">
+              <app-icon name="calendar" [size]="17" style="color:var(--st-atendimento)"></app-icon>
+            </div>
+          </div>
+          <div class="stat-val tnum">{{ prazoMedio }}<small> dias</small></div>
+          <div class="stat-meta">média de vencimento</div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-head">
           <div class="card-title">Contas a receber</div>
+          <span class="muted" style="margin-left:auto;font-size:12.5px">ordenado por vencimento</span>
         </div>
         <table class="tbl">
           <thead>
@@ -257,12 +504,13 @@ import { DataService } from '../data.service';
               <th>Cliente</th>
               <th>Descrição</th>
               <th>Vencimento</th>
-              <th>Valor</th>
+              <th>Situação</th>
+              <th style="text-align:right">Valor</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            @for (r of data.aReceber; track r.id) {
+            @for (r of aReceberOrdenado; track r.id) {
               <tr>
                 <td>
                   <div class="row" style="gap:10px">
@@ -271,15 +519,16 @@ import { DataService } from '../data.service';
                   </div>
                 </td>
                 <td class="muted">{{ r.desc }}</td>
+                <td class="mono muted" style="font-size:13px">{{ data.fmtData(r.venc) }}</td>
                 <td>
-                  <span [style.color]="r.dias < 0 ? 'var(--st-faltou)' : 'var(--text)'"
-                        [style.font-weight]="r.dias < 0 ? 600 : 400">
-                    {{ r.dias < 0 ? 'Vencida há ' + abs(r.dias) + 'd' : 'em ' + r.dias + 'd' }}
+                  <span [class]="r.dias < 0 ? 'pill pill-faltou' : (r.dias <= 3 ? 'pill pill-pendente' : 'pill pill-confirmado')">
+                    <span class="pdot"></span>
+                    {{ r.dias < 0 ? 'Vencida há ' + abs(r.dias) + 'd' : (r.dias === 0 ? 'Vence hoje' : 'Vence em ' + r.dias + 'd') }}
                   </span>
                 </td>
-                <td class="tnum" style="font-weight:700">{{ data.money(r.valor) }}</td>
+                <td class="tnum" style="font-weight:700;text-align:right">{{ data.money(r.valor) }}</td>
                 <td>
-                  <div class="row" style="gap:6px">
+                  <div class="row" style="gap:6px;justify-content:flex-end">
                     <button class="btn btn-subtle btn-sm" (click)="notify.emit('Lembrete de pagamento enviado')">
                       <app-icon name="whatsapp" [size]="14"></app-icon> Cobrar
                     </button>
@@ -297,137 +546,112 @@ import { DataService } from '../data.service';
     </div>
   }
 
-  <!-- ==================== TAB: FLUXO DE CAIXA ==================== -->
-  @if (tab==='fluxo') {
-    <div class="col" style="gap:16px">
-
-      <!-- KPIs fluxo -->
-      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-        <!-- Receita 7 dias -->
-        <div class="stat">
-          <div class="stat-top">
-            <div class="stat-label">Receita (7 dias)</div>
-            <div class="stat-ico" style="background:var(--accent-soft)">
-              <app-icon name="trend" [size]="17" style="color:var(--accent)"></app-icon>
-            </div>
-          </div>
-          <div class="stat-val tnum">{{ data.money(fluxoTotRec) }}</div>
-        </div>
-        <!-- Despesa 7 dias -->
-        <div class="stat">
-          <div class="stat-top">
-            <div class="stat-label">Despesa (7 dias)</div>
-            <div class="stat-ico" style="background:var(--st-faltou-bg)">
-              <app-icon name="trendD" [size]="17" style="color:var(--st-faltou)"></app-icon>
-            </div>
-          </div>
-          <div class="stat-val tnum">{{ data.money(fluxoTotDesp) }}</div>
-        </div>
-        <!-- Resultado -->
-        <div class="stat">
-          <div class="stat-top">
-            <div class="stat-label">Resultado</div>
-            <div class="stat-ico" style="background:var(--st-atendimento-bg)">
-              <app-icon name="chart" [size]="17" style="color:var(--st-atendimento)"></app-icon>
-            </div>
-          </div>
-          <div class="stat-val tnum">{{ data.money(fluxoTotRec - fluxoTotDesp) }}</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">Fluxo dos últimos 7 dias</div>
-          <div class="row" style="margin-left:auto;gap:14px;font-size:12.5px">
-            <span class="row" style="gap:6px">
-              <span style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></span>
-              Receita
-            </span>
-            <span class="row" style="gap:6px">
-              <span style="width:10px;height:10px;border-radius:3px;background:var(--st-faltou)"></span>
-              Despesa
-            </span>
-          </div>
-        </div>
-        <div style="padding:28px 18px 18px;display:flex;gap:14px;align-items:flex-end;height:280px">
-          @for (f of data.fluxo; track f.dia) {
-            <div class="col" style="flex:1;align-items:center;gap:8px;height:100%;justify-content:flex-end">
-              <div class="row" style="gap:4px;align-items:flex-end;height:100%;width:100%;justify-content:center">
-                <div [title]="data.money(f.rec)"
-                     style="width:38%;max-width:26px;background:var(--accent);border-radius:5px 5px 0 0;transition:height .3s"
-                     [style.height]="barHeight(f.rec)"></div>
-                <div [title]="data.money(f.desp)"
-                     style="width:38%;max-width:26px;background:var(--st-faltou);border-radius:5px 5px 0 0;opacity:0.85;transition:height .3s"
-                     [style.height]="barHeight(f.desp)"></div>
-              </div>
-              <span class="muted" style="font-size:12px;font-weight:600">{{ f.dia }}</span>
-            </div>
-          }
-        </div>
-      </div>
-
-    </div>
-  }
-
 </div>
   `,
 })
 export class FinanceiroComponent {
   @Output() notify = new EventEmitter<string>();
 
-  tab = 'caixa';
+  tab = 'visao';
   filtro = 'todos';
+  periodo = 'mes';
 
   readonly FORMA: any = {
     dinheiro: { label: 'Dinheiro', cor: 'var(--accent)',            bg: 'var(--accent-soft)',          icon: 'money'   },
     pix:      { label: 'Pix',      cor: 'var(--st-atendimento)',    bg: 'var(--st-atendimento-bg)',    icon: 'sparkle' },
     cartao:   { label: 'Cartão',   cor: 'oklch(0.5 0.12 300)',      bg: 'oklch(0.96 0.04 300)',        icon: 'coins'   },
   };
+  readonly FORMA_COR: any = {
+    pix: 'var(--st-atendimento)', cartao: 'oklch(0.5 0.12 300)', dinheiro: 'var(--accent)',
+  };
+  readonly CAT_COR: any = {
+    Atendimento: 'var(--accent)', Produto: 'var(--st-atendimento)',
+    Insumos: 'var(--st-faltou)', Marketing: 'oklch(0.55 0.16 300)', Operacional: 'var(--st-pendente)',
+  };
 
   get formaKeys(): string[] { return Object.keys(this.FORMA); }
 
   constructor(public data: DataService) {}
 
-  // ---- caixa computations ----
-  get receitas() { return this.data.lancamentos.filter(l => l.tipo === 'receita'); }
-  get despesas()  { return this.data.lancamentos.filter(l => l.tipo === 'despesa'); }
-  get totRec()    { return this.receitas.reduce((s, l) => s + l.valor, 0); }
-  get totDesp()   { return this.despesas.reduce((s, l) => s + l.valor, 0); }
-  get saldo()     { return this.data.caixa.valorAbertura + this.totRec - this.totDesp; }
+  get fin() { return this.data.financeiro; }
+  get hoje() { return this.fin.hoje; }
 
-  get porForma(): { [key: string]: number } {
-    const m: { [key: string]: number } = {};
-    this.receitas.forEach(l => m[l.forma] = (m[l.forma] || 0) + l.valor);
+  // ---- visão geral ----
+  get recDelta(): number | null {
+    const a = this.fin.mesAnterior.receita;
+    return a > 0 ? Math.round((this.fin.mes.receita - a) / a * 100) : null;
+  }
+  get margem() { return this.fin.mes.receita ? Math.round(this.fin.mes.resultado / this.fin.mes.receita * 100) : 0; }
+  get pctDespesa() { return this.fin.mes.receita ? Math.round(this.fin.mes.despesa / this.fin.mes.receita * 100) : 0; }
+  get fluxoMax() { return Math.max(1, ...this.fin.fluxo.map(f => Math.max(f.rec, f.desp))); }
+  barH(val: number): string { return (val / this.fluxoMax * 100 || 0) + '%'; }
+  get receitaFormaTotal() { return this.fin.receitaForma.reduce((s, f) => s + f.valor, 0); }
+  formaPct(v: number): number { return this.receitaFormaTotal ? Math.round(v / this.receitaFormaTotal * 100) : 0; }
+  get receitaCatMax() { return Math.max(1, ...this.fin.receitaCategoria.map(c => c.valor)); }
+  get despesaCatMax() { return Math.max(1, ...this.fin.despesaCategoria.map(c => c.valor)); }
+  get despesaTotal() { return this.fin.despesaCategoria.reduce((s, c) => s + c.valor, 0); }
+  get profMax() { return Math.max(1, ...this.fin.porProfissional.map(p => p.valor)); }
+  catCor(c: string) { return this.CAT_COR[c] || 'var(--text-3)'; }
+  pctDe(v: number, total: number): number { return total ? Math.round(v / total * 100) : 0; }
+  kfmt(v: number): string { return v >= 1000 ? (v / 1000).toFixed(1).replace('.', ',') + 'k' : String(v); }
+
+  // ---- caixa do dia (hoje) ----
+  get lancHoje() { return this.data.lancamentos.filter(l => l.data === this.hoje); }
+  get receitasHoje() { return this.lancHoje.filter(l => l.tipo === 'receita'); }
+  get despesasHoje() { return this.lancHoje.filter(l => l.tipo === 'despesa'); }
+  get totRecHoje() { return this.receitasHoje.reduce((s, l) => s + l.valor, 0); }
+  get totDespHoje() { return this.despesasHoje.reduce((s, l) => s + l.valor, 0); }
+  get saldoHoje() { return this.data.caixa.valorAbertura + this.totRecHoje - this.totDespHoje; }
+  get porFormaHoje(): { [k: string]: number } {
+    const m: { [k: string]: number } = {};
+    this.receitasHoje.forEach(l => m[l.forma] = (m[l.forma] || 0) + l.valor);
     return m;
   }
+  pctHoje(f: string): number {
+    const v = this.porFormaHoje[f] || 0;
+    return this.totRecHoje ? Math.round(v / this.totRecHoje * 100) : 0;
+  }
+  get todosHojeOrdenados() { return [...this.lancHoje].sort((a, b) => b.hora.localeCompare(a.hora)); }
 
-  pct(f: string): number {
-    const val = this.porForma[f] || 0;
-    return this.totRec ? Math.round(val / this.totRec * 100) : 0;
+  // ---- lançamentos (histórico filtrável) ----
+  get lancamentosRows(): Lancamento[] {
+    let rows = [...this.data.lancamentos];
+    if (this.periodo === 'hoje') rows = rows.filter(l => l.data === this.hoje);
+    else if (this.periodo === '7d') {
+      const min = this.shiftDays(this.hoje, -6);
+      rows = rows.filter(l => l.data >= min);
+    } else if (this.periodo === 'mes') {
+      const ym = this.hoje.slice(0, 7);
+      rows = rows.filter(l => l.data.slice(0, 7) === ym);
+    }
+    if (this.filtro !== 'todos') rows = rows.filter(l => l.tipo === this.filtro);
+    return rows.sort((a, b) => (b.data + b.hora).localeCompare(a.data + a.hora));
+  }
+  get totalFiltrado() {
+    return this.lancamentosRows.reduce(
+      (acc, l) => {
+        if (l.tipo === 'receita') acc.rec += l.valor; else acc.desp += l.valor;
+        return acc;
+      },
+      { rec: 0, desp: 0 },
+    );
+  }
+  private shiftDays(iso: string, days: number): string {
+    const d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + days);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
-  get todosOrdenados() {
-    return [...this.receitas, ...this.despesas].sort((a, b) => b.hora.localeCompare(a.hora));
-  }
-
-  // ---- lançamentos tab ----
-  get lancamentosRows() {
-    let rows = [...this.data.lancamentos].sort((a, b) => b.hora.localeCompare(a.hora));
-    if (this.filtro !== 'todos') rows = rows.filter(r => r.tipo === this.filtro);
-    return rows;
-  }
-
-  // ---- a receber tab ----
+  // ---- a receber ----
+  get aReceberOrdenado() { return [...this.data.aReceber].sort((a, b) => a.dias - b.dias); }
   get totalAReceber() { return this.data.aReceber.reduce((s, r) => s + r.valor, 0); }
-  get vencidas()      { return this.data.aReceber.filter(r => r.dias < 0); }
-  abs(n: number)      { return Math.abs(n); }
-
-  // ---- fluxo tab ----
-  get fluxoTotRec()  { return this.data.fluxo.reduce((s, f) => s + f.rec, 0); }
-  get fluxoTotDesp() { return this.data.fluxo.reduce((s, f) => s + f.desp, 0); }
-  get fluxoMax()     { return Math.max(...this.data.fluxo.map(f => Math.max(f.rec, f.desp))); }
-
-  barHeight(val: number): string {
-    return (val / this.fluxoMax * 100 || 0.5) + '%';
+  get aVencer() { return this.data.aReceber.filter(r => r.dias >= 0); }
+  get vencidas() { return this.data.aReceber.filter(r => r.dias < 0); }
+  get totalAVencer() { return this.aVencer.reduce((s, r) => s + r.valor, 0); }
+  get totalVencido() { return this.vencidas.reduce((s, r) => s + r.valor, 0); }
+  get prazoMedio(): number {
+    const av = this.aVencer;
+    return av.length ? Math.round(av.reduce((s, r) => s + r.dias, 0) / av.length) : 0;
   }
+  abs(n: number) { return Math.abs(n); }
 }
