@@ -1,15 +1,17 @@
 /* Tela: Clientes (CRM) — lista + ficha detalhada (drawer) */
 import { Component, EventEmitter, Input, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { TagComponent } from '../shared/tag.component';
+import { ModalComponent } from '../shared/modal.component';
 import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, TagComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, TagComponent, ModalComponent],
   template: `
 <div class="page">
 
@@ -30,8 +32,9 @@ import { DataService } from '../data.service';
       }
     </div>
 
-    <button class="btn btn-primary" style="margin-left:auto">
-      <app-icon name="plus" [size]="16"></app-icon> Novo cliente
+    <button class="btn btn-primary btn-sm" style="margin-left:auto" (click)="openNovo()">
+      <app-icon name="plus" [size]="14"></app-icon>
+      Novo cliente
     </button>
   </div>
 
@@ -256,8 +259,8 @@ import { DataService } from '../data.service';
           <div class="col" style="gap:10px">
             <div style="font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-3)">Fidelidade</div>
             <div class="card card-pad" style="display:flex; align-items:center; gap:12px; padding:14px">
-              <div style="width:40px; height:40px; border-radius:10px; background:oklch(0.96 0.05 82); display:grid; place-items:center">
-                <app-icon name="coins" [size]="19" style="color:oklch(0.5 0.12 75)"></app-icon>
+              <div style="width:40px; height:40px; border-radius:10px; background:var(--accent-soft); display:grid; place-items:center">
+                <app-icon name="coins" [size]="19" style="color:var(--accent-text)"></app-icon>
               </div>
               <div class="col" style="flex:1; line-height:1.3">
                 <span style="font-weight:700; font-size:15px">{{ c.visitas % 10 }} / 10 cortes</span>
@@ -309,6 +312,36 @@ import { DataService } from '../data.service';
   }
 
 </div>
+
+@if (novoModal) {
+  <app-modal title="Novo cliente" (close)="novoModal = false">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="field">
+        <label>Nome completo *</label>
+        <input class="input" [(ngModel)]="draft.nome" placeholder="Ex: João Silva" autofocus>
+      </div>
+      <div class="field">
+        <label>WhatsApp</label>
+        <input class="input" [(ngModel)]="draft.wpp" placeholder="(11) 99999-0000">
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input class="input" [(ngModel)]="draft.email" placeholder="joao@email.com">
+      </div>
+      <div class="field">
+        <label>Data de nascimento</label>
+        <input class="input" type="date" [(ngModel)]="draft.nasc">
+      </div>
+    </div>
+    <div modalFoot>
+      <button class="btn btn-ghost" (click)="novoModal = false">Cancelar</button>
+      <button class="btn btn-primary" [disabled]="!draft.nome.trim()" (click)="salvarCliente()">
+        <app-icon name="check" [size]="15"></app-icon>
+        Cadastrar
+      </button>
+    </div>
+  </app-modal>
+}
   `,
 })
 export class ClientesComponent {
@@ -318,8 +351,30 @@ export class ClientesComponent {
 
   q = '';
   tag = 'todos';
+  novoModal = false;
+  draft = { nome: '', wpp: '', email: '', nasc: '' };
 
   constructor(public data: DataService) {}
+
+  openNovo() {
+    this.draft = { nome: '', wpp: '', email: '', nasc: '' };
+    this.novoModal = true;
+  }
+
+  salvarCliente() {
+    if (!this.draft.nome.trim()) return;
+    this.data.addCliente({
+      nome: this.draft.nome.trim(),
+      wpp: this.draft.wpp.trim(),
+      email: this.draft.email.trim(),
+      nasc: this.draft.nasc || '2000-01-01',
+      tags: ['novo'],
+      visitas: 0, ticket: 0, total: 0,
+      ultima: new Date().toISOString().slice(0, 10),
+      freq: 0, obs: '', fav: null,
+    });
+    this.novoModal = false;
+  }
 
   @HostListener('document:keydown.escape')
   onEsc() {

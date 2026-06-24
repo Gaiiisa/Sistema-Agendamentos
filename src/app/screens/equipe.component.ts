@@ -20,10 +20,6 @@ import { DataService, Staff } from '../data.service';
           <div style="font-weight:700;font-size:16px">{{ data.staff.length }} profissionais ativos</div>
           <div class="muted" style="font-size:13px">Horários, especialidades, comissão e metas alimentam a disponibilidade da agenda.</div>
         </div>
-        <button class="btn btn-primary" style="margin-left:auto" (click)="openNovo()">
-          <app-icon name="plus" [size]="16"></app-icon>
-          Adicionar profissional
-        </button>
       </div>
 
       <!-- Grade de cards -->

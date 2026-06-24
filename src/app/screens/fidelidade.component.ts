@@ -189,10 +189,6 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
           <div style="font-weight:700;font-size:15px">Campanhas via WhatsApp</div>
           <div class="muted" style="font-size:13px">Dispare mensagens segmentadas por tag, retorno ou aniversário.</div>
         </div>
-        <button class="btn btn-primary" style="margin-left:auto" (click)="openNovaCampanha()">
-          <app-icon name="plus" [size]="16"></app-icon>
-          Nova campanha
-        </button>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px">
@@ -281,7 +277,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
                 Editar
               </button>
             </div>
-            <div style="background:oklch(0.97 0.02 150);border:1px solid var(--border);border-radius:var(--r-md);border-top-left-radius:3px;padding:11px 13px;font-size:13px;color:var(--text-2);line-height:1.5">{{ m.texto }}</div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);border-top-left-radius:3px;padding:11px 13px;font-size:13px;color:var(--text-2);line-height:1.5">{{ m.texto }}</div>
           </div>
         }
       </div>
@@ -440,9 +436,14 @@ export class FidelidadeComponent {
     'Aniversariantes do mês', 'Sem visita há 60 dias',
   ];
 
-  readonly quaseLa: [string, number][] = [
-    ['c4', 9], ['c8', 8], ['c1', 8],
-  ];
+  get quaseLa(): [string, number][] {
+    const limiar = Math.ceil(this.meta * 0.7);
+    return this.data.clientes
+      .map(c => [c.id, c.visitas % this.meta] as [string, number])
+      .filter(([, pts]) => pts >= limiar && pts < this.meta)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4);
+  }
 
   readonly varTags: string[] = [
     '{cliente}', '{data}', '{hora}', '{profissional}', '{estabelecimento}',

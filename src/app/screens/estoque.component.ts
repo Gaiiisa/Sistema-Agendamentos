@@ -99,10 +99,6 @@ import type { Produto } from '../data.service';
         <input placeholder="Buscar produto…" [value]="q" (input)="q=$any($event.target).value">
       </div>
     }
-    <button class="btn btn-primary btn-sm" style="margin-left:auto" (click)="openNovo()">
-      <app-icon name="plus" [size]="15"></app-icon>
-      Novo produto
-    </button>
   </div>
 
   <!-- ── Tab: Produtos ── -->

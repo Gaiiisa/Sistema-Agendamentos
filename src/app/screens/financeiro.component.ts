@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { MenuComponent } from '../shared/menu.component';
+import { AreaChartComponent } from '../shared/area-chart.component';
+import { DonutComponent } from '../shared/donut.component';
+import { GaugeComponent } from '../shared/gauge.component';
 import { DataService, Lancamento } from '../data.service';
 
 @Component({
   selector: 'app-financeiro',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, MenuComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, MenuComponent, AreaChartComponent, DonutComponent, GaugeComponent],
   template: `
 <div class="page">
 
@@ -77,78 +80,87 @@ import { DataService, Lancamento } from '../data.service';
           <div class="stat-val tnum">{{ data.money(fin.mes.resultado) }}</div>
           <div class="stat-meta">margem de {{ margem }}%</div>
         </div>
-        <!-- Ticket médio -->
+        <!-- Projeção do mês -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Ticket médio</div>
+            <div class="stat-label">Projeção do mês</div>
             <div class="stat-ico" style="background:var(--st-atendimento-bg)">
-              <app-icon name="coins" [size]="17" style="color:var(--st-atendimento)"></app-icon>
+              <app-icon name="trend" [size]="17" style="color:var(--st-atendimento)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(fin.mes.ticketMedio) }}</div>
-          <div class="stat-meta">{{ fin.mes.atendimentos }} atendimentos no mês</div>
+          <div class="stat-val tnum">{{ data.money(projecao) }}</div>
+          <div class="stat-meta">no ritmo atual · {{ fin.mes.atendimentos }} atend.</div>
         </div>
       </div>
 
-      <!-- Fluxo de caixa (7 dias) + composição por forma -->
-      <div class="grid-dash" style="align-items:stretch">
-
-        <!-- Fluxo 7 dias -->
-        <div class="card" style="display:flex;flex-direction:column">
-          <div class="card-head">
-            <app-icon name="chart" [size]="16" style="color:var(--text-2)"></app-icon>
-            <div class="card-title">Fluxo de caixa · últimos 7 dias</div>
-            <div class="row" style="margin-left:auto;gap:14px;font-size:12.5px">
-              <span class="row" style="gap:6px">
-                <span style="width:10px;height:10px;border-radius:3px;background:var(--accent)"></span> Receita
-              </span>
-              <span class="row" style="gap:6px">
-                <span style="width:10px;height:10px;border-radius:3px;background:var(--st-faltou)"></span> Despesa
-              </span>
-            </div>
-          </div>
-          <div style="padding:24px 18px 14px;display:flex;gap:12px;align-items:flex-end;flex:1;min-height:240px">
-            @for (f of fin.fluxo; track f.dia) {
-              <div class="col" style="flex:1;align-items:center;gap:8px;height:100%;justify-content:flex-end">
-                <span class="tnum muted" style="font-size:11px;font-weight:700">{{ kfmt(f.rec) }}</span>
-                <div class="row" style="gap:4px;align-items:flex-end;height:100%;width:100%;justify-content:center">
-                  <div [title]="data.money(f.rec)"
-                       style="width:38%;max-width:24px;background:var(--accent);border-radius:5px 5px 0 0;transition:height .3s"
-                       [style.height]="barH(f.rec)"></div>
-                  <div [title]="data.money(f.desp)"
-                       style="width:38%;max-width:24px;background:var(--st-faltou);border-radius:5px 5px 0 0;opacity:0.88;transition:height .3s"
-                       [style.height]="barH(f.desp)"></div>
-                </div>
-                <span class="muted" style="font-size:12px;font-weight:600">{{ f.dia }}</span>
-              </div>
-            }
+      <!-- Receita × Despesa · 7 dias (area-chart 2 séries) -->
+      <div class="card">
+        <div class="card-head">
+          <app-icon name="chart" [size]="16" style="color:var(--text-2)"></app-icon>
+          <div class="card-title">Receita × Despesa · últimos 7 dias</div>
+          <div class="row" style="margin-left:auto;gap:14px;font-size:12.5px">
+            <span class="row" style="gap:5px">
+              <span style="width:10px;height:3px;border-radius:2px;background:var(--accent);display:inline-block"></span> Receita
+            </span>
+            <span class="row" style="gap:5px">
+              <span style="width:10px;height:3px;border-radius:2px;border-top:2px dashed var(--st-faltou);display:inline-block"></span> Despesa
+            </span>
           </div>
         </div>
+        <div style="padding:14px 18px 8px">
+          <app-area-chart
+            [labels]="fluxoLabels"
+            [series]="fluxoSeries2"
+            [altura]="150"
+            [formatY]="kfmtFn">
+          </app-area-chart>
+        </div>
+      </div>
 
-        <!-- Receita por forma de pagamento (mês) -->
+      <!-- Donut forma + Gauge margem -->
+      <div class="grid-2" style="align-items:stretch">
+
+        <!-- Receita por forma de pagamento -->
         <div class="card" style="display:flex;flex-direction:column">
           <div class="card-head">
             <app-icon name="coins" [size]="16" style="color:var(--text-2)"></app-icon>
-            <div class="card-title">Receita por forma</div>
+            <div class="card-title">Receita por forma de pagamento</div>
           </div>
-          <div style="padding:18px;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:14px">
-            @for (f of fin.receitaForma; track f.forma) {
-              <div class="col" style="gap:7px">
+          <div style="padding:18px;display:flex;gap:20px;align-items:center;flex:1;flex-wrap:wrap">
+            <app-donut [fatias]="donutFatias" [size]="110" [tampaCentro]="'mês'"></app-donut>
+            <div class="col" style="flex:1;gap:11px;min-width:120px">
+              @for (f of fin.receitaForma; track f.forma) {
                 <div class="row" style="gap:9px">
-                  <span [style.width.px]="9" [style.height.px]="9" [style.borderRadius.px]="3" [style.background]="FORMA_COR[f.forma] || 'var(--text-3)'"></span>
-                  <span style="font-weight:600;font-size:13.5px;flex:1">{{ f.label }}</span>
-                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(f.valor) }}</span>
-                  <span class="muted tnum" style="font-size:12px;width:38px;text-align:right">{{ formaPct(f.valor) }}%</span>
+                  <span [style.width.px]="9" [style.height.px]="9" [style.borderRadius.px]="3"
+                        [style.background]="FORMA_COR[f.forma] || 'var(--text-3)'"
+                        style="flex-shrink:0"></span>
+                  <span style="font-weight:600;font-size:13px;flex:1">{{ f.label }}</span>
+                  <span class="tnum muted" style="font-size:12px">{{ formaPct(f.valor) }}%</span>
+                  <span class="tnum" style="font-weight:700;font-size:13px">{{ data.money(f.valor) }}</span>
                 </div>
-                <div class="progress">
-                  <span [style.width]="formaPct(f.valor)+'%'" [style.background]="FORMA_COR[f.forma] || 'var(--text-3)'"></span>
-                </div>
+              }
+              <div class="divider"></div>
+              <div class="row">
+                <span class="muted" style="font-size:12.5px;flex:1">Total</span>
+                <span class="tnum" style="font-weight:800;font-size:14px">{{ data.money(receitaFormaTotal) }}</span>
               </div>
-            }
-            <div class="divider"></div>
-            <div class="row">
-              <span class="muted" style="font-size:13px;flex:1">Total recebido no mês</span>
-              <span class="tnum" style="font-weight:800;font-size:15px">{{ data.money(receitaFormaTotal) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Margem de lucro (gauge) -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-head">
+            <app-icon name="chart" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Margem de lucro</div>
+          </div>
+          <div style="padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px">
+            <app-gauge [pct]="margem" [cor]="margemCor" [texto]="margem + '%'"></app-gauge>
+            <div class="col" style="align-items:center;gap:4px">
+              <span style="font-size:15px;font-weight:700" [style.color]="margemCor">{{ margemTexto }}</span>
+              <span class="muted" style="font-size:12.5px;text-align:center">
+                {{ data.money(fin.mes.resultado) }} de resultado líquido sobre {{ data.money(fin.mes.receita) }} de receita
+              </span>
             </div>
           </div>
         </div>
@@ -162,7 +174,7 @@ import { DataService, Lancamento } from '../data.service';
         <div class="card" style="display:flex;flex-direction:column">
           <div class="card-head">
             <app-icon name="trend" [size]="16" style="color:var(--text-2)"></app-icon>
-            <div class="card-title">Receita por categoria</div>
+            <div class="card-title">De onde vem a receita</div>
             <span class="muted" style="margin-left:auto;font-size:12.5px">mês</span>
           </div>
           <div style="padding:18px;display:flex;flex-direction:column;gap:15px;flex:1;justify-content:space-evenly">
@@ -186,7 +198,7 @@ import { DataService, Lancamento } from '../data.service';
         <div class="card" style="display:flex;flex-direction:column">
           <div class="card-head">
             <app-icon name="trendD" [size]="16" style="color:var(--text-2)"></app-icon>
-            <div class="card-title">Despesas por categoria</div>
+            <div class="card-title">Para onde vai a despesa</div>
             <span class="muted" style="margin-left:auto;font-size:12.5px">{{ data.money(despesaTotal) }}</span>
           </div>
           <div style="padding:18px;display:flex;flex-direction:column;gap:15px;flex:1;justify-content:space-evenly">
@@ -212,13 +224,13 @@ import { DataService, Lancamento } from '../data.service';
       <div class="card">
         <div class="card-head">
           <app-icon name="team" [size]="16" style="color:var(--text-2)"></app-icon>
-          <div class="card-title">Receita por profissional</div>
-          <span class="muted" style="margin-left:auto;font-size:12.5px">mês · atendimentos</span>
+          <div class="card-title">Receita por profissional · mês</div>
+          <span class="muted" style="margin-left:auto;font-size:12.5px">atendimentos</span>
         </div>
         @for (p of fin.porProfissional; track p.prof; let i = $index) {
           <div class="row" style="gap:12px;padding:12px 18px"
                [style.border-bottom]="i < fin.porProfissional.length - 1 ? '1px solid var(--border)' : 'none'">
-            <span class="tnum" [style.color]="i===0 ? 'var(--accent)' : 'var(--text-3)'" style="font-weight:800;width:20px">#{{ i + 1 }}</span>
+            <span class="tnum" [style.color]="i===0 ? 'var(--accent)' : (i===1 ? 'var(--st-atendimento)' : (i===2 ? 'var(--st-pendente)' : 'var(--text-3)'))" style="font-weight:800;width:20px">{{ i===0 ? '🥇' : (i===1 ? '🥈' : (i===2 ? '🥉' : '#'+(i+1))) }}</span>
             <app-avatar [nome]="data.prof(p.prof).nome" [cor]="data.prof(p.prof).cor" [size]="34"></app-avatar>
             <div class="col" style="flex:1;line-height:1.25;gap:5px;min-width:0">
               <span style="font-weight:600;font-size:13.5px">{{ data.prof(p.prof).nome }}</span>
@@ -559,14 +571,14 @@ export class FinanceiroComponent {
   readonly FORMA: any = {
     dinheiro: { label: 'Dinheiro', cor: 'var(--accent)',            bg: 'var(--accent-soft)',          icon: 'money'   },
     pix:      { label: 'Pix',      cor: 'var(--st-atendimento)',    bg: 'var(--st-atendimento-bg)',    icon: 'sparkle' },
-    cartao:   { label: 'Cartão',   cor: 'oklch(0.5 0.12 300)',      bg: 'oklch(0.96 0.04 300)',        icon: 'coins'   },
+    cartao:   { label: 'Cartão',   cor: '#7c3aed',                  bg: '#ede9fe',                     icon: 'coins'   },
   };
   readonly FORMA_COR: any = {
-    pix: 'var(--st-atendimento)', cartao: 'oklch(0.5 0.12 300)', dinheiro: 'var(--accent)',
+    pix: 'var(--st-atendimento)', cartao: '#7c3aed', dinheiro: 'var(--accent)',
   };
   readonly CAT_COR: any = {
     Atendimento: 'var(--accent)', Produto: 'var(--st-atendimento)',
-    Insumos: 'var(--st-faltou)', Marketing: 'oklch(0.55 0.16 300)', Operacional: 'var(--st-pendente)',
+    Insumos: 'var(--st-faltou)', Marketing: '#7c3aed', Operacional: 'var(--st-pendente)',
   };
 
   get formaKeys(): string[] { return Object.keys(this.FORMA); }
@@ -582,7 +594,35 @@ export class FinanceiroComponent {
     return a > 0 ? Math.round((this.fin.mes.receita - a) / a * 100) : null;
   }
   get margem() { return this.fin.mes.receita ? Math.round(this.fin.mes.resultado / this.fin.mes.receita * 100) : 0; }
+  get margemCor(): string {
+    if (this.margem >= 60) return 'var(--st-confirmado)';
+    if (this.margem >= 40) return 'var(--accent)';
+    return 'var(--st-faltou)';
+  }
+  get margemTexto(): string {
+    if (this.margem >= 70) return 'Margem excelente';
+    if (this.margem >= 50) return 'Margem saudável';
+    if (this.margem >= 30) return 'Margem moderada';
+    return 'Margem apertada — revise custos';
+  }
   get pctDespesa() { return this.fin.mes.receita ? Math.round(this.fin.mes.despesa / this.fin.mes.receita * 100) : 0; }
+  get projecao(): number { return this.data.projecaoMes(); }
+
+  get fluxoLabels(): string[] { return this.fin.fluxo.map(f => f.dia); }
+  get fluxoSeries2() {
+    return [
+      { dados: this.fin.fluxo.map(f => f.rec), cor: 'var(--accent)' },
+      { dados: this.fin.fluxo.map(f => f.desp), cor: 'var(--st-faltou)', tracejado: true },
+    ];
+  }
+  kfmtFn = (v: number): string => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : String(v);
+
+  get donutFatias() {
+    return this.fin.receitaForma.map(f => ({
+      valor: f.valor, label: f.label, cor: this.FORMA_COR[f.forma] || 'var(--text-3)',
+    }));
+  }
+
   get fluxoMax() { return Math.max(1, ...this.fin.fluxo.map(f => Math.max(f.rec, f.desp))); }
   barH(val: number): string { return (val / this.fluxoMax * 100 || 0) + '%'; }
   get receitaFormaTotal() { return this.fin.receitaForma.reduce((s, f) => s + f.valor, 0); }

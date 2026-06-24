@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from './avatar.component';
 import { DataService } from '../data.service';
@@ -10,86 +10,130 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
   standalone: true,
   imports: [IconComponent, AvatarComponent],
   template: `
-    <aside class="sidebar">
-      <div class="sb-brand">
-        <div class="sb-logo">
-          <app-icon name="scissors" [size]="19" style="color:#fff"></app-icon>
+    <nav class="sidebar">
+
+      <div class="tn-brand">
+        <div class="tn-logo">
+          <app-icon name="scissors" [size]="15" style="color:var(--topbar-text)"></app-icon>
         </div>
-        <div class="col">
-          <div class="sb-brand-name">{{ data.estabelecimento.nome }}</div>
-          <div class="sb-brand-sub">Plano {{ data.estabelecimento.plano }}</div>
-        </div>
+        <span class="tn-brand-name">{{ data.estabelecimento.nome }}</span>
       </div>
 
-      <div class="sb-search">
-        <app-icon name="search" [size]="15"></app-icon>
-        Buscar…
-        <kbd>⌘K</kbd>
-      </div>
-
-      <nav class="sb-nav">
-        @for (item of NAV; track item.id) {
-          <button class="sb-item" [class.active]="active === item.id" (click)="nav.emit(item.id)">
-            <app-icon [name]="item.icon" [size]="18"></app-icon>
+      <div class="tn-groups" #container (mouseleave)="resetIndicator()">
+        <div class="tn-indicator"
+          [class.visible]="indicatorVisible"
+          [style.left.px]="indicatorX"
+          [style.width.px]="indicatorW"></div>
+        @for (item of ALL_NAV; track item.id; let i = $index) {
+          <button #btn class="tn-nav-item" [class.active]="active === item.id"
+            (click)="navigate(item.id)"
+            (mouseenter)="hoverItem(i)">
+            <app-icon [name]="item.icon" [size]="14"></app-icon>
             {{ item.label }}
             @if (item.badge) {
-              <span class="sb-badge" [class.muted]="active !== item.id">{{ item.badge }}</span>
+              <span class="tn-badge">{{ item.badge }}</span>
             }
           </button>
         }
-        <div class="sb-section">Financeiro · Fase 2</div>
-        @for (item of NAV_FIN; track item.id) {
-          <button class="sb-item" [class.active]="active === item.id" (click)="nav.emit(item.id)">
-            <app-icon [name]="item.icon" [size]="18"></app-icon>
-            {{ item.label }}
-          </button>
-        }
-        <div class="sb-section">Marketing & BI · Fase 3</div>
-        @for (item of NAV_SOON; track item.id) {
-          <button class="sb-item" [class.active]="active === item.id" (click)="nav.emit(item.id)">
-            <app-icon [name]="item.icon" [size]="18"></app-icon>
-            {{ item.label }}
-          </button>
-        }
-      </nav>
-
-      <div class="sb-foot">
-        <button class="sb-item" (click)="nav.emit('config')">
-          <app-icon name="settings" [size]="18"></app-icon>
-          Configurações
-        </button>
-        <div class="sb-user">
-          <app-avatar [nome]="data.usuario.nome" [cor]="data.usuario.cor" [size]="34"></app-avatar>
-          <div class="col" style="line-height:1.25">
-            <div class="sb-user-name">{{ data.usuario.nome }}</div>
-            <div class="sb-user-role">{{ data.usuario.papel }}</div>
-          </div>
-          <app-icon name="chevD" [size]="15" style="margin-left:auto;color:var(--text-3)"></app-icon>
-        </div>
       </div>
-    </aside>`,
+
+      <div class="tn-end">
+        <button class="tn-icon-btn" title="Buscar">
+          <app-icon name="search" [size]="16"></app-icon>
+        </button>
+        <button class="tn-icon-btn"
+          [title]="theme === 'dark' ? 'Tema claro' : 'Tema escuro'"
+          (click)="toggleTheme()">
+          <app-icon [name]="theme === 'dark' ? 'sun' : 'moon'" [size]="16"></app-icon>
+        </button>
+        <button class="tn-icon-btn" title="Configurações" (click)="navigate('config')">
+          <app-icon name="settings" [size]="16"></app-icon>
+        </button>
+        <button class="tn-icon-btn" title="Notificações" style="position:relative">
+          <span class="tn-dot"></span>
+          <app-icon name="bell" [size]="16"></app-icon>
+        </button>
+        <button class="tn-user" [title]="data.usuario.nome">
+          <app-avatar [nome]="data.usuario.nome" [cor]="data.usuario.cor" [size]="28"></app-avatar>
+        </button>
+      </div>
+
+    </nav>`,
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnChanges, AfterViewInit {
   @Input() active = '';
   @Output() nav = new EventEmitter<string>();
 
-  readonly NAV: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { id: 'agenda', label: 'Agenda', icon: 'calendar', badge: '15' },
+  @ViewChild('container') container!: ElementRef<HTMLElement>;
+  @ViewChildren('btn') btns!: QueryList<ElementRef<HTMLElement>>;
+
+  indicatorX = 0;
+  indicatorW = 0;
+  indicatorVisible = false;
+  theme: 'dark' | 'light' = 'dark';
+
+  readonly ALL_NAV: NavItem[] = [
+    { id: 'dashboard',    label: 'Dashboard',   icon: 'dashboard' },
+    { id: 'agenda',       label: 'Agenda',       icon: 'calendar', badge: '15' },
     { id: 'agendamentos', label: 'Agendamentos', icon: 'list' },
-    { id: 'clientes', label: 'Clientes', icon: 'users' },
-    { id: 'servicos', label: 'Serviços', icon: 'scissors' },
-    { id: 'equipe', label: 'Equipe', icon: 'team' },
-  ];
-  readonly NAV_FIN: NavItem[] = [
-    { id: 'financeiro', label: 'Financeiro', icon: 'money' },
-    { id: 'comissoes', label: 'Comissões', icon: 'coins' },
-    { id: 'estoque', label: 'Estoque', icon: 'box' },
-  ];
-  readonly NAV_SOON: NavItem[] = [
-    { id: 'fidelidade', label: 'Fidelidade', icon: 'gift' },
-    { id: 'relatorios', label: 'Relatórios', icon: 'chart' },
+    { id: 'clientes',     label: 'Clientes',     icon: 'users' },
+    { id: 'servicos',     label: 'Serviços',     icon: 'scissors' },
+    { id: 'equipe',       label: 'Equipe',       icon: 'team' },
+    { id: 'financeiro',   label: 'Financeiro',   icon: 'money' },
+    { id: 'comissoes',    label: 'Comissões',    icon: 'coins' },
+    { id: 'estoque',      label: 'Estoque',      icon: 'box' },
+    { id: 'fidelidade',   label: 'Fidelidade',   icon: 'gift' },
+    { id: 'relatorios',   label: 'Relatórios',   icon: 'chart' },
   ];
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService) {
+    const saved = localStorage.getItem('app-theme');
+    this.theme = saved === 'light' ? 'light' : 'dark';
+    this.applyTheme();
+  }
+
+  ngAfterViewInit() { this.moveIndicator(); }
+
+  ngOnChanges(c: SimpleChanges) { if (c['active']) this.moveIndicator(); }
+
+  navigate(id: string) { this.nav.emit(id); }
+
+  toggleTheme() {
+    this.theme = this.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('app-theme', this.theme);
+    this.applyTheme();
+  }
+
+  hoverItem(idx: number) {
+    const btns = this.btns?.toArray();
+    if (btns?.[idx]) this.placeIndicatorOn(btns[idx].nativeElement);
+  }
+
+  resetIndicator() {
+    const idx = this.ALL_NAV.findIndex(i => i.id === this.active);
+    const btns = this.btns?.toArray();
+    if (idx >= 0 && btns?.[idx]) this.placeIndicatorOn(btns[idx].nativeElement);
+  }
+
+  private moveIndicator() {
+    setTimeout(() => {
+      const idx = this.ALL_NAV.findIndex(i => i.id === this.active);
+      const btns = this.btns?.toArray();
+      if (idx >= 0 && btns?.[idx]) this.placeIndicatorOn(btns[idx].nativeElement);
+    });
+  }
+
+  private placeIndicatorOn(el: HTMLElement) {
+    const cont = this.container?.nativeElement;
+    if (!cont) return;
+    const cR = cont.getBoundingClientRect();
+    const bR = el.getBoundingClientRect();
+    this.indicatorX = bR.left - cR.left;
+    this.indicatorW = bR.width;
+    this.indicatorVisible = true;
+  }
+
+  private applyTheme() {
+    document.documentElement.setAttribute('data-theme', this.theme);
+  }
 }

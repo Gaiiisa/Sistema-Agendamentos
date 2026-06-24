@@ -256,12 +256,14 @@ interface Pending {
     <ng-template #header>
       <div class="col" style="gap:14px;margin-bottom:16px">
         <div class="row" style="gap:12px;flex-wrap:wrap">
-          <div class="row" style="gap:4px">
-            <button class="icon-btn" style="width:36px;height:36px" [style.visibility]="isToday ? 'hidden' : 'visible'" (click)="prevDay()"><app-icon name="chevL" [size]="18"></app-icon></button>
-            <button class="btn btn-ghost btn-sm" (click)="goToday()">Hoje</button>
-            <button class="icon-btn" style="width:36px;height:36px" (click)="nextDay()"><app-icon name="chevR" [size]="18"></app-icon></button>
-          </div>
-          <div style="font-size:17px;font-weight:700;letter-spacing:-0.01em">{{ currentDateLabel }}</div>
+          @if (view !== 'dia') {
+            <div class="row" style="gap:4px">
+              <button class="icon-btn" style="width:36px;height:36px" [style.visibility]="isToday ? 'hidden' : 'visible'" (click)="prevDay()"><app-icon name="chevL" [size]="18"></app-icon></button>
+              <button class="btn btn-ghost btn-sm" (click)="goToday()">Hoje</button>
+              <button class="icon-btn" style="width:36px;height:36px" (click)="nextDay()"><app-icon name="chevR" [size]="18"></app-icon></button>
+            </div>
+            <div style="font-size:17px;font-weight:700;letter-spacing:-0.01em">{{ currentDateLabel }}</div>
+          }
           <div class="seg" style="margin-left:auto">
             @for (v of ['dia','semana','mes']; track v) {
               <button [class.on]="view === v" (click)="view = v">{{ v === 'dia' ? 'Dia' : v === 'semana' ? 'Semana' : 'Mês' }}</button>
@@ -298,7 +300,7 @@ export class AgendaComponent {
   readonly BOTTOM_OFFSET = 32;
   readonly MIN_CARD_H = 68;
   get colH() { return this.TOP_OFFSET + (this.DAY_END - this.DAY_START) * this.PX_MIN + this.BOTTOM_OFFSET; }
-  readonly now = 13 * 60 + 20;
+  get now() { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
 
   readonly STATUS_FILTERS = [
     { id: 'todos', label: 'Todos' },
@@ -328,6 +330,20 @@ export class AgendaComponent {
     return `${days[base.getDay()]}, ${base.getDate()} de ${months[base.getMonth()]}`;
   }
 
+  get currentDate(): string {
+    const base = new Date('2026-06-09T12:00:00');
+    base.setDate(base.getDate() + this.currentDayOffset);
+    return base.toISOString().slice(0, 10);
+  }
+
+  get dayAppts(): Appt[] {
+    if (this.currentDayOffset === 0) return this.appts;
+    const date = this.currentDate;
+    return this.data.agendamentos
+      .filter(a => a.data === date)
+      .map(a => ({ id: a.id, cli: a.cli, srv: a.srv, prof: a.prof, ini: a.hora, status: a.status, sinal: false }));
+  }
+
   nextDay() { this.currentDayOffset++; }
   prevDay() { if (!this.isToday) this.currentDayOffset--; }
   goToday() { this.currentDayOffset = 0; }
@@ -353,8 +369,8 @@ export class AgendaComponent {
     return this.statusFilter === 'todos' || a.status === this.statusFilter;
   }
   durOf(a: Appt) { return a._dur || this.data.srv(a.srv).dur; }
-  countFor(p: Staff) { return this.appts.filter(a => a.prof === p.id && this.visible(a)).length; }
-  apptsFor(p: Staff) { return this.appts.filter(a => a.prof === p.id && this.visible(a)); }
+  countFor(p: Staff) { return this.dayAppts.filter(a => a.prof === p.id && this.visible(a)).length; }
+  apptsFor(p: Staff) { return this.dayAppts.filter(a => a.prof === p.id && this.visible(a)); }
 
   // ---- valores efetivos (com ghost) ----
   private g(a: Appt): Ghost | null { return this.ghost && this.ghost.id === a.id ? this.ghost : null; }
@@ -373,9 +389,9 @@ export class AgendaComponent {
     return {
       position: 'absolute', top: this.topOf(a) + 'px', left: '4px', right: '4px',
       height: this.heightOf(a) + 'px',
-      background: dragging ? 'var(--surface)' : `color-mix(in oklch, ${s.cor} 10%, white)`,
+      background: dragging ? 'var(--surface)' : `color-mix(in oklch, ${s.cor} 12%, #ffffff)`,
       borderLeft: `3px solid ${s.cor}`,
-      border: `1px solid color-mix(in oklch, ${s.cor} 28%, var(--border))`,
+      border: `1px solid color-mix(in oklch, ${s.cor} 30%, #e3e0d8)`,
       borderLeftWidth: '3px', borderRadius: '8px',
       padding: '6px 9px',
       cursor: dragging ? 'grabbing' : 'grab', overflow: 'hidden',
@@ -478,6 +494,10 @@ export class AgendaComponent {
   }
 
   confirmDrop() {
+    if (this.pending) {
+      const { apptId, newIni, newProf } = this.pending;
+      this.data.updateAppt(apptId, { ini: newIni, prof: newProf });
+    }
     this.pending = null;
   }
 
@@ -517,8 +537,9 @@ export class AgendaComponent {
     return Array(segBased === 6 ? 0 : 6 - segBased).fill(null);
   }
 
-  mesCnt(day: number) {
-    return [9, 11, 12].includes(day) ? (day === 9 ? 15 : 8) : (day % 4 === 0 ? 6 : day % 3 === 0 ? 4 : day % 7 === 0 ? 9 : 0);
+  mesCnt(day: number): number {
+    const date = `2026-06-${String(day).padStart(2, '0')}`;
+    return this.data.agendamentos.filter(a => a.data === date && a.status !== 'cancelado' && a.status !== 'faltou').length;
   }
 
   isPastDay(day: number): boolean { return day < 9; }

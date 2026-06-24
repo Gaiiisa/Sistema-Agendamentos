@@ -1,5 +1,5 @@
 /* App shell — navegação + modal de novo agendamento */
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DataService, Appt } from './data.service';
@@ -53,7 +53,7 @@ const TITLES: { [k: string]: [string, string] } = {
     <div class="app">
       <app-sidebar [active]="route" (nav)="route = $event"></app-sidebar>
       <div class="main">
-        <app-topbar [title]="title" [sub]="sub" (onNew)="showNew = true"></app-topbar>
+        <app-topbar [title]="title" [sub]="sub" [newLabel]="newLabel" (onNew)="handleNew()"></app-topbar>
         <div class="content">
           @switch (route) {
             @case ('dashboard') {
@@ -66,14 +66,14 @@ const TITLES: { [k: string]: [string, string] } = {
               <app-agendamentos (onOpenCliente)="goCliente($event)"></app-agendamentos>
             }
             @case ('clientes') {
-              <app-clientes [openId]="clienteId" (onOpen)="clienteId = $event" (onClose)="clienteId = null"></app-clientes>
+              <app-clientes #clientesRef [openId]="clienteId" (onOpen)="clienteId = $event" (onClose)="clienteId = null"></app-clientes>
             }
-            @case ('servicos') { <app-servicos></app-servicos> }
-            @case ('equipe') { <app-equipe></app-equipe> }
+            @case ('servicos') { <app-servicos #servicosRef></app-servicos> }
+            @case ('equipe') { <app-equipe #equipeRef></app-equipe> }
             @case ('financeiro') { <app-financeiro (notify)="notify($event)"></app-financeiro> }
             @case ('comissoes') { <app-comissoes (notify)="notify($event)"></app-comissoes> }
-            @case ('estoque') { <app-estoque (notify)="notify($event)"></app-estoque> }
-            @case ('fidelidade') { <app-fidelidade (notify)="notify($event)"></app-fidelidade> }
+            @case ('estoque') { <app-estoque #estoqueRef (notify)="notify($event)"></app-estoque> }
+            @case ('fidelidade') { <app-fidelidade #fidelidadeRef (notify)="notify($event)"></app-fidelidade> }
             @case ('relatorios') { <app-relatorios (notify)="notify($event)"></app-relatorios> }
             @default {
               <app-coming-soon [title]="TITLES[route] ? TITLES[route][0] : 'Em breve'"></app-coming-soon>
@@ -90,7 +90,7 @@ const TITLES: { [k: string]: [string, string] } = {
       }
       @if (toast) {
         <div [ngStyle]="toastStyle">
-          <div style="width:20px;height:20px;border-radius:99px;background:var(--accent);display:grid;place-items:center">
+          <div style="width:20px;height:20px;border-radius:99px;background:rgba(255,255,255,0.18);display:grid;place-items:center">
             <app-icon name="check" [size]="13" [stroke]="3" style="color:#fff"></app-icon>
           </div>
           {{ toast }}
@@ -101,6 +101,12 @@ const TITLES: { [k: string]: [string, string] } = {
 export class AppComponent {
   readonly TITLES = TITLES;
 
+  @ViewChild('servicosRef') servicosRef?: any;
+  @ViewChild('equipeRef')   equipeRef?: any;
+  @ViewChild('estoqueRef')  estoqueRef?: any;
+  @ViewChild('fidelidadeRef') fidelidadeRef?: any;
+  @ViewChild('clientesRef') clientesRef?: any;
+
   route = 'dashboard';
   appts: Appt[] = this.data.hoje.map(a => ({ ...a }));
   showNew = false;
@@ -110,9 +116,33 @@ export class AppComponent {
 
   private toastTimer: any = null;
 
+  private readonly NEW_LABELS: { [k: string]: string } = {
+    agenda:        'Novo agendamento',
+    agendamentos:  'Novo agendamento',
+    clientes:      'Novo cliente',
+    servicos:      'Novo serviço',
+    equipe:        'Novo profissional',
+    estoque:       'Novo produto',
+    fidelidade:    'Nova campanha',
+  };
+
+  get newLabel() { return this.NEW_LABELS[this.route] || ''; }
+
+  handleNew() {
+    switch (this.route) {
+      case 'agenda':
+      case 'agendamentos': this.showNew = true; break;
+      case 'servicos':     this.servicosRef?.openNovo(); break;
+      case 'equipe':       this.equipeRef?.openNovo(); break;
+      case 'estoque':      this.estoqueRef?.openNovo(); break;
+      case 'fidelidade':   this.fidelidadeRef?.openNovaCampanha(); break;
+      case 'clientes':     this.clientesRef?.openNovo(); break;
+    }
+  }
+
   readonly toastStyle = {
     position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
-    background: 'oklch(0.25 0.012 165)', color: '#fff', padding: '12px 18px',
+    background: 'var(--accent)', color: 'var(--on-accent)', padding: '11px 18px', border: 'none',
     borderRadius: 'var(--r-md)', boxShadow: 'var(--sh-pop)', zIndex: '200',
     display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600', fontSize: '14px',
     animation: 'pop .2s ease',

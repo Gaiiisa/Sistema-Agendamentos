@@ -6,27 +6,25 @@ import { IconComponent } from '../icon.component';
   standalone: true,
   imports: [IconComponent],
   template: `
-    <header class="topbar">
-      <div class="col" style="line-height:1.2">
-        <div class="tb-title">{{ title }}</div>
-        @if (sub) { <div class="tb-sub">{{ sub }}</div> }
+    <div class="topbar">
+      <div class="tb-spacer"></div>
+      <div class="tb-page">
+        <span class="tb-title">{{ title }}</span>
+        @if (sub) { <span class="tb-sub">{{ sub }}</span> }
       </div>
-      <div class="tb-right">
-        <button class="icon-btn">
-          <app-icon name="search" [size]="18"></app-icon>
-        </button>
-        <button class="icon-btn">
-          <span class="dot"></span>
-          <app-icon name="bell" [size]="18"></app-icon>
-        </button>
-        <button class="btn btn-primary" (click)="onNew.emit()">
-          <app-icon name="plus" [size]="17"></app-icon> Novo agendamento
-        </button>
+      <div class="tb-actions">
+        @if (newLabel) {
+          <button class="btn btn-primary" (click)="onNew.emit()">
+            <app-icon name="plus" [size]="14"></app-icon>
+            {{ newLabel }}
+          </button>
+        }
       </div>
-    </header>`,
+    </div>`,
 })
 export class TopbarComponent {
   @Input() title = '';
   @Input() sub = '';
+  @Input() newLabel = '';
   @Output() onNew = new EventEmitter<void>();
 }

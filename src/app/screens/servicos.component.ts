@@ -21,10 +21,6 @@ import { DataService, Servico, Staff } from '../data.service';
             </button>
           }
         </div>
-        <button class="btn btn-primary" style="margin-left:auto" (click)="openNovo()">
-          <app-icon name="plus" [size]="16"></app-icon>
-          Novo serviço
-        </button>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px">
@@ -34,7 +30,7 @@ import { DataService, Servico, Staff } from '../data.service';
             <!-- faixa de cor / "foto" -->
             <div
               [style.height.px]="96"
-              [style.background]="'linear-gradient(135deg, color-mix(in oklch, ' + s.cor + ' 16%, white), color-mix(in oklch, ' + s.cor + ' 6%, white))'"
+              [style.background]="'linear-gradient(135deg, color-mix(in oklch, ' + s.cor + ' 18%, #ffffff), color-mix(in oklch, ' + s.cor + ' 8%, #ffffff))'"
               style="position:relative;display:grid;place-items:center">
 
               <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">

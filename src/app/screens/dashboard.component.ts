@@ -1,25 +1,47 @@
-/* Tela: Dashboard inicial — visão do dia */
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { StatusPillComponent } from '../shared/status-pill.component';
+import { SparklineComponent } from '../shared/sparkline.component';
+import { MiniRingComponent } from '../shared/mini-ring.component';
+import { AreaChartComponent } from '../shared/area-chart.component';
 import { DataService, Appt, Cliente } from '../data.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, SparklineComponent, MiniRingComponent, AreaChartComponent],
   template: `
     <div class="page">
+
       <!-- saudação -->
       <div style="margin-bottom:18px">
-        <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em">Bom dia, Carlos 👋</div>
-        <div class="muted" style="font-size:14px">Terça-feira, 9 de junho · Aqui está o resumo do seu dia.</div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em">{{ saudacao }}, {{ nomeUsuario }} 👋</div>
+        <div class="muted" style="font-size:14px">{{ dataLabel }} · Aqui está o resumo do seu dia.</div>
       </div>
 
       <!-- KPIs -->
       <div class="stat-grid" style="margin-bottom:16px">
+
+        <!-- Faturamento hoje -->
+        <div class="stat">
+          <div class="stat-top">
+            <div class="stat-label">Faturamento hoje</div>
+            <div class="stat-ico" style="background:var(--accent-soft)">
+              <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
+            </div>
+          </div>
+          <div class="stat-val tnum">{{ data.money(k.faturaRealizado) }}</div>
+          <div class="col" style="gap:6px">
+            <div class="row" style="justify-content:space-between">
+              <div class="stat-meta">de {{ data.money(k.faturaPrevisto) }} previstos</div>
+              <app-sparkline [pontos]="sparkline" cor="var(--accent)" [w]="64" [h]="22"></app-sparkline>
+            </div>
+            <div class="progress"><span [style.width.%]="round(k.faturaRealizado / k.faturaPrevisto * 100)"></span></div>
+          </div>
+        </div>
+
         <!-- Agendamentos hoje -->
         <div class="stat">
           <div class="stat-top">
@@ -29,57 +51,60 @@ import { DataService, Appt, Cliente } from '../data.service';
             </div>
           </div>
           <div class="stat-val tnum">{{ k.agendamentos }}</div>
-          <div class="stat-meta">
-            <span class="trend-up">
-              <app-icon name="trend" [size]="13" style="display:inline;vertical-align:-2px;margin-right:3px"></app-icon>+3
-            </span>
-            vs. ontem
-          </div>
-        </div>
-        <!-- Faturamento previsto -->
-        <div class="stat">
-          <div class="stat-top">
-            <div class="stat-label">Faturamento previsto</div>
-            <div class="stat-ico" style="background:oklch(0.95 0.04 162)">
-              <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
+          <div class="col" style="gap:6px">
+            <div class="row" style="gap:4px;height:4px">
+              <div [style.flex]="breakdown.feitos" style="background:var(--st-confirmado);border-radius:99px;height:4px;min-width:2px"></div>
+              <div [style.flex]="breakdown.aFazer" style="background:var(--accent);border-radius:99px;height:4px;min-width:2px"></div>
+              <div [style.flex]="breakdown.pendentes" style="background:var(--st-pendente);border-radius:99px;height:4px;min-width:2px"></div>
+            </div>
+            <div class="stat-meta">
+              <span style="color:var(--st-confirmado);font-weight:600">{{ breakdown.feitos }} feitos</span>
+              &nbsp;·&nbsp;
+              <span style="color:var(--accent);font-weight:600">{{ breakdown.aFazer }} a fazer</span>
+              &nbsp;·&nbsp;
+              <span style="color:var(--st-pendente);font-weight:600">{{ breakdown.pendentes }} pend.</span>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(k.faturaPrevisto) }}</div>
-          <div class="col" style="gap:6px">
-            <div class="progress"><span [style.width.%]="round(k.faturaRealizado / k.faturaPrevisto * 100)"></span></div>
-            <div class="stat-meta">{{ data.money(k.faturaRealizado) }} já realizado</div>
-          </div>
         </div>
-        <!-- Taxa de ocupação -->
+
+        <!-- Ocupação -->
         <div class="stat">
           <div class="stat-top">
             <div class="stat-label">Taxa de ocupação</div>
-            <div class="stat-ico" style="background:oklch(0.95 0.04 248)">
+            <div class="stat-ico" style="background:var(--st-atendimento-bg)">
               <app-icon name="target" [size]="17" style="color:var(--st-atendimento)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ k.ocupacao }}%</div>
-          <div class="col" style="gap:6px">
-            <div class="progress"><span [style.width.%]="k.ocupacao"></span></div>
-            <div class="stat-meta">da agenda preenchida</div>
+          <div class="row" style="gap:14px;align-items:center">
+            <div class="stat-val tnum">{{ k.ocupacao }}%</div>
+            <app-mini-ring [pct]="k.ocupacao" cor="var(--st-atendimento)" [size]="48" [label]="''"></app-mini-ring>
           </div>
+          <div class="stat-meta">da agenda preenchida hoje</div>
         </div>
-        <!-- Faltas / Cancelam. -->
+
+        <!-- Ticket médio hoje -->
         <div class="stat">
           <div class="stat-top">
-            <div class="stat-label">Faltas / Cancelam.</div>
-            <div class="stat-ico" style="background:var(--st-faltou-bg)">
-              <app-icon name="alert" [size]="17" style="color:var(--st-faltou)"></app-icon>
+            <div class="stat-label">Ticket médio hoje</div>
+            <div class="stat-ico" style="background:var(--accent-soft)">
+              <app-icon name="coins" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ k.faltas }} / {{ k.cancelamentos }}</div>
+          <div class="stat-val tnum">{{ data.money(ticketHoje) }}</div>
           <div class="stat-meta">
-            <span class="trend-down">
-              <app-icon name="trendD" [size]="13" style="display:inline;vertical-align:-2px;margin-right:3px"></app-icon>−2
-            </span>
-            melhor que a média
+            @if (ticketDelta !== 0) {
+              <span [class.trend-up]="ticketDelta > 0" [class.trend-down]="ticketDelta < 0">
+                <app-icon [name]="ticketDelta > 0 ? 'trend' : 'trendD'" [size]="13"
+                          style="display:inline;vertical-align:-2px;margin-right:3px"></app-icon>
+                {{ (ticketDelta > 0 ? '+' : '') + ticketDelta }}%
+              </span>
+              vs. ticket do mês
+            } @else {
+              ticket médio do mês: {{ data.money(data.financeiro.mes.ticketMedio) }}
+            }
           </div>
         </div>
+
       </div>
 
       <!-- atalhos rápidos -->
@@ -98,8 +123,98 @@ import { DataService, Appt, Cliente } from '../data.service';
         </button>
       </div>
 
+      <!-- Meta do mês -->
+      <div class="card card-pad" style="margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div class="col" style="gap:2px;min-width:160px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)">Meta do mês</div>
+          <div style="font-size:17px;font-weight:800">{{ data.money(meta.vendido) }} <span class="muted" style="font-size:13px;font-weight:500">/ {{ data.money(meta.meta) }}</span></div>
+        </div>
+        <div class="col" style="flex:1;gap:6px;min-width:160px">
+          <div class="progress" style="height:6px">
+            <span [style.width.%]="meta.pct" [style.background]="meta.bateu ? 'var(--st-confirmado)' : 'var(--accent)'"></span>
+          </div>
+          <div class="stat-meta">{{ meta.pct }}% atingido · projeção {{ data.money(meta.projecao) }}</div>
+        </div>
+        <span [class]="meta.bateu ? 'pill pill-confirmado' : 'pill pill-pendente'">
+          <span class="pdot"></span>
+          {{ meta.bateu ? 'Meta em dia' : 'Abaixo da meta' }}
+        </span>
+      </div>
+
+      <!-- Faturamento · últimos 7 dias -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head">
+          <app-icon name="chart" [size]="16" style="color:var(--text-2)"></app-icon>
+          <div class="card-title">Faturamento · últimos 7 dias</div>
+          <span class="muted" style="margin-left:auto;font-size:12.5px">média {{ data.money(mediaFluxo) }}/dia</span>
+        </div>
+        <div style="padding:14px 18px 8px">
+          <app-area-chart
+            [labels]="fluxoLabels"
+            [series]="fluxoSeries"
+            [altura]="140"
+            [formatY]="kfmt">
+          </app-area-chart>
+        </div>
+      </div>
+
+      <!-- grid ocupação / desempenho -->
+      <div class="grid-2" style="margin-bottom:16px;align-items:stretch">
+
+        <!-- Ocupação por horário -->
+        <div class="card">
+          <div class="card-head">
+            <app-icon name="clock" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Ocupação por horário</div>
+            @if (horaLivre) {
+              <span class="pill pill-pendente" style="margin-left:auto;font-size:11px">{{ horaLivre }} disponível</span>
+            }
+          </div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:7px">
+            @for (h of ocupacaoPorHora; track h.hora) {
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">{{ h.hora }}</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span [style.width.%]="h.pct"
+                        [style.background]="h.pct === 0 ? 'var(--surface-3)' : h.pct < 50 ? 'var(--st-pendente)' : 'var(--accent)'"
+                        style="border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">{{ h.pct }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Desempenho por profissional hoje -->
+        <div class="card">
+          <div class="card-head">
+            <app-icon name="team" [size]="16" style="color:var(--text-2)"></app-icon>
+            <div class="card-title">Desempenho hoje</div>
+            <span class="muted" style="margin-left:auto;font-size:12.5px">concluídos</span>
+          </div>
+          @for (d of desempenho; track d.prof.id) {
+            <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+              <app-avatar [nome]="d.prof.nome" [cor]="d.prof.cor" [size]="34"></app-avatar>
+              <div class="col" style="flex:1;gap:5px;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">{{ d.prof.apelido }}</span>
+                <div class="progress">
+                  <span [style.width.%]="desempenhoMax ? d.receita / desempenhoMax * 100 : 0"
+                        [style.background]="d.prof.cor"></span>
+                </div>
+              </div>
+              <div class="col" style="align-items:flex-end;gap:2px">
+                <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(d.receita) }}</span>
+                <span class="muted tnum" style="font-size:12px">{{ d.atend }} atend.</span>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
+
       <!-- grid principal -->
       <div class="grid-dash">
+
         <!-- próximos atendimentos -->
         <div class="card">
           <div class="card-head">
@@ -131,15 +246,15 @@ import { DataService, Appt, Cliente } from '../data.service';
           </div>
         </div>
 
-        <!-- coluna lateral: alertas -->
+        <!-- coluna lateral -->
         <div class="col" style="gap:16px">
+
           <!-- alertas -->
           <div class="card card-pad">
             <div class="row" style="margin-bottom:6px">
               <app-icon name="alert" [size]="17" style="color:var(--st-pendente)"></app-icon>
               <div class="card-title" style="font-size:15px">Alertas</div>
             </div>
-            <!-- AlertRow 1 -->
             <div class="alert-item">
               <div class="alert-ico" style="background:var(--st-pendente-bg)">
                 <app-icon name="clock" [size]="15" style="color:var(--st-pendente)"></app-icon>
@@ -150,25 +265,35 @@ import { DataService, Appt, Cliente } from '../data.service';
               </div>
               <button class="link" style="font-size:13px">Lembrar</button>
             </div>
-            <!-- AlertRow 2 -->
             <div class="alert-item">
               <div class="alert-ico" style="background:var(--st-faltou-bg)">
                 <app-icon name="pkg" [size]="15" style="color:var(--st-faltou)"></app-icon>
               </div>
               <div class="col" style="line-height:1.3;flex:1">
-                <div style="font-weight:600;font-size:13.5px">2 produtos em estoque baixo</div>
-                <div class="muted" style="font-size:12.5px">Pomada modeladora, lâmina</div>
+                <div style="font-weight:600;font-size:13.5px">{{ data.produtosAlerta.length }} produto{{ data.produtosAlerta.length === 1 ? '' : 's' }} em estoque baixo</div>
+                <div class="muted" style="font-size:12.5px">{{ alertaNomes }}</div>
               </div>
               <button class="link" style="font-size:13px">Repor</button>
             </div>
-            <!-- AlertRow 3 -->
+            @if (titulosVencidos > 0) {
+              <div class="alert-item">
+                <div class="alert-ico" style="background:var(--st-faltou-bg)">
+                  <app-icon name="money" [size]="15" style="color:var(--st-faltou)"></app-icon>
+                </div>
+                <div class="col" style="line-height:1.3;flex:1">
+                  <div style="font-weight:600;font-size:13.5px">{{ titulosVencidos }} título{{ titulosVencidos === 1 ? '' : 's' }} vencido{{ titulosVencidos === 1 ? '' : 's' }}</div>
+                  <div class="muted" style="font-size:12.5px">{{ data.money(valorVencido) }} a receber</div>
+                </div>
+                <button class="link" style="font-size:13px">Cobrar</button>
+              </div>
+            }
             <div class="alert-item">
               <div class="alert-ico" style="background:var(--accent-soft)">
                 <app-icon name="coins" [size]="15" style="color:var(--accent)"></app-icon>
               </div>
               <div class="col" style="line-height:1.3;flex:1">
                 <div style="font-weight:600;font-size:13.5px">Comissões a pagar</div>
-                <div class="muted" style="font-size:12.5px">{{ data.money(2840) }} · fechamento sexta</div>
+                <div class="muted" style="font-size:12.5px">{{ data.money(data.comissoesAPagar) }} · fechamento sexta</div>
               </div>
               <button class="link" style="font-size:13px">Ver</button>
             </div>
@@ -195,6 +320,7 @@ import { DataService, Appt, Cliente } from '../data.service';
               }
             </div>
           </div>
+
         </div>
       </div>
     </div>`,
@@ -208,6 +334,55 @@ export class DashboardComponent {
 
   get k() { return this.data.kpis; }
   round = Math.round;
+
+  get sparkline() { return this.data.faturamentoSparkline(); }
+  get breakdown() { return this.data.agendamentosHojeBreakdown(); }
+  get ticketHoje() { return this.data.ticketMedioHoje(); }
+  get ticketDelta(): number {
+    const mes = this.data.financeiro.mes.ticketMedio;
+    if (!mes || !this.ticketHoje) return 0;
+    return Math.round((this.ticketHoje - mes) / mes * 100);
+  }
+  get meta() { return this.data.metaMes(); }
+
+  get fluxoLabels() { return this.data.financeiro.fluxo.map(f => f.dia); }
+  get fluxoSeries() {
+    return [{ dados: this.data.financeiro.fluxo.map(f => f.rec), cor: 'var(--accent)' }];
+  }
+  get mediaFluxo(): number {
+    const vals = this.data.financeiro.fluxo.map(f => f.rec).filter(v => v > 0);
+    return vals.length ? Math.round(vals.reduce((s, v) => s + v, 0) / vals.length) : 0;
+  }
+  kfmt = (v: number) => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : String(v);
+
+  get ocupacaoPorHora() { return this.data.ocupacaoPorHora(); }
+  get horaLivre(): string {
+    const livre = this.data.ocupacaoPorHora().find(h => h.pct === 0);
+    return livre ? livre.hora : '';
+  }
+
+  get desempenho() { return this.data.desempenhoHoje(); }
+  get desempenhoMax(): number {
+    const vals = this.desempenho.map(d => d.receita);
+    return Math.max(1, ...vals);
+  }
+
+  get saudacao(): string {
+    const h = new Date().getHours();
+    return h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+  }
+  get nomeUsuario(): string { return this.data.usuario.nome.split(' ')[0]; }
+  get dataLabel(): string {
+    const hoje = new Date();
+    const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const months = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    return `${days[hoje.getDay()]}, ${hoje.getDate()} de ${months[hoje.getMonth()]}`;
+  }
+  get alertaNomes(): string {
+    return this.data.produtosAlerta.slice(0, 2).map(p => p.nome).join(', ');
+  }
+  get titulosVencidos(): number { return this.data.aReceber.filter(r => r.dias < 0).length; }
+  get valorVencido(): number { return this.data.aReceber.filter(r => r.dias < 0).reduce((s, r) => s + r.valor, 0); }
 
   get proximos(): Appt[] {
     return this.data.hoje

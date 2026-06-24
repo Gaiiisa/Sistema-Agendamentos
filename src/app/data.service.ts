@@ -261,7 +261,7 @@ export class DataService {
       { prof: 'p3', valor: 1240, qtd: 18 },
       { prof: 'p4', valor: 755, qtd: 12 },
     ],
-    mes: { receita: 5860, despesa: 1093, resultado: 4767, ticketMedio: 61, atendimentos: 79 },
+    mes: { receita: 5860, despesa: 1093, resultado: 4767, ticketMedio: 61, atendimentos: 96 },
     mesAnterior: { receita: 5120, despesa: 1240, resultado: 3880 },
   };
 
@@ -331,6 +331,19 @@ export class DataService {
     ocupacaoSemana: [
       { dia: 'Seg', pct: 64 }, { dia: 'Ter', pct: 72 }, { dia: 'Qua', pct: 81 },
       { dia: 'Qui', pct: 78 }, { dia: 'Sex', pct: 92 }, { dia: 'Sáb', pct: 96 }, { dia: 'Dom', pct: 0 },
+    ],
+    faturamentoSemanal: [4200, 4650, 5120, 4980, 5340, 5510, 5120, 5860],
+    faturamentoSemanalLabels: ['Mai 5','Mai 12','Mai 19','Mai 26','Jun 2','Jun 9','Jun 16','Jun 23'],
+    metaSemanal: 5000,
+    heatmapDias:   ['Seg','Ter','Qua','Qui','Sex','Sáb'],
+    heatmapFaixas: ['9h','11h','13h','15h','17h','19h'],
+    heatmap: [
+      [2, 3, 2, 3, 4, 3],
+      [3, 4, 3, 4, 4, 3],
+      [1, 2, 1, 2, 3, 2],
+      [2, 3, 2, 4, 4, 3],
+      [3, 4, 3, 4, 5, 4],
+      [4, 5, 4, 5, 5, 3],
     ],
   };
 
@@ -447,6 +460,106 @@ export class DataService {
     const p = this.produtos.find(p => p.id === prod);
     if (p) p.qtd = tipo === 'entrada' ? p.qtd + qtd : Math.max(0, p.qtd - qtd);
     this.api.post('/movimentacoes', { id, prod, tipo, qtd, motivo }).subscribe({ error: () => {} });
+  }
+
+  get produtosAlerta(): Produto[] {
+    return this.produtos.filter(p => p.qtd <= p.min);
+  }
+
+  faturamentoSparkline(): number[] {
+    return this.financeiro.fluxo.map(f => f.rec);
+  }
+
+  ticketMedioHoje(): number {
+    const concluidos = this.hoje.filter(a => a.status === 'concluido');
+    if (!concluidos.length) return 0;
+    const receita = concluidos.reduce((s, a) => s + (this.srv(a.srv)?.preco ?? 0), 0);
+    return Math.round(receita / concluidos.length);
+  }
+
+  agendamentosHojeBreakdown(): { feitos: number; aFazer: number; pendentes: number } {
+    return {
+      feitos: this.hoje.filter(a => a.status === 'concluido' || a.status === 'atendimento').length,
+      aFazer: this.hoje.filter(a => a.status === 'confirmado').length,
+      pendentes: this.hoje.filter(a => a.status === 'pendente').length,
+    };
+  }
+
+  metaMes(): { vendido: number; meta: number; pct: number; projecao: number; bateu: boolean } {
+    const vendido = this.financeiro.mes.receita;
+    const meta = this.staff.reduce((s, p) => s + p.meta, 0);
+    const pct = meta ? Math.round(vendido / meta * 100) : 0;
+    const diaDoMes = 9;
+    const diasNoMes = 30;
+    const projecao = Math.round(vendido / diaDoMes * diasNoMes);
+    return { vendido, meta, pct, projecao, bateu: projecao >= meta };
+  }
+
+  ocupacaoPorHora(): { hora: string; pct: number }[] {
+    const profAtivos = this.staff.length;
+    return this.horarios.map(hora => {
+      const appts = this.hoje.filter(a =>
+        a.ini === hora && ['confirmado', 'pendente', 'atendimento', 'concluido'].includes(a.status)
+      );
+      return { hora, pct: profAtivos ? Math.round(appts.length / profAtivos * 100) : 0 };
+    });
+  }
+
+  desempenhoHoje(): { prof: Staff; atend: number; receita: number }[] {
+    return this.staff.map(prof => {
+      const appts = this.hoje.filter(a => a.prof === prof.id && ['concluido','atendimento'].includes(a.status));
+      const receita = appts.reduce((s, a) => s + (this.srv(a.srv)?.preco ?? 0), 0);
+      return { prof, atend: appts.length, receita };
+    }).sort((a, b) => b.receita - a.receita);
+  }
+
+  projecaoMes(): number {
+    const diaDoMes = 9;
+    const diasNoMes = 30;
+    return Math.round(this.financeiro.mes.receita / diaDoMes * diasNoMes);
+  }
+
+  taxaRetorno(): number {
+    const total = this.relatorio.novos + this.relatorio.recorrentes;
+    return total ? Math.round(this.relatorio.recorrentes / total * 100) : 0;
+  }
+
+  metasEquipe(): { prof: Staff; pct: number }[] {
+    return this.staff
+      .map(p => ({ prof: p, pct: p.meta ? Math.round(p.vendido / p.meta * 100) : 0 }))
+      .sort((a, b) => b.pct - a.pct);
+  }
+
+  clientesEmRisco(): Cliente[] {
+    return this.clientes
+      .filter(c => c.tags.includes('sumido') || this.diasDesde(c.ultima) > 60)
+      .sort((a, b) => b.total - a.total);
+  }
+
+  get comissoesAPagar(): number {
+    return this.staff.reduce((total, s) => {
+      const comissao = this.comissoes[s.id];
+      if (!comissao || comissao.status === 'pago') return total;
+      const base = comissao.itens.reduce((sum, i) => sum + i.valor, 0);
+      return total + Math.round(base * s.comissao / 100);
+    }, 0);
+  }
+
+  updateAppt(id: string, changes: { ini?: string; prof?: string }) {
+    const a = this.hoje.find(a => a.id === id);
+    if (a) Object.assign(a, changes);
+    const ag = this.agendamentos.find(a => a.id === id);
+    if (ag) {
+      if (changes.ini) ag.hora = changes.ini;
+      if (changes.prof) ag.prof = changes.prof;
+    }
+    this.api.put('/agendamentos/' + id, changes).subscribe({ error: () => {} });
+  }
+
+  addCliente(c: Omit<Cliente, 'id'>) {
+    const novo = { ...c, id: 'cn' + Date.now() } as Cliente;
+    this.clientes.push(novo);
+    this.api.post('/clientes', novo).subscribe({ error: () => {} });
   }
 
   /** persiste um novo agendamento criado pela UI */
