@@ -64,7 +64,7 @@ interface Pending {
                 <div style="text-align:center;font-size:12px;font-weight:700;color:var(--text-3);padding:4px 0">{{ d }}</div>
               }
               @for (day of mesCells; track day) {
-                <div [style.minHeight.px]="92" style="border-radius:10px;padding:8px"
+                <div class="mes-cell" [style.minHeight.px]="92" style="border-radius:10px;padding:8px"
                   [style.border]="'1px solid ' + (day === 9 ? 'var(--accent)' : 'var(--border)')"
                   [style.background]="day === 9 ? 'var(--accent-soft)' : isPastDay(day) ? 'var(--surface-2)' : 'var(--surface)'">
                   <div style="font-weight:700;font-size:13px" [style.color]="day === 9 ? 'var(--accent-text)' : isPastDay(day) ? 'var(--text-3)' : 'var(--text)'">{{ day }}</div>
@@ -87,92 +87,167 @@ interface Pending {
           </div>
         }
       } @else {
-        <!-- ===== Dia (timeline) ===== -->
-        <div class="card" style="overflow:hidden">
-          <!-- cabeçalho de colunas -->
-          <div style="position:sticky;top:0;background:var(--surface);z-index:5;border-bottom:1px solid var(--border)">
-            <!-- barra de navegação de dia -->
-            <div class="row" style="padding:8px 14px;border-bottom:1px solid var(--border);align-items:center;gap:8px">
+        <!-- ===== Dia ===== -->
+        @if (isMobile) {
+          <!-- Mobile: Lista cronológica do dia -->
+          <div class="card" style="padding:0;overflow:hidden">
+            <!-- Navegação de data -->
+            <div class="row" style="padding:10px 14px;border-bottom:1px solid var(--border);align-items:center;gap:8px">
               @if (!isToday) {
-                <button class="icon-btn" style="width:30px;height:30px" (click)="prevDay()">
+                <button class="icon-btn" style="width:32px;height:32px" (click)="prevDay()">
                   <app-icon name="chevL" [size]="16"></app-icon>
                 </button>
               } @else {
-                <div style="width:30px;height:30px"></div>
+                <div style="width:32px"></div>
               }
-              <div style="flex:1;text-align:center;font-size:14px;font-weight:700;letter-spacing:-0.01em">
+              <div style="flex:1;text-align:center;font-size:14px;font-weight:700">
                 {{ currentDateLabel }}
                 @if (isToday) {
-                  <span style="margin-left:8px;font-size:11px;font-weight:600;background:var(--accent-soft);color:var(--accent-text);border-radius:99px;padding:2px 8px">Hoje</span>
+                  <span style="margin-left:6px;font-size:10px;font-weight:700;background:var(--accent-soft);color:var(--accent-text);border-radius:99px;padding:2px 7px">Hoje</span>
                 }
               </div>
-              <button class="icon-btn" style="width:30px;height:30px" (click)="nextDay()">
+              <button class="icon-btn" style="width:32px;height:32px" (click)="nextDay()">
                 <app-icon name="chevR" [size]="16"></app-icon>
               </button>
             </div>
-            <!-- colunas de profissionais -->
-            <div [style.display]="'grid'" [style.gridTemplateColumns]="gridCols">
-              <div></div>
-              @for (p of profs; track p.id) {
-                <div style="padding:12px 14px;display:flex;align-items:center;gap:10px;border-left:1px solid var(--border)">
-                  <app-avatar [nome]="p.nome" [cor]="p.cor" [size]="32"></app-avatar>
-                  <div class="col" style="line-height:1.25">
-                    <div style="font-weight:700;font-size:14px">{{ p.apelido }}</div>
-                    <div class="muted" style="font-size:12px">{{ countFor(p) }} hoje</div>
+            <!-- Agendamentos -->
+            @if (mobileDayGroups.length === 0) {
+              <div style="padding:32px;text-align:center">
+                <div class="muted" style="font-size:14px">Nenhum agendamento para esse dia.</div>
+              </div>
+            }
+            @for (group of mobileDayGroups; track group.time) {
+              @if (group.appts.length === 1) {
+                <!-- Card simples -->
+                <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer"
+                  (click)="onOpen.emit(group.appts[0])">
+                  <div class="mono" style="font-size:12px;font-weight:700;min-width:38px;color:var(--text-3)">{{ group.time }}</div>
+                  <div style="width:3px;align-self:stretch;border-radius:99px;flex-shrink:0" [style.background]="data.srv(group.appts[0].srv).cor"></div>
+                  <app-avatar [nome]="data.cli(group.appts[0].cli).nome" [cor]="data.prof(group.appts[0].prof).cor" [size]="32"></app-avatar>
+                  <div style="flex:1;min-width:0;line-height:1.3">
+                    <div style="font-weight:700;font-size:13.5px">{{ data.cli(group.appts[0].cli).nome }}</div>
+                    <div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.srv(group.appts[0].srv).nome }} · {{ data.prof(group.appts[0].prof).apelido }}</div>
                   </div>
+                  <app-status-pill [status]="group.appts[0].status"></app-status-pill>
+                </div>
+              } @else {
+                <!-- Grupo colapsável -->
+                <div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;background:var(--surface-2)"
+                    (click)="toggleSlot(group.time)">
+                    <div class="mono" style="font-size:12px;font-weight:700;min-width:38px;color:var(--text-3)">{{ group.time }}</div>
+                    <div style="flex:1">
+                      <div style="font-weight:700;font-size:13.5px">{{ group.appts.length }} agendamentos</div>
+                      <div class="muted" style="font-size:12px">Toque para {{ expandedSlots[group.time] ? 'recolher' : 'expandir' }}</div>
+                    </div>
+                    <app-icon [name]="expandedSlots[group.time] ? 'chevD' : 'chevR'" [size]="16" style="color:var(--text-3)"></app-icon>
+                  </div>
+                  @if (expandedSlots[group.time]) {
+                    @for (a of group.appts; track a.id) {
+                      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px 10px 22px;border-bottom:1px solid var(--border);cursor:pointer"
+                        (click)="onOpen.emit(a)">
+                        <div style="width:3px;align-self:stretch;border-radius:99px;flex-shrink:0" [style.background]="data.srv(a.srv).cor"></div>
+                        <app-avatar [nome]="data.cli(a.cli).nome" [cor]="data.prof(a.prof).cor" [size]="28"></app-avatar>
+                        <div style="flex:1;min-width:0;line-height:1.3">
+                          <div style="font-weight:700;font-size:13px">{{ data.cli(a.cli).nome }}</div>
+                          <div class="muted" style="font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.srv(a.srv).nome }} · {{ data.prof(a.prof).apelido }}</div>
+                        </div>
+                        <app-status-pill [status]="a.status"></app-status-pill>
+                      </div>
+                    }
+                  }
+                </div>
+              }
+            }
+          </div>
+        } @else {
+          <!-- Desktop/Tablet: Timeline com drag-and-drop -->
+          <div class="card" style="overflow:hidden">
+            <!-- cabeçalho de colunas -->
+            <div style="position:sticky;top:0;background:var(--surface);z-index:5;border-bottom:1px solid var(--border)">
+              <!-- barra de navegação de dia -->
+              <div class="row" style="padding:8px 14px;border-bottom:1px solid var(--border);align-items:center;gap:8px">
+                @if (!isToday) {
+                  <button class="icon-btn" style="width:30px;height:30px" (click)="prevDay()">
+                    <app-icon name="chevL" [size]="16"></app-icon>
+                  </button>
+                } @else {
+                  <div style="width:30px;height:30px"></div>
+                }
+                <div style="flex:1;text-align:center;font-size:14px;font-weight:700;letter-spacing:-0.01em">
+                  {{ currentDateLabel }}
+                  @if (isToday) {
+                    <span style="margin-left:8px;font-size:11px;font-weight:600;background:var(--accent-soft);color:var(--accent-text);border-radius:99px;padding:2px 8px">Hoje</span>
+                  }
+                </div>
+                <button class="icon-btn" style="width:30px;height:30px" (click)="nextDay()">
+                  <app-icon name="chevR" [size]="16"></app-icon>
+                </button>
+              </div>
+              <!-- colunas de profissionais -->
+              <div [style.display]="'grid'" [style.gridTemplateColumns]="gridCols">
+                <div></div>
+                @for (p of profs; track p.id) {
+                  <div style="padding:12px 14px;display:flex;align-items:center;gap:10px;border-left:1px solid var(--border)">
+                    <app-avatar [nome]="p.nome" [cor]="p.cor" [size]="32"></app-avatar>
+                    <div class="col" style="line-height:1.25">
+                      <div style="font-weight:700;font-size:14px">{{ p.apelido }}</div>
+                      <div class="muted" style="font-size:12px">{{ countFor(p) }} hoje</div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- grade -->
+            <div [style.display]="'grid'" [style.gridTemplateColumns]="gridCols" style="position:relative">
+              <!-- coluna de horas -->
+              <div style="position:relative" [style.height.px]="colH">
+                @for (h of data.horarios; track h; let i = $index) {
+                  <div class="mono" style="position:absolute;right:8px;font-size:12px;color:var(--text-3);font-weight:600"
+                    [style.top.px]="TOP_OFFSET + i * 60 * PX_MIN - 8">{{ h }}</div>
+                }
+              </div>
+              <!-- colunas por profissional -->
+              @for (p of profs; track p.id) {
+                <div [attr.data-prof]="p.id" style="position:relative;border-left:1px solid var(--border)" [style.height.px]="colH">
+                  @for (h of data.horarios; track h; let i = $index) {
+                    <div style="position:absolute;left:0;right:0;border-top:1px solid var(--border)" [style.top.px]="TOP_OFFSET + i * 60 * PX_MIN"></div>
+                  }
+                  @for (h of data.horarios; track h; let i = $index) {
+                    <div style="position:absolute;left:0;right:0;border-top:1px dashed var(--border);opacity:0.5" [style.top.px]="TOP_OFFSET + i * 60 * PX_MIN + 30 * PX_MIN"></div>
+                  }
+                  <!-- agendamentos -->
+                  @for (a of apptsFor(p); track a.id) {
+                    <div
+                      (pointerdown)="startMove($event, a, durOf(a))"
+                      (click)="cardClick(a)"
+                      [ngStyle]="cardStyle(a)">
+                      <div class="row" style="gap:5px;justify-content:space-between">
+                        <span class="mono" style="font-size:11px;font-weight:700" [style.color]="data.srv(a.srv).cor">{{ cardTime(a) }}</span>
+                        <div class="row" style="gap:4px">
+                          @if (a.sinal) { <app-icon name="check" [size]="12" style="color:var(--accent)"></app-icon> }
+                          <span [style.width.px]="8" [style.height.px]="8" style="border-radius:99px;flex-shrink:0" [style.background]="dotColor(a.status)" [title]="data.statusLabels[a.status]"></span>
+                        </div>
+                      </div>
+                      <div style="font-weight:700;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.cli(a.cli).nome }}</div>
+                      <div class="muted" style="font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.srv(a.srv).nome }} · {{ data.prof(a.prof).apelido }}</div>
+                      <!-- alça de resize -->
+                      <div (pointerdown)="startResize($event, a, durOf(a))"
+                        style="position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize"></div>
+                    </div>
+                  }
                 </div>
               }
             </div>
           </div>
 
-          <!-- grade -->
-          <div [style.display]="'grid'" [style.gridTemplateColumns]="gridCols" style="position:relative">
-            <!-- coluna de horas -->
-            <div style="position:relative" [style.height.px]="colH">
-              @for (h of data.horarios; track h; let i = $index) {
-                <div class="mono" style="position:absolute;right:8px;font-size:12px;color:var(--text-3);font-weight:600"
-                  [style.top.px]="TOP_OFFSET + i * 60 * PX_MIN - 8">{{ h }}</div>
-              }
-            </div>
-            <!-- colunas por profissional -->
-            @for (p of profs; track p.id) {
-              <div [attr.data-prof]="p.id" style="position:relative;border-left:1px solid var(--border)" [style.height.px]="colH">
-                @for (h of data.horarios; track h; let i = $index) {
-                  <div style="position:absolute;left:0;right:0;border-top:1px solid var(--border)" [style.top.px]="TOP_OFFSET + i * 60 * PX_MIN"></div>
-                }
-                @for (h of data.horarios; track h; let i = $index) {
-                  <div style="position:absolute;left:0;right:0;border-top:1px dashed var(--border);opacity:0.5" [style.top.px]="TOP_OFFSET + i * 60 * PX_MIN + 30 * PX_MIN"></div>
-                }
-                <!-- agendamentos -->
-                @for (a of apptsFor(p); track a.id) {
-                  <div
-                    (pointerdown)="startMove($event, a, durOf(a))"
-                    (click)="cardClick(a)"
-                    [ngStyle]="cardStyle(a)">
-                    <div class="row" style="gap:5px;justify-content:space-between">
-                      <span class="mono" style="font-size:11px;font-weight:700" [style.color]="data.srv(a.srv).cor">{{ cardTime(a) }}</span>
-                      <div class="row" style="gap:4px">
-                        @if (a.sinal) { <app-icon name="check" [size]="12" style="color:var(--accent)"></app-icon> }
-                        <span [style.width.px]="8" [style.height.px]="8" style="border-radius:99px;flex-shrink:0" [style.background]="dotColor(a.status)" [title]="data.statusLabels[a.status]"></span>
-                      </div>
-                    </div>
-                    <div style="font-weight:700;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.cli(a.cli).nome }}</div>
-                    <div class="muted" style="font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.srv(a.srv).nome }} · {{ data.prof(a.prof).apelido }}</div>
-                    <!-- alça de resize -->
-                    <div (pointerdown)="startResize($event, a, durOf(a))"
-                      style="position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize"></div>
-                  </div>
-                }
-              </div>
-            }
+          <div class="drag-hint row" style="margin-top:14px;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--text-3)">
+            <span class="row" style="gap:6px"><app-icon name="grip" [size]="14"></app-icon> Arraste para remarcar</span>
+            <span class="row" style="gap:6px">↕ Redimensione a borda inferior para ajustar a duração</span>
+            <span class="row" style="gap:6px">Clique no card para ver detalhes</span>
           </div>
-        </div>
-
-        <div class="row" style="margin-top:14px;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--text-3)">
-          <span class="row" style="gap:6px"><app-icon name="grip" [size]="14"></app-icon> Arraste para remarcar</span>
-          <span class="row" style="gap:6px">↕ Redimensione a borda inferior para ajustar a duração</span>
-          <span class="row" style="gap:6px">Clique no card para ver detalhes</span>
-        </div>
+        }
       }
     </div>
 
@@ -264,7 +339,7 @@ interface Pending {
             </div>
             <div style="font-size:17px;font-weight:700;letter-spacing:-0.01em">{{ currentDateLabel }}</div>
           }
-          <div class="seg" style="margin-left:auto">
+          <div class="seg" [style.marginLeft]="isMobile ? '0' : 'auto'">
             @for (v of ['dia','semana','mes']; track v) {
               <button [class.on]="view === v" (click)="view = v">{{ v === 'dia' ? 'Dia' : v === 'semana' ? 'Semana' : 'Mês' }}</button>
             }
@@ -348,10 +423,28 @@ export class AgendaComponent {
   prevDay() { if (!this.isToday) this.currentDayOffset--; }
   goToday() { this.currentDayOffset = 0; }
 
+  toggleSlot(time: string) {
+    this.expandedSlots[time] = !this.expandedSlots[time];
+  }
+
+  get mobileDayGroups(): { time: string; appts: Appt[] }[] {
+    const visible = this.dayAppts.filter(a =>
+      this.visible(a) && (this.profFilter === 'todos' || a.prof === this.profFilter)
+    );
+    const sorted = [...visible].sort((a, b) => this.data.toMin(a.ini) - this.data.toMin(b.ini));
+    const map = new Map<string, Appt[]>();
+    for (const a of sorted) {
+      if (!map.has(a.ini)) map.set(a.ini, []);
+      map.get(a.ini)!.push(a);
+    }
+    return Array.from(map.entries()).map(([time, appts]) => ({ time, appts }));
+  }
+
   drag: Drag | null = null;
   ghost: Ghost | null = null;
   pending: Pending | null = null;
   semanaModal: { label: string; appts: Agendamento[] } | null = null;
+  expandedSlots: { [time: string]: boolean } = {};
   private wasDragged = false;
 
   private moveHandler?: (e: PointerEvent) => void;
@@ -359,8 +452,15 @@ export class AgendaComponent {
 
   constructor(public data: DataService, private host: ElementRef) {}
 
+  get isMobile(): boolean { return typeof window !== 'undefined' && window.innerWidth <= 768; }
+
   get profs(): Staff[] {
-    return this.data.staff.filter(p => this.profFilter === 'todos' || p.id === this.profFilter);
+    const filtered = this.data.staff.filter(p => this.profFilter === 'todos' || p.id === this.profFilter);
+    // Mobile: exibe apenas 1 profissional por vez para caber na tela
+    if (this.isMobile && this.view === 'dia' && this.profFilter === 'todos') {
+      return filtered.slice(0, 1);
+    }
+    return filtered;
   }
   get gridCols() { return `64px repeat(${this.profs.length}, 1fr)`; }
   get semanaHrs() { return this.data.horarios.filter((_, i) => i % 2 === 0); }
@@ -417,6 +517,8 @@ export class AgendaComponent {
   // ---- drag ----
   startMove(e: PointerEvent, a: Appt, dur: number) {
     if (e.button !== 0) return;
+    // Drag desabilitado no mobile — tap abre o detalhe normalmente
+    if (this.isMobile) return;
     e.preventDefault();
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
@@ -427,6 +529,7 @@ export class AgendaComponent {
   }
   startResize(e: PointerEvent, a: Appt, dur: number) {
     if (e.button !== 0) return;
+    if (this.isMobile) return;
     e.preventDefault(); e.stopPropagation();
     document.body.style.cursor = 'ns-resize';
     document.body.style.userSelect = 'none';

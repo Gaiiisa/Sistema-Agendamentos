@@ -16,7 +16,7 @@ import { IconComponent } from '../icon.component';
         @if (newLabel) {
           <button class="btn btn-primary" (click)="onNew.emit()">
             <app-icon name="plus" [size]="14"></app-icon>
-            {{ newLabel }}
+            <span class="btn-text">{{ newLabel }}</span>
           </button>
         }
       </div>

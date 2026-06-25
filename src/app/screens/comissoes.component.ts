@@ -64,7 +64,7 @@ import { DataService } from '../data.service';
   </div>
 
   <!-- cards grid -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(340px,1fr));gap:16px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(min(100%, 340px),1fr));gap:16px">
     @for (d of dados; track d.p.id) {
       <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:14px">
 
@@ -151,28 +151,30 @@ import { DataService } from '../data.service';
         </div>
       </div>
 
-      <table class="tbl" style="border:1px solid var(--border);border-radius:var(--r-md)">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Cliente</th>
-            <th>Serviço</th>
-            <th>Valor</th>
-            <th>Comissão</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (it of recibo.c.itens; track $index) {
+      <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md)">
+        <table class="tbl">
+          <thead>
             <tr>
-              <td class="mono" style="font-size:12.5px">{{ data.fmtData(it.data) }}</td>
-              <td>{{ data.cli(it.cli).nome.split(' ')[0] }}</td>
-              <td>{{ data.srv(it.srv).nome }}</td>
-              <td class="tnum">{{ data.money(it.valor) }}</td>
-              <td class="tnum" style="font-weight:600">{{ data.money(calcComissaoItem(it.valor, recibo.p.comissao)) }}</td>
+              <th>Data</th>
+              <th>Cliente</th>
+              <th>Serviço</th>
+              <th>Valor</th>
+              <th>Comissão</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (it of recibo.c.itens; track $index) {
+              <tr>
+                <td class="mono" style="font-size:12.5px">{{ data.fmtData(it.data) }}</td>
+                <td>{{ data.cli(it.cli).nome.split(' ')[0] }}</td>
+                <td>{{ data.srv(it.srv).nome }}</td>
+                <td class="tnum">{{ data.money(it.valor) }}</td>
+                <td class="tnum" style="font-weight:600">{{ data.money(calcComissaoItem(it.valor, recibo.p.comissao)) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
       <div class="row" style="padding:12px 14px;background:var(--accent-soft);border-radius:var(--r-md)">
         <span style="font-weight:700;color:var(--accent-text)">Total a receber</span>

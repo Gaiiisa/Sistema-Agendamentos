@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from './avatar.component';
 import { DataService } from '../data.service';
@@ -38,7 +38,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
       </div>
 
       <div class="tn-end">
-        <button class="tn-icon-btn" title="Buscar">
+        <button class="tn-icon-btn tn-hide-mobile" title="Buscar">
           <app-icon name="search" [size]="16"></app-icon>
         </button>
         <button class="tn-icon-btn"
@@ -46,7 +46,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
           (click)="toggleTheme()">
           <app-icon [name]="theme === 'dark' ? 'sun' : 'moon'" [size]="16"></app-icon>
         </button>
-        <button class="tn-icon-btn" title="Configurações" (click)="navigate('config')">
+        <button class="tn-icon-btn tn-hide-mobile" title="Configurações" (click)="navigate('config')">
           <app-icon name="settings" [size]="16"></app-icon>
         </button>
         <button class="tn-icon-btn" title="Notificações" style="position:relative">
@@ -58,7 +58,46 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
         </button>
       </div>
 
-    </nav>`,
+    </nav>
+
+    <!-- ── Bottom Tab Bar (mobile) ── -->
+    <div class="tn-bottom-bar">
+      @for (item of BOTTOM_NAV; track item.id) {
+        <button class="tn-tab" [class.active]="active === item.id && !menuOpen"
+          (click)="navigate(item.id); menuOpen = false">
+          <app-icon [name]="item.icon" [size]="20"></app-icon>
+          <span>{{ item.label }}</span>
+          @if (item.badge && active !== item.id) {
+            <span style="position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--st-faltou);border-radius:99px;border:1.5px solid var(--surface)"></span>
+          }
+        </button>
+      }
+      <button class="tn-tab" [class.active]="isMoreActive || menuOpen"
+        (click)="menuOpen = !menuOpen">
+        <app-icon name="menu" [size]="20"></app-icon>
+        <span>Mais</span>
+      </button>
+    </div>
+
+    <!-- ── Sheet "Mais" (mobile) ── -->
+    @if (menuOpen) {
+      <div class="tn-sheet-overlay" (click)="menuOpen = false"></div>
+      <div class="tn-sheet">
+        <div class="tn-sheet-handle"></div>
+        @for (item of MORE_NAV; track item.id) {
+          <button class="tn-sheet-item" [class.active]="active === item.id"
+            (click)="navigate(item.id); menuOpen = false">
+            <app-icon [name]="item.icon" [size]="20"
+              [style.color]="active === item.id ? 'var(--accent)' : 'var(--text-2)'"></app-icon>
+            {{ item.label }}
+            @if (item.badge) {
+              <span class="tn-sheet-badge">{{ item.badge }}</span>
+            }
+          </button>
+        }
+      </div>
+    }
+  `,
 })
 export class SidebarComponent implements OnChanges, AfterViewInit {
   @Input() active = '';
@@ -71,6 +110,7 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   indicatorW = 0;
   indicatorVisible = false;
   theme: 'dark' | 'light' = 'dark';
+  menuOpen = false;
 
   readonly ALL_NAV: NavItem[] = [
     { id: 'dashboard',    label: 'Dashboard',   icon: 'dashboard' },
@@ -86,6 +126,29 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     { id: 'relatorios',   label: 'Relatórios',   icon: 'chart' },
   ];
 
+  // 4 itens primários na bottom bar
+  readonly BOTTOM_NAV: NavItem[] = [
+    { id: 'dashboard',  label: 'Início',      icon: 'dashboard' },
+    { id: 'agenda',     label: 'Agenda',      icon: 'calendar', badge: '15' },
+    { id: 'clientes',   label: 'Clientes',    icon: 'users' },
+    { id: 'financeiro', label: 'Financeiro',  icon: 'money' },
+  ];
+
+  // Itens restantes no sheet "Mais"
+  readonly MORE_NAV: NavItem[] = [
+    { id: 'agendamentos', label: 'Agendamentos', icon: 'list' },
+    { id: 'servicos',     label: 'Serviços',     icon: 'scissors' },
+    { id: 'equipe',       label: 'Equipe',       icon: 'team' },
+    { id: 'comissoes',    label: 'Comissões',    icon: 'coins' },
+    { id: 'estoque',      label: 'Estoque',      icon: 'box' },
+    { id: 'fidelidade',   label: 'Fidelidade',   icon: 'gift' },
+    { id: 'relatorios',   label: 'Relatórios',   icon: 'chart' },
+  ];
+
+  get isMoreActive(): boolean {
+    return this.MORE_NAV.some(i => i.id === this.active);
+  }
+
   constructor(public data: DataService) {
     const saved = localStorage.getItem('app-theme');
     this.theme = saved === 'light' ? 'light' : 'dark';
@@ -94,7 +157,17 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
 
   ngAfterViewInit() { this.moveIndicator(); }
 
-  ngOnChanges(c: SimpleChanges) { if (c['active']) this.moveIndicator(); }
+  ngOnChanges(c: SimpleChanges) {
+    if (c['active']) {
+      this.menuOpen = false;
+      this.moveIndicator();
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    if (window.innerWidth > 768) this.menuOpen = false;
+  }
 
   navigate(id: string) { this.nav.emit(id); }
 

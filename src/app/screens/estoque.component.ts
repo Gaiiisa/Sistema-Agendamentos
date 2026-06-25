@@ -105,7 +105,7 @@ import type { Produto } from '../data.service';
   @if (tab === 'produtos') {
     <div class="card">
       <div style="overflow-x:auto">
-        <table class="tbl">
+        <table class="tbl tbl-card">
           <thead>
             <tr>
               <th>Produto</th>
@@ -122,7 +122,7 @@ import type { Produto } from '../data.service';
           <tbody>
             @for (p of list; track p.id) {
               <tr>
-                <td>
+                <td class="card-header">
                   <div class="row" style="gap:10px">
                     <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0">
                       <app-icon name="pkg" [size]="15" style="color:var(--text-2)"></app-icon>
@@ -130,8 +130,8 @@ import type { Produto } from '../data.service';
                     <span style="font-weight:600">{{ p.nome }}</span>
                   </div>
                 </td>
-                <td><span class="tag">{{ p.cat }}</span></td>
-                <td>
+                <td data-label="Categoria"><span class="tag">{{ p.cat }}</span></td>
+                <td data-label="Em estoque">
                   <div class="col" style="gap:4px;min-width:90px">
                     <span class="tnum" [style.fontWeight]="700" [style.color]="NIVEL[nivel(p)].cor">{{ p.qtd }} un</span>
                     <div class="progress" style="width:70px">
@@ -139,10 +139,10 @@ import type { Produto } from '../data.service';
                     </div>
                   </div>
                 </td>
-                <td class="tnum muted">{{ p.min }}</td>
-                <td class="tnum">{{ data.money(p.custo) }}</td>
-                <td class="muted" style="font-size:13px">{{ p.fornecedor }}</td>
-                <td>
+                <td class="tnum muted" data-label="Mínimo">{{ p.min }}</td>
+                <td class="tnum" data-label="Custo">{{ data.money(p.custo) }}</td>
+                <td class="muted" data-label="Fornecedor" style="font-size:13px">{{ p.fornecedor }}</td>
+                <td data-label="Baixa auto.">
                   @if (p.consumo) {
                     <span class="row" style="gap:5px;font-size:12.5px;color:var(--st-atendimento)">
                       <app-icon name="sparkle" [size]="13"></app-icon>
@@ -152,7 +152,7 @@ import type { Produto } from '../data.service';
                     <span class="muted" style="font-size:12.5px">—</span>
                   }
                 </td>
-                <td>
+                <td data-label="Status">
                   <span class="pill"
                     [style.background]="NIVEL[nivel(p)].bg"
                     [style.color]="NIVEL[nivel(p)].cor">
@@ -160,7 +160,7 @@ import type { Produto } from '../data.service';
                     {{ NIVEL[nivel(p)].label }}
                   </span>
                 </td>
-                <td>
+                <td class="card-actions">
                   <app-menu [items]="itemsFor(p)"></app-menu>
                 </td>
               </tr>
@@ -174,6 +174,7 @@ import type { Produto } from '../data.service';
   <!-- ── Tab: Histórico ── -->
   @if (tab === 'historico') {
     <div class="card">
+      <div style="overflow-x:auto">
       <table class="tbl">
         <thead>
           <tr>
@@ -211,6 +212,7 @@ import type { Produto } from '../data.service';
           }
         </tbody>
       </table>
+      </div>
     </div>
   }
 

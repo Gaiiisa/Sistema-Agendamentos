@@ -23,7 +23,7 @@ import { DataService, Staff } from '../data.service';
       </div>
 
       <!-- Grade de cards -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(min(100%, 360px), 1fr));gap:16px">
 
         @for (p of data.staff; track p.id) {
           <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:15px">

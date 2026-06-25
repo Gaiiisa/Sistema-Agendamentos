@@ -23,7 +23,7 @@ import { DataService, Servico, Staff } from '../data.service';
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
         @for (s of list; track s.id) {
           <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
 

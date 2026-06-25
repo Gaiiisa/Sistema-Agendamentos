@@ -191,7 +191,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 330px),1fr));gap:14px">
         @for (c of data.campanhas; track c.id) {
           <div class="card" style="padding:16px;display:flex;flex-direction:column;gap:13px">
 

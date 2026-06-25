@@ -409,7 +409,7 @@ import { DataService, Lancamento } from '../data.service';
             <app-icon name="download" [size]="15"></app-icon> Exportar
           </button>
         </div>
-        <table class="tbl">
+        <table class="tbl tbl-card">
           <thead>
             <tr>
               <th>Data</th>
@@ -425,26 +425,39 @@ import { DataService, Lancamento } from '../data.service';
           <tbody>
             @for (l of lancamentosRows; track l.id) {
               <tr>
-                <td class="mono muted" style="font-size:13px">{{ data.fmtData(l.data) }}</td>
-                <td class="mono muted" style="font-size:13px">{{ l.hora }}</td>
-                <td style="font-weight:600">{{ l.desc }}</td>
-                <td class="muted">{{ l.cat }}</td>
-                <td>
+                <td class="card-header" style="gap:6px">
+                  <div style="display:flex;align-items:center;gap:8px;flex:1">
+                    <div [style.width.px]="28" [style.height.px]="28" style="border-radius:8px;display:grid;place-items:center;flex-shrink:0"
+                         [style.background]="l.tipo==='receita' ? 'var(--accent-soft)' : 'var(--st-faltou-bg)'">
+                      <app-icon [name]="l.tipo==='receita' ? 'trend' : 'trendD'" [size]="14"
+                                 [style.color]="l.tipo==='receita' ? 'var(--accent)' : 'var(--st-faltou)'"></app-icon>
+                    </div>
+                    <span style="font-weight:600">{{ l.desc }}</span>
+                  </div>
+                  <span class="tnum" style="font-weight:700"
+                        [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
+                    {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
+                  </span>
+                </td>
+                <td class="mono muted" data-label="Data" style="font-size:13px">{{ data.fmtData(l.data) }}</td>
+                <td class="mono muted" data-label="Hora" style="font-size:13px">{{ l.hora }}</td>
+                <td data-label="Categoria" class="muted">{{ l.cat }}</td>
+                <td data-label="Forma">
                   <span class="tag" style="border-color:transparent"
                         [style.background]="FORMA[l.forma].bg"
                         [style.color]="FORMA[l.forma].cor">{{ FORMA[l.forma].label }}</span>
                 </td>
-                <td>
+                <td data-label="Tipo">
                   <span [class]="l.tipo==='receita' ? 'pill pill-confirmado' : 'pill pill-faltou'">
                     <span class="pdot"></span>
                     {{ l.tipo==='receita' ? 'Receita' : 'Despesa' }}
                   </span>
                 </td>
-                <td class="tnum" style="font-weight:700;text-align:right"
+                <td class="tnum" data-label="Valor" style="font-weight:700;text-align:right"
                     [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
                   {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
                 </td>
-                <td>
+                <td class="card-actions">
                   <app-menu [items]="[{label:'Editar',icon:'edit'},{label:'Excluir',icon:'trash',danger:true}]"></app-menu>
                 </td>
               </tr>
@@ -510,7 +523,7 @@ import { DataService, Lancamento } from '../data.service';
           <div class="card-title">Contas a receber</div>
           <span class="muted" style="margin-left:auto;font-size:12.5px">ordenado por vencimento</span>
         </div>
-        <table class="tbl">
+        <table class="tbl tbl-card">
           <thead>
             <tr>
               <th>Cliente</th>
@@ -524,30 +537,29 @@ import { DataService, Lancamento } from '../data.service';
           <tbody>
             @for (r of aReceberOrdenado; track r.id) {
               <tr>
-                <td>
-                  <div class="row" style="gap:10px">
+                <td class="card-header">
+                  <div class="row" style="gap:10px;flex:1">
                     <app-avatar [nome]="data.cli(r.cli).nome" cor="#2563eb" [size]="30"></app-avatar>
                     <span style="font-weight:600">{{ data.cli(r.cli).nome }}</span>
                   </div>
+                  <span class="tnum" style="font-weight:700">{{ data.money(r.valor) }}</span>
                 </td>
-                <td class="muted">{{ r.desc }}</td>
-                <td class="mono muted" style="font-size:13px">{{ data.fmtData(r.venc) }}</td>
-                <td>
+                <td data-label="Descrição" class="muted">{{ r.desc }}</td>
+                <td data-label="Vencimento" class="mono muted" style="font-size:13px">{{ data.fmtData(r.venc) }}</td>
+                <td data-label="Situação">
                   <span [class]="r.dias < 0 ? 'pill pill-faltou' : (r.dias <= 3 ? 'pill pill-pendente' : 'pill pill-confirmado')">
                     <span class="pdot"></span>
                     {{ r.dias < 0 ? 'Vencida há ' + abs(r.dias) + 'd' : (r.dias === 0 ? 'Vence hoje' : 'Vence em ' + r.dias + 'd') }}
                   </span>
                 </td>
-                <td class="tnum" style="font-weight:700;text-align:right">{{ data.money(r.valor) }}</td>
-                <td>
-                  <div class="row" style="gap:6px;justify-content:flex-end">
-                    <button class="btn btn-subtle btn-sm" (click)="notify.emit('Lembrete de pagamento enviado')">
-                      <app-icon name="whatsapp" [size]="14"></app-icon> Cobrar
-                    </button>
-                    <button class="btn btn-primary btn-sm" (click)="notify.emit('Pagamento registrado')">
-                      Receber
-                    </button>
-                  </div>
+                <td data-label="Valor" class="tnum" style="font-weight:700;text-align:right">{{ data.money(r.valor) }}</td>
+                <td class="card-actions">
+                  <button class="btn btn-subtle btn-sm" (click)="notify.emit('Lembrete de pagamento enviado')">
+                    <app-icon name="whatsapp" [size]="14"></app-icon> Cobrar
+                  </button>
+                  <button class="btn btn-primary btn-sm" (click)="notify.emit('Pagamento registrado')">
+                    Receber
+                  </button>
                 </td>
               </tr>
             }

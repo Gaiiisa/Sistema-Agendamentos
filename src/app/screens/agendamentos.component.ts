@@ -114,7 +114,7 @@ const TABS = [
 
     <!-- table -->
     <div style="overflow-x:auto">
-      <table class="tbl">
+      <table class="tbl tbl-card">
         <thead>
           <tr>
             <th style="width:36px">
@@ -136,30 +136,30 @@ const TABS = [
         <tbody>
           @for (r of rows; track r.id) {
             <tr [style.background]="sel.includes(r.id) ? 'var(--accent-soft)' : null">
-              <td>
+              <td class="card-check">
                 <div [class]="'checkbox' + (sel.includes(r.id) ? ' on' : '')" (click)="toggle(r.id)">
                   @if (sel.includes(r.id)) {
                     <app-icon name="check" [size]="13" [stroke]="3"></app-icon>
                   }
                 </div>
               </td>
-              <td>
+              <td class="card-header">
                 <div class="row" style="gap:10px;cursor:pointer" (click)="onOpenCliente.emit(data.cli(r.cli).id)">
                   <app-avatar [nome]="data.cli(r.cli).nome" [cor]="data.prof(r.prof).cor" [size]="32"></app-avatar>
                   <span style="font-weight:600">{{ data.cli(r.cli).nome }}</span>
                 </div>
               </td>
-              <td>
+              <td data-label="Serviço">
                 <span class="row" style="gap:7px">
                   <span style="width:8px;height:8px;border-radius:3px" [style.background]="data.srv(r.srv).cor"></span>
                   {{ data.srv(r.srv).nome }}
                 </span>
               </td>
-              <td class="muted">{{ data.prof(r.prof).apelido }}</td>
-              <td class="tnum">{{ data.fmtData(r.data) }} · {{ r.hora }}</td>
-              <td class="tnum" style="font-weight:600">{{ data.money(r.valor) }}</td>
-              <td><app-status-pill [status]="r.status"></app-status-pill></td>
-              <td>
+              <td class="muted" data-label="Profissional">{{ data.prof(r.prof).apelido }}</td>
+              <td class="tnum" data-label="Data / Hora">{{ data.fmtData(r.data) }} · {{ r.hora }}</td>
+              <td class="tnum" data-label="Valor" style="font-weight:600">{{ data.money(r.valor) }}</td>
+              <td data-label="Status"><app-status-pill [status]="r.status"></app-status-pill></td>
+              <td class="card-actions">
                 <app-menu [items]="[
                   {label:'Confirmar', icon:'check'},
                   {label:'Reagendar', icon:'calendar'},

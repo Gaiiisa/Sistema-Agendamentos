@@ -31,35 +31,32 @@ import { DataService } from '../data.service';
         </button>
       }
     </div>
-
-    <button class="btn btn-primary btn-sm" style="margin-left:auto" (click)="openNovo()">
-      <app-icon name="plus" [size]="14"></app-icon>
-      Novo cliente
-    </button>
   </div>
 
   <!-- banner sumidos -->
   @if (sumidos > 0 && tag !== 'sumido') {
-    <div class="card card-pad"
+    <div class="card card-pad sumidos-banner"
          style="margin-bottom:16px; display:flex; align-items:center; gap:14px; border-left:3px solid var(--st-faltou)">
       <div class="alert-ico" style="background:var(--st-faltou-bg)">
         <app-icon name="alert" [size]="17" style="color:var(--st-faltou)"></app-icon>
       </div>
-      <div class="col" style="flex:1">
+      <div class="col" style="flex:1; min-width:0">
         <div style="font-weight:600">{{ sumidos }} clientes sumiram</div>
         <div class="muted" style="font-size:13px">Não voltam há mais de 60 dias — bons candidatos a uma campanha de retorno.</div>
       </div>
-      <button class="btn btn-ghost btn-sm" (click)="tag = 'sumido'">Ver lista</button>
-      <button class="btn btn-primary btn-sm">
-        <app-icon name="whatsapp" [size]="14"></app-icon> Campanha de retorno
-      </button>
+      <div class="sumidos-actions">
+        <button class="btn btn-ghost btn-sm" (click)="tag = 'sumido'">Ver lista</button>
+        <button class="btn btn-primary btn-sm">
+          <app-icon name="whatsapp" [size]="14"></app-icon> Campanha de retorno
+        </button>
+      </div>
     </div>
   }
 
   <!-- tabela -->
-  <div class="card">
+  <div class="card tbl-card-outer">
     <div style="overflow-x:auto">
-      <table class="tbl">
+      <table class="tbl tbl-card">
         <thead>
           <tr>
             <th>Cliente</th>
@@ -74,7 +71,7 @@ import { DataService } from '../data.service';
         <tbody>
           @for (c of list; track c.id) {
             <tr class="tbl-row-click" (click)="onOpen.emit(c.id)">
-              <td>
+              <td class="card-header">
                 <div class="row" style="gap:11px">
                   <app-avatar [nome]="c.nome"
                               [cor]="c.tags.includes('vip') ? '#0e9f6e' : c.tags.includes('sumido') ? '#9ca3af' : '#2563eb'"
@@ -85,17 +82,17 @@ import { DataService } from '../data.service';
                   </div>
                 </div>
               </td>
-              <td class="mono muted" style="font-size:13px">{{ c.wpp }}</td>
-              <td>
+              <td class="mono muted" data-label="WhatsApp" style="font-size:13px">{{ c.wpp }}</td>
+              <td data-label="Última visita">
                 <span [style.color]="data.diasDesde(c.ultima) > 60 ? 'var(--st-faltou)' : 'var(--text)'">
                   {{ data.diasDesde(c.ultima) === 0 ? 'Hoje' : 'há ' + data.diasDesde(c.ultima) + ' dias' }}
                 </span>
               </td>
-              <td class="tnum">{{ c.visitas }}</td>
-              <td class="tnum">{{ data.money(c.ticket) }}</td>
-              <td class="tnum" style="font-weight:600">{{ data.money(c.total) }}</td>
-              <td>
-                <div class="row" style="gap:5px">
+              <td class="tnum" data-label="Visitas">{{ c.visitas }}</td>
+              <td class="tnum" data-label="Ticket médio">{{ data.money(c.ticket) }}</td>
+              <td class="tnum" data-label="Total gasto" style="font-weight:600">{{ data.money(c.total) }}</td>
+              <td data-label="Tags">
+                <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
                   @for (t of c.tags; track t) {
                     <app-tag [kind]="t"></app-tag>
                   }

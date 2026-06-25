@@ -140,13 +140,18 @@ export class AppComponent {
     }
   }
 
-  readonly toastStyle = {
-    position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
-    background: 'var(--accent)', color: 'var(--on-accent)', padding: '11px 18px', border: 'none',
-    borderRadius: 'var(--r-md)', boxShadow: 'var(--sh-pop)', zIndex: '200',
-    display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600', fontSize: '14px',
-    animation: 'pop .2s ease',
-  };
+  get toastStyle() {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    return {
+      position: 'fixed',
+      bottom: isMobile ? '76px' : '24px',
+      left: '50%', transform: 'translateX(-50%)',
+      background: 'var(--accent)', color: 'var(--on-accent)', padding: '11px 18px', border: 'none',
+      borderRadius: 'var(--r-md)', boxShadow: 'var(--sh-pop)', zIndex: '200',
+      display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600', fontSize: '14px',
+      animation: 'pop .2s ease',
+    };
+  }
 
   constructor(public data: DataService) {}
 
