@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit, signal } from '@angular/core';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from './avatar.component';
 import { DataService } from '../data.service';
@@ -49,7 +49,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
         <button class="tn-icon-btn tn-hide-mobile" title="Configurações" (click)="navigate('config')">
           <app-icon name="settings" [size]="16"></app-icon>
         </button>
-        <button class="tn-icon-btn" title="Notificações" style="position:relative">
+        <button class="tn-icon-btn" title="Notificações" style="position:relative" (click)="onNotif.emit()">
           <span class="tn-dot"></span>
           <app-icon name="bell" [size]="16"></app-icon>
         </button>
@@ -102,6 +102,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
 export class SidebarComponent implements OnChanges, AfterViewInit {
   @Input() active = '';
   @Output() nav = new EventEmitter<string>();
+  @Output() onNotif = new EventEmitter<void>();
 
   @ViewChild('container') container!: ElementRef<HTMLElement>;
   @ViewChildren('btn') btns!: QueryList<ElementRef<HTMLElement>>;

@@ -19,9 +19,11 @@ import { ComissoesComponent } from './screens/comissoes.component';
 import { EstoqueComponent } from './screens/estoque.component';
 import { FidelidadeComponent } from './screens/fidelidade.component';
 import { RelatoriosComponent } from './screens/relatorios.component';
+import { ConfigComponent } from './screens/config.component';
 
 import { NovoAgendamentoComponent } from './novo-agendamento.component';
 import { ApptDetailComponent } from './appt-detail.component';
+import { NotificationsPanelComponent } from './shared/notifications-panel.component';
 
 const TITLES: { [k: string]: [string, string] } = {
   dashboard: ['Dashboard', 'Visão geral do dia'],
@@ -47,11 +49,11 @@ const TITLES: { [k: string]: [string, string] } = {
     DashboardComponent, AgendaComponent, AgendamentosComponent, ClientesComponent,
     ServicosComponent, EquipeComponent, FinanceiroComponent, ComissoesComponent,
     EstoqueComponent, FidelidadeComponent, RelatoriosComponent,
-    NovoAgendamentoComponent, ApptDetailComponent,
+    NovoAgendamentoComponent, ApptDetailComponent, NotificationsPanelComponent, ConfigComponent,
   ],
   template: `
     <div class="app">
-      <app-sidebar [active]="route" (nav)="route = $event"></app-sidebar>
+      <app-sidebar [active]="route" (nav)="route = $event" (onNotif)="showNotif = true"></app-sidebar>
       <div class="main">
         <app-topbar [title]="title" [sub]="sub" [newLabel]="newLabel" (onNew)="handleNew()"></app-topbar>
         <div class="content">
@@ -75,6 +77,7 @@ const TITLES: { [k: string]: [string, string] } = {
             @case ('estoque') { <app-estoque #estoqueRef (notify)="notify($event)"></app-estoque> }
             @case ('fidelidade') { <app-fidelidade #fidelidadeRef (notify)="notify($event)"></app-fidelidade> }
             @case ('relatorios') { <app-relatorios (notify)="notify($event)"></app-relatorios> }
+            @case ('config') { <app-config (notify)="notify($event)"></app-config> }
             @default {
               <app-coming-soon [title]="TITLES[route] ? TITLES[route][0] : 'Em breve'"></app-coming-soon>
             }
@@ -82,6 +85,9 @@ const TITLES: { [k: string]: [string, string] } = {
         </div>
       </div>
 
+      @if (showNotif) {
+        <app-notifications-panel (close)="showNotif = false"></app-notifications-panel>
+      }
       @if (showNew) {
         <app-novo-agendamento (close)="showNew = false" (save)="addAppt($event)"></app-novo-agendamento>
       }
@@ -110,6 +116,7 @@ export class AppComponent {
   route = 'dashboard';
   appts: Appt[] = this.data.hoje.map(a => ({ ...a }));
   showNew = false;
+  showNotif = false;
   openAppt: Appt | null = null;
   clienteId: string | null = null;
   toast: string | null = null;
