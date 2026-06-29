@@ -100,7 +100,7 @@ const TABS = [
         <button class="btn btn-sm" style="background:var(--surface);color:var(--accent-text);margin-left:auto">
           <app-icon name="check" [size]="14"></app-icon> Confirmar
         </button>
-        <button class="btn btn-sm" style="background:var(--surface);color:var(--text)">
+        <button class="btn btn-whatsapp btn-sm">
           <app-icon name="whatsapp" [size]="14"></app-icon> Lembrar
         </button>
         <button class="btn btn-sm" style="background:var(--surface);color:var(--st-faltou)">

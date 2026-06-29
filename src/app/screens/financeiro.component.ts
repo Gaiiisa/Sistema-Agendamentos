@@ -554,7 +554,7 @@ import { DataService, Lancamento } from '../data.service';
                 </td>
                 <td data-label="Valor" class="tnum" style="font-weight:700;text-align:right">{{ data.money(r.valor) }}</td>
                 <td class="card-actions">
-                  <button class="btn btn-subtle btn-sm" (click)="notify.emit('Lembrete de pagamento enviado')">
+                  <button class="btn btn-whatsapp btn-sm" (click)="notify.emit('Lembrete de pagamento enviado')">
                     <app-icon name="whatsapp" [size]="14"></app-icon> Cobrar
                   </button>
                   <button class="btn btn-primary btn-sm" (click)="notify.emit('Pagamento registrado')">

@@ -46,7 +46,7 @@ import { DataService } from '../data.service';
       </div>
       <div class="sumidos-actions">
         <button class="btn btn-ghost btn-sm" (click)="tag = 'sumido'">Ver lista</button>
-        <button class="btn btn-primary btn-sm">
+        <button class="btn btn-whatsapp btn-sm">
           <app-icon name="whatsapp" [size]="14"></app-icon> Campanha de retorno
         </button>
       </div>
@@ -144,7 +144,7 @@ import { DataService } from '../data.service';
             <button class="btn btn-primary btn-sm" style="flex:1">
               <app-icon name="calendar" [size]="15"></app-icon> Agendar
             </button>
-            <button class="btn btn-ghost btn-sm" style="flex:1">
+            <button class="btn btn-whatsapp btn-sm" style="flex:1">
               <app-icon name="whatsapp" [size]="15"></app-icon> WhatsApp
             </button>
             <button class="btn btn-ghost btn-sm btn-icon-only">

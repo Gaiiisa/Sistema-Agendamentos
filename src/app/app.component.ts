@@ -10,7 +10,6 @@ import { ComingSoonComponent } from './shared/coming-soon.component';
 
 import { DashboardComponent } from './screens/dashboard.component';
 import { AgendaComponent } from './screens/agenda.component';
-import { AgendamentosComponent } from './screens/agendamentos.component';
 import { ClientesComponent } from './screens/clientes.component';
 import { ServicosComponent } from './screens/servicos.component';
 import { EquipeComponent } from './screens/equipe.component';
@@ -19,14 +18,17 @@ import { ComissoesComponent } from './screens/comissoes.component';
 import { EstoqueComponent } from './screens/estoque.component';
 import { FidelidadeComponent } from './screens/fidelidade.component';
 import { RelatoriosComponent } from './screens/relatorios.component';
+import { CentralComponent } from './screens/central.component';
+import { ConfigComponent } from './screens/config.component';
 
 import { NovoAgendamentoComponent } from './novo-agendamento.component';
 import { ApptDetailComponent } from './appt-detail.component';
+import { NotificationsPanelComponent } from './shared/notifications-panel.component';
+import { LoginComponent } from './login.component';
 
 const TITLES: { [k: string]: [string, string] } = {
   dashboard: ['Dashboard', 'Visão geral do dia'],
-  agenda: ['Agenda', 'Arraste para remarcar · clique para detalhes'],
-  agendamentos: ['Agendamentos', 'Gestão em lista de todos os horários'],
+  agenda: ['Agenda', 'Calendário e lista de todos os horários'],
   clientes: ['Clientes', 'CRM — onde está o dinheiro recorrente'],
   servicos: ['Serviços', 'Catálogo, preços e margens'],
   equipe: ['Equipe', 'Profissionais, jornada e comissões'],
@@ -34,7 +36,7 @@ const TITLES: { [k: string]: [string, string] } = {
   comissoes: ['Comissões', 'Cálculo automático por profissional'],
   estoque: ['Estoque', 'Produtos, baixa automática e reposição'],
   fidelidade: ['Fidelidade & Marketing', 'Programa de pontos, campanhas e mensagens'],
-  relatorios: ['Relatórios / BI', 'Indicadores-chave do negócio'],
+  central:    ['Relatórios & Alertas', 'Exportações, notificações internas e configurações'],
   config: ['Configurações', 'Estabelecimento, políticas e usuários'],
   soon: ['Em breve', 'Módulo da Fase 3'],
 };
@@ -44,14 +46,18 @@ const TITLES: { [k: string]: [string, string] } = {
   standalone: true,
   imports: [
     CommonModule, IconComponent, SidebarComponent, TopbarComponent, ComingSoonComponent,
-    DashboardComponent, AgendaComponent, AgendamentosComponent, ClientesComponent,
+    DashboardComponent, AgendaComponent, ClientesComponent,
     ServicosComponent, EquipeComponent, FinanceiroComponent, ComissoesComponent,
-    EstoqueComponent, FidelidadeComponent, RelatoriosComponent,
-    NovoAgendamentoComponent, ApptDetailComponent,
+    EstoqueComponent, FidelidadeComponent, RelatoriosComponent, CentralComponent,
+    NovoAgendamentoComponent, ApptDetailComponent, NotificationsPanelComponent, ConfigComponent,
+    LoginComponent,
   ],
   template: `
+    @if (!loggedIn) {
+      <app-login (success)="loggedIn = true"></app-login>
+    } @else {
     <div class="app">
-      <app-sidebar [active]="route" (nav)="route = $event"></app-sidebar>
+      <app-sidebar [active]="route" (nav)="route = $event" (onNotif)="showNotif = true"></app-sidebar>
       <div class="main">
         <app-topbar [title]="title" [sub]="sub" [newLabel]="newLabel" (onNew)="handleNew()"></app-topbar>
         <div class="content">
@@ -60,10 +66,7 @@ const TITLES: { [k: string]: [string, string] } = {
               <app-dashboard (onNew)="showNew = true" (onNav)="route = $event" (onOpen)="openAppt = $event"></app-dashboard>
             }
             @case ('agenda') {
-              <app-agenda [appts]="appts" (onOpen)="openAppt = $event" (onNew)="showNew = true"></app-agenda>
-            }
-            @case ('agendamentos') {
-              <app-agendamentos (onOpenCliente)="goCliente($event)"></app-agendamentos>
+              <app-agenda [appts]="appts" (onOpen)="openAppt = $event" (onNew)="showNew = true" (onOpenCliente)="goCliente($event)"></app-agenda>
             }
             @case ('clientes') {
               <app-clientes #clientesRef [openId]="clienteId" (onOpen)="clienteId = $event" (onClose)="clienteId = null"></app-clientes>
@@ -74,7 +77,8 @@ const TITLES: { [k: string]: [string, string] } = {
             @case ('comissoes') { <app-comissoes (notify)="notify($event)"></app-comissoes> }
             @case ('estoque') { <app-estoque #estoqueRef (notify)="notify($event)"></app-estoque> }
             @case ('fidelidade') { <app-fidelidade #fidelidadeRef (notify)="notify($event)"></app-fidelidade> }
-            @case ('relatorios') { <app-relatorios (notify)="notify($event)"></app-relatorios> }
+            @case ('central')    { <app-central (notify)="notify($event)"></app-central> }
+            @case ('config') { <app-config (notify)="notify($event)"></app-config> }
             @default {
               <app-coming-soon [title]="TITLES[route] ? TITLES[route][0] : 'Em breve'"></app-coming-soon>
             }
@@ -82,6 +86,9 @@ const TITLES: { [k: string]: [string, string] } = {
         </div>
       </div>
 
+      @if (showNotif) {
+        <app-notifications-panel (close)="showNotif = false"></app-notifications-panel>
+      }
       @if (showNew) {
         <app-novo-agendamento (close)="showNew = false" (save)="addAppt($event)"></app-novo-agendamento>
       }
@@ -96,7 +103,8 @@ const TITLES: { [k: string]: [string, string] } = {
           {{ toast }}
         </div>
       }
-    </div>`,
+    </div>
+    }`,
 })
 export class AppComponent {
   readonly TITLES = TITLES;
@@ -107,9 +115,11 @@ export class AppComponent {
   @ViewChild('fidelidadeRef') fidelidadeRef?: any;
   @ViewChild('clientesRef') clientesRef?: any;
 
+  loggedIn = false;
   route = 'dashboard';
   appts: Appt[] = this.data.hoje.map(a => ({ ...a }));
   showNew = false;
+  showNotif = false;
   openAppt: Appt | null = null;
   clienteId: string | null = null;
   toast: string | null = null;
@@ -118,8 +128,7 @@ export class AppComponent {
 
   private readonly NEW_LABELS: { [k: string]: string } = {
     agenda:        'Novo agendamento',
-    agendamentos:  'Novo agendamento',
-    clientes:      'Novo cliente',
+      clientes:      'Novo cliente',
     servicos:      'Novo serviço',
     equipe:        'Novo profissional',
     estoque:       'Novo produto',

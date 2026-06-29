@@ -28,7 +28,6 @@ import { DataService } from '../data.service';
   <!-- stat-grid -->
   <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
 
-    <!-- CStat: Total em comissões -->
     <div class="stat" style="flex-direction:row;align-items:center;gap:14px">
       <div class="stat-ico" style="background:var(--accent-soft);width:44px;height:44px">
         <app-icon name="coins" [size]="21" style="color:var(--accent)"></app-icon>
@@ -39,7 +38,6 @@ import { DataService } from '../data.service';
       </div>
     </div>
 
-    <!-- CStat: A pagar -->
     <div class="stat" style="flex-direction:row;align-items:center;gap:14px">
       <div class="stat-ico" style="background:var(--st-pendente-bg);width:44px;height:44px">
         <app-icon name="clock" [size]="21" style="color:var(--st-pendente)"></app-icon>
@@ -50,7 +48,6 @@ import { DataService } from '../data.service';
       </div>
     </div>
 
-    <!-- CStat: Já pago -->
     <div class="stat" style="flex-direction:row;align-items:center;gap:14px">
       <div class="stat-ico" style="background:var(--st-atendimento-bg);width:44px;height:44px">
         <app-icon name="check" [size]="21" style="color:var(--st-atendimento)"></app-icon>
@@ -117,6 +114,9 @@ import { DataService } from '../data.service';
         <div class="row" style="gap:8px">
           <button class="btn btn-ghost btn-sm" style="flex:1" (click)="recibo=d">
             <app-icon name="download" [size]="14"></app-icon> Recibo
+          </button>
+          <button class="btn btn-ghost btn-sm" style="flex:1" (click)="historico=d">
+            <app-icon name="clock" [size]="14"></app-icon> Histórico
           </button>
           @if (d.c.status === 'aberto') {
             <button class="btn btn-primary btn-sm" style="flex:1"
@@ -191,6 +191,99 @@ import { DataService } from '../data.service';
     </app-modal>
   }
 
+  <!-- histórico modal -->
+  @if (historico) {
+    <app-modal title="Histórico de pagamentos" [wide]="true" (close)="historico=null">
+
+      <div style="text-align:center;padding-bottom:6px">
+        <div style="font-weight:800;font-size:17px;letter-spacing:-0.01em">{{ data.estabelecimento.nome }}</div>
+        <div class="muted" style="font-size:13px">Histórico de comissões pagas</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row" style="gap:12px">
+        <app-avatar [nome]="historico.p.nome" [cor]="historico.p.cor" [size]="42"></app-avatar>
+        <div class="col" style="line-height:1.3">
+          <span style="font-weight:700;font-size:15px">{{ historico.p.nome }}</span>
+          <span class="muted" style="font-size:12.5px">Comissão de {{ historico.p.comissao }}% · {{ histProf.length }} períodos registrados</span>
+        </div>
+      </div>
+
+      <!-- mini KPIs -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div style="background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px">
+          <div class="muted" style="font-size:11.5px">Total recebido</div>
+          <div class="tnum" style="font-weight:800;font-size:15px;color:var(--accent-text)">{{ data.money(histTotalProf) }}</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px">
+          <div class="muted" style="font-size:11.5px">Atendimentos</div>
+          <div class="tnum" style="font-weight:800;font-size:15px">{{ histAtendProf }}</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px">
+          <div class="muted" style="font-size:11.5px">Média / período</div>
+          <div class="tnum" style="font-weight:800;font-size:15px">{{ data.money(histMediaProf) }}</div>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md)">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th style="text-align:center">Atend.</th>
+              <th style="text-align:right">Faturado</th>
+              <th style="text-align:right">Comissão</th>
+              <th>Data pgto</th>
+              <th>Forma</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (h of histProf; track h.id) {
+              <tr>
+                <td style="font-weight:600;font-size:13px">{{ h.periodo }}</td>
+                <td class="tnum muted" style="text-align:center;font-size:13px">{{ h.atendimentos }}</td>
+                <td class="tnum" style="text-align:right;font-size:13px">{{ data.money(h.bruto) }}</td>
+                <td class="tnum" style="text-align:right;font-weight:700;color:var(--accent-text)">{{ data.money(h.comissao) }}</td>
+                <td class="mono muted" style="font-size:12.5px">{{ h.dataPagamento ? data.fmtDataFull(h.dataPagamento) : '—' }}</td>
+                <td>
+                  @if (h.formaPagamento) {
+                    <span class="tag" style="border-color:transparent"
+                          [style.background]="FORMA_BG[h.formaPagamento]"
+                          [style.color]="FORMA_COR[h.formaPagamento]">{{ FORMA_LABEL[h.formaPagamento] }}</span>
+                  }
+                </td>
+                <td>
+                  @if (h.status === 'pago') {
+                    <span class="pill pill-confirmado"><app-icon name="check" [size]="11"></app-icon> Pago</span>
+                  } @else {
+                    <span class="pill pill-pendente"><span class="pdot"></span> Aberto</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="7"><div class="empty">Nenhum registro encontrado.</div></td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row" style="padding:12px 14px;background:var(--accent-soft);border-radius:var(--r-md)">
+        <span style="font-weight:700;color:var(--accent-text)">Total recebido (histórico)</span>
+        <span class="tnum" style="margin-left:auto;font-weight:800;font-size:18px;color:var(--accent-text)">{{ data.money(histTotalProf) }}</span>
+      </div>
+
+      <div modalFoot>
+        <button class="btn btn-ghost" (click)="historico=null">Fechar</button>
+        <button class="btn btn-primary" (click)="historico=null; notify.emit('Histórico de ' + historico.p.apelido + ' exportado em PDF')">
+          <app-icon name="download" [size]="15"></app-icon> Exportar PDF
+        </button>
+      </div>
+
+    </app-modal>
+  }
+
 </div>
 `,
 })
@@ -199,6 +292,11 @@ export class ComissoesComponent {
 
   periodo = 'quinzena';
   recibo: any = null;
+  historico: any = null;
+
+  readonly FORMA_LABEL: any = { pix: 'Pix', dinheiro: 'Dinheiro', cartao: 'Cartão' };
+  readonly FORMA_COR: any = { pix: 'var(--st-atendimento)', dinheiro: 'var(--accent)', cartao: '#7c3aed' };
+  readonly FORMA_BG: any = { pix: 'var(--st-atendimento-bg)', dinheiro: 'var(--accent-soft)', cartao: '#ede9fe' };
 
   constructor(public data: DataService) {}
 
@@ -218,15 +316,18 @@ export class ComissoesComponent {
     return this.data.staff.map(p => this.calc(p.id));
   }
 
-  get totalComissao() {
-    return this.dados.reduce((s, d) => s + d.comissao, 0);
+  get totalComissao() { return this.dados.reduce((s, d) => s + d.comissao, 0); }
+  get aPagar() { return this.dados.filter(d => d.c.status === 'aberto').reduce((s, d) => s + d.comissao, 0); }
+  get pago() { return this.dados.filter(d => d.c.status === 'pago').reduce((s, d) => s + d.comissao, 0); }
+
+  get histProf() {
+    if (!this.historico) return [];
+    return [...this.data.historicoComissoes]
+      .filter(h => h.profId === this.historico.p.id)
+      .sort((a, b) => b.dataInicio.localeCompare(a.dataInicio));
   }
 
-  get aPagar() {
-    return this.dados.filter(d => d.c.status === 'aberto').reduce((s, d) => s + d.comissao, 0);
-  }
-
-  get pago() {
-    return this.dados.filter(d => d.c.status === 'pago').reduce((s, d) => s + d.comissao, 0);
-  }
+  get histTotalProf() { return this.histProf.filter(h => h.status === 'pago').reduce((s, h) => s + h.comissao, 0); }
+  get histAtendProf() { return this.histProf.reduce((s, h) => s + h.atendimentos, 0); }
+  get histMediaProf() { const p = this.histProf.filter(h => h.status === 'pago'); return p.length ? Math.round(this.histTotalProf / p.length) : 0; }
 }

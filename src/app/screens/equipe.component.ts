@@ -210,7 +210,7 @@ import { DataService, Staff } from '../data.service';
 
         </div>
 
-        <div modalFoot style="display:flex;justify-content:flex-end;gap:8px">
+        <div modalFoot>
           <button class="btn" (click)="closeModal()">Cancelar</button>
           <button class="btn btn-primary" (click)="salvar()">
             {{ editando ? 'Salvar alterações' : 'Adicionar profissional' }}

@@ -279,7 +279,7 @@ import type { Produto } from '../data.service';
 
       </div>
 
-      <div modalFoot style="display:flex;justify-content:flex-end;gap:8px">
+      <div modalFoot>
         <button class="btn" (click)="closeModal()">Cancelar</button>
         <button class="btn btn-primary" (click)="salvarMov()" [disabled]="movQtd < 1">
           {{ modalTipo === 'entrada' ? 'Registrar entrada' : 'Registrar saída' }}
@@ -337,7 +337,7 @@ import type { Produto } from '../data.service';
 
       </div>
 
-      <div modalFoot style="display:flex;justify-content:flex-end;gap:8px">
+      <div modalFoot>
         <button class="btn" (click)="closeModal()">Cancelar</button>
         <button class="btn btn-primary" (click)="salvarProduto()">
           {{ modalTipo === 'novo' ? 'Criar produto' : 'Salvar alterações' }}

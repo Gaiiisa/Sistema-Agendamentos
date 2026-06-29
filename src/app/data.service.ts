@@ -54,7 +54,12 @@ export interface Financeiro {
 export interface ComissaoItem { data: string; cli: string; srv: string; valor: number; }
 export interface Comissao { status: string; itens: ComissaoItem[]; }
 export interface Campanha { id: string; nome: string; tipo: string; alvo: string; publico: number; enviadas: number; retorno: number; taxa: number; status: string; cor: string; }
-export interface Modelo { id: string; nome: string; gatilho: string; texto: string; }
+export interface Modelo { id: string; nome: string; desc: string; cat: string; gatilho: string; canal: string; assunto: string; texto: string; status: string; }
+export interface HistoricoComissaoPagamento {
+  id: string; profId: string; periodo: string; dataInicio: string; dataFim: string;
+  atendimentos: number; bruto: number; comissao: number;
+  status: 'pago' | 'aberto'; dataPagamento?: string; formaPagamento?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -293,6 +298,26 @@ export class DataService {
     ]},
   };
 
+  // ---------- FASE 2 · Histórico de pagamentos de comissão ----------
+  readonly historicoComissoes: HistoricoComissaoPagamento[] = [
+    { id: 'hc1',  profId: 'p1', periodo: '16–30 de maio',  dataInicio: '2026-05-16', dataFim: '2026-05-30', atendimentos: 22, bruto: 1540, comissao: 770, status: 'pago', dataPagamento: '2026-05-31', formaPagamento: 'pix' },
+    { id: 'hc2',  profId: 'p1', periodo: '01–15 de maio',  dataInicio: '2026-05-01', dataFim: '2026-05-15', atendimentos: 19, bruto: 1330, comissao: 665, status: 'pago', dataPagamento: '2026-05-16', formaPagamento: 'pix' },
+    { id: 'hc3',  profId: 'p1', periodo: '16–30 de abril', dataInicio: '2026-04-16', dataFim: '2026-04-30', atendimentos: 18, bruto: 1260, comissao: 630, status: 'pago', dataPagamento: '2026-05-01', formaPagamento: 'dinheiro' },
+    { id: 'hc4',  profId: 'p1', periodo: '01–15 de abril', dataInicio: '2026-04-01', dataFim: '2026-04-15', atendimentos: 20, bruto: 1400, comissao: 700, status: 'pago', dataPagamento: '2026-04-16', formaPagamento: 'pix' },
+    { id: 'hc5',  profId: 'p2', periodo: '16–30 de maio',  dataInicio: '2026-05-16', dataFim: '2026-05-30', atendimentos: 16, bruto: 880,  comissao: 396, status: 'pago', dataPagamento: '2026-05-31', formaPagamento: 'pix' },
+    { id: 'hc6',  profId: 'p2', periodo: '01–15 de maio',  dataInicio: '2026-05-01', dataFim: '2026-05-15', atendimentos: 14, bruto: 770,  comissao: 347, status: 'pago', dataPagamento: '2026-05-16', formaPagamento: 'dinheiro' },
+    { id: 'hc7',  profId: 'p2', periodo: '16–30 de abril', dataInicio: '2026-04-16', dataFim: '2026-04-30', atendimentos: 15, bruto: 825,  comissao: 371, status: 'pago', dataPagamento: '2026-05-01', formaPagamento: 'pix' },
+    { id: 'hc8',  profId: 'p2', periodo: '01–15 de abril', dataInicio: '2026-04-01', dataFim: '2026-04-15', atendimentos: 13, bruto: 715,  comissao: 322, status: 'pago', dataPagamento: '2026-04-16', formaPagamento: 'pix' },
+    { id: 'hc9',  profId: 'p3', periodo: '16–30 de maio',  dataInicio: '2026-05-16', dataFim: '2026-05-30', atendimentos: 11, bruto: 660,  comissao: 297, status: 'pago', dataPagamento: '2026-05-31', formaPagamento: 'pix' },
+    { id: 'hc10', profId: 'p3', periodo: '01–15 de maio',  dataInicio: '2026-05-01', dataFim: '2026-05-15', atendimentos: 10, bruto: 600,  comissao: 270, status: 'pago', dataPagamento: '2026-05-16', formaPagamento: 'dinheiro' },
+    { id: 'hc11', profId: 'p3', periodo: '16–30 de abril', dataInicio: '2026-04-16', dataFim: '2026-04-30', atendimentos: 12, bruto: 720,  comissao: 324, status: 'pago', dataPagamento: '2026-05-01', formaPagamento: 'pix' },
+    { id: 'hc12', profId: 'p3', periodo: '01–15 de abril', dataInicio: '2026-04-01', dataFim: '2026-04-15', atendimentos: 9,  bruto: 540,  comissao: 243, status: 'pago', dataPagamento: '2026-04-16', formaPagamento: 'pix' },
+    { id: 'hc13', profId: 'p4', periodo: '16–30 de maio',  dataInicio: '2026-05-16', dataFim: '2026-05-30', atendimentos: 10, bruto: 450,  comissao: 180, status: 'pago', dataPagamento: '2026-05-31', formaPagamento: 'dinheiro' },
+    { id: 'hc14', profId: 'p4', periodo: '01–15 de maio',  dataInicio: '2026-05-01', dataFim: '2026-05-15', atendimentos: 9,  bruto: 405,  comissao: 162, status: 'pago', dataPagamento: '2026-05-16', formaPagamento: 'pix' },
+    { id: 'hc15', profId: 'p4', periodo: '16–30 de abril', dataInicio: '2026-04-16', dataFim: '2026-04-30', atendimentos: 8,  bruto: 360,  comissao: 144, status: 'pago', dataPagamento: '2026-05-01', formaPagamento: 'pix' },
+    { id: 'hc16', profId: 'p4', periodo: '01–15 de abril', dataInicio: '2026-04-01', dataFim: '2026-04-15', atendimentos: 11, bruto: 495,  comissao: 198, status: 'pago', dataPagamento: '2026-04-16', formaPagamento: 'dinheiro' },
+  ];
+
   // ---------- FASE 3 · Fidelidade & Marketing ----------
   readonly fidelidade = {
     tipo: 'pontos', meta: 10, recompensa: '1 corte grátis', cashbackPct: 5,
@@ -305,10 +330,10 @@ export class DataService {
     { id: 'cp4', nome: 'Terça do Degradê', tipo: 'promo', alvo: 'Todos', publico: 210, enviadas: 0, retorno: 0, taxa: 0, status: 'rascunho', cor: 'var(--text-3)' },
   ];
   readonly modelos: Modelo[] = [
-    { id: 'md1', nome: 'Confirmação imediata', gatilho: 'Ao agendar', texto: 'Olá {cliente}! Seu horário na {estabelecimento} está confirmado para {data} às {hora} com {profissional}. Qualquer coisa, é só responder aqui. 💈' },
-    { id: 'md2', nome: 'Lembrete véspera', gatilho: '1 dia antes', texto: 'Oi {cliente}, passando pra lembrar do seu horário amanhã às {hora}. Confirma pra mim? Responda SIM ou NÃO.' },
-    { id: 'md3', nome: 'Retorno (cliente sumido)', gatilho: '60 dias sem voltar', texto: 'E aí {cliente}, sentimos sua falta! Que tal dar um trato no visual? Tem horário essa semana. 😎' },
-    { id: 'md4', nome: 'Aniversário', gatilho: 'No aniversário', texto: 'Parabéns, {cliente}! 🎉 Pra comemorar, você tem 20% off no seu próximo corte esse mês. Vem!' },
+    { id: 'md1', nome: 'Confirmação imediata',   desc: 'Confirmação automática ao criar o agendamento',  cat: 'Agendamento', gatilho: 'agendamento_criado',   canal: 'whatsapp', assunto: '', texto: 'Olá {nome_cliente}! Seu horário na {nome_empresa} está confirmado para {data_agendamento} às {hora_agendamento} com {profissional}. Qualquer coisa, é só responder aqui. 💈', status: 'ativo'    },
+    { id: 'md2', nome: 'Lembrete véspera',        desc: 'Enviado 1 dia antes do atendimento',             cat: 'Agendamento', gatilho: 'lembrete_agendamento', canal: 'whatsapp', assunto: '', texto: 'Oi {nome_cliente}, passando pra lembrar do seu horário amanhã às {hora_agendamento}. Confirma pra mim? Responda SIM ou NÃO.',                                                            status: 'ativo'    },
+    { id: 'md3', nome: 'Retorno (cliente sumido)', desc: 'Para clientes sem visita há 60+ dias',           cat: 'Retenção',   gatilho: 'cliente_inativo',     canal: 'whatsapp', assunto: '', texto: 'E aí {nome_cliente}, sentimos sua falta! Que tal dar um trato no visual? Tem horário essa semana. 😎',                                                                                   status: 'ativo'    },
+    { id: 'md4', nome: 'Aniversário',             desc: 'Parabéns com oferta especial no aniversário',    cat: 'Fidelidade',  gatilho: 'aniversario',         canal: 'whatsapp', assunto: '', texto: 'Parabéns, {nome_cliente}! 🎉 Pra comemorar, você tem 20% off no próximo corte. Use o cupom {cupom} até {validade_cupom}. Vem!',                                                       status: 'ativo'    },
   ];
 
   // ---------- FASE 3 · Relatórios / BI ----------
@@ -431,6 +456,23 @@ export class DataService {
     const c = this.campanhas.find(c => c.id === id);
     if (c) Object.assign(c, changes);
     this.api.put('/campanhas/' + id, changes).subscribe({ error: () => {} });
+  }
+
+  addModelo(m: Omit<Modelo, 'id'>) {
+    const novo = { ...m, id: 'mdn' + Date.now() } as Modelo;
+    this.modelos.push(novo);
+    this.api.post('/modelos', novo).subscribe({ error: () => {} });
+  }
+
+  updateModelo(id: string, changes: Partial<Modelo>) {
+    const m = this.modelos.find(m => m.id === id);
+    if (m) Object.assign(m, changes);
+    this.api.put('/modelos/' + id, changes).subscribe({ error: () => {} });
+  }
+
+  removeModelo(id: string) {
+    const idx = this.modelos.findIndex(m => m.id === id);
+    if (idx >= 0) this.modelos.splice(idx, 1);
   }
 
   addCampanha(c: Omit<Campanha, 'id' | 'enviadas' | 'retorno' | 'taxa'>) {
@@ -583,5 +625,6 @@ export class DataService {
   toMin = (hhmm: string) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
   fromMin = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
   fmtData = (iso: string) => { const [, m, d] = iso.split('-'); return `${d}/${m}`; };
+  fmtDataFull = (iso: string) => { const [y, m, d] = iso.split('-'); return `${d}/${m}/${y.slice(2)}`; };
   diasDesde = (iso: string) => Math.round((+new Date('2026-06-09') - +new Date(iso)) / 86400000);
 }

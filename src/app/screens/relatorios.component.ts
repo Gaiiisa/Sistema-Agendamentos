@@ -317,7 +317,7 @@ import { DataService } from '../data.service';
             </span>
             <span class="muted" style="font-size:12px">Gasto total: {{ data.money(c.total) }}</span>
           </div>
-          <button class="btn btn-subtle btn-sm"
+          <button class="btn btn-whatsapp btn-sm"
                   (click)="notify.emit('Mensagem de reativação enviada para ' + c.nome)">
             <app-icon name="whatsapp" [size]="14"></app-icon> Reativar
           </button>

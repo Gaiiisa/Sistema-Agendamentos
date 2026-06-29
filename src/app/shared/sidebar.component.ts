@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, AfterViewInit, signal } from '@angular/core';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from './avatar.component';
 import { DataService } from '../data.service';
@@ -16,7 +16,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
         <div class="tn-logo">
           <app-icon name="scissors" [size]="15" style="color:var(--topbar-text)"></app-icon>
         </div>
-        <span class="tn-brand-name">{{ data.estabelecimento.nome }}</span>
+        <span class="tn-brand-name">{{ brandName }}</span>
       </div>
 
       <div class="tn-groups" #container (mouseleave)="resetIndicator()">
@@ -49,7 +49,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
         <button class="tn-icon-btn tn-hide-mobile" title="Configurações" (click)="navigate('config')">
           <app-icon name="settings" [size]="16"></app-icon>
         </button>
-        <button class="tn-icon-btn" title="Notificações" style="position:relative">
+        <button class="tn-icon-btn" title="Notificações" style="position:relative" (click)="onNotif.emit()">
           <span class="tn-dot"></span>
           <app-icon name="bell" [size]="16"></app-icon>
         </button>
@@ -102,6 +102,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
 export class SidebarComponent implements OnChanges, AfterViewInit {
   @Input() active = '';
   @Output() nav = new EventEmitter<string>();
+  @Output() onNotif = new EventEmitter<void>();
 
   @ViewChild('container') container!: ElementRef<HTMLElement>;
   @ViewChildren('btn') btns!: QueryList<ElementRef<HTMLElement>>;
@@ -115,7 +116,6 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   readonly ALL_NAV: NavItem[] = [
     { id: 'dashboard',    label: 'Dashboard',   icon: 'dashboard' },
     { id: 'agenda',       label: 'Agenda',       icon: 'calendar', badge: '15' },
-    { id: 'agendamentos', label: 'Agendamentos', icon: 'list' },
     { id: 'clientes',     label: 'Clientes',     icon: 'users' },
     { id: 'servicos',     label: 'Serviços',     icon: 'scissors' },
     { id: 'equipe',       label: 'Equipe',       icon: 'team' },
@@ -123,7 +123,7 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     { id: 'comissoes',    label: 'Comissões',    icon: 'coins' },
     { id: 'estoque',      label: 'Estoque',      icon: 'box' },
     { id: 'fidelidade',   label: 'Fidelidade',   icon: 'gift' },
-    { id: 'relatorios',   label: 'Relatórios',   icon: 'chart' },
+    { id: 'central',      label: 'Central',       icon: 'bell' },
   ];
 
   // 4 itens primários na bottom bar
@@ -136,18 +136,19 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
 
   // Itens restantes no sheet "Mais"
   readonly MORE_NAV: NavItem[] = [
-    { id: 'agendamentos', label: 'Agendamentos', icon: 'list' },
     { id: 'servicos',     label: 'Serviços',     icon: 'scissors' },
     { id: 'equipe',       label: 'Equipe',       icon: 'team' },
     { id: 'comissoes',    label: 'Comissões',    icon: 'coins' },
     { id: 'estoque',      label: 'Estoque',      icon: 'box' },
     { id: 'fidelidade',   label: 'Fidelidade',   icon: 'gift' },
-    { id: 'relatorios',   label: 'Relatórios',   icon: 'chart' },
+    { id: 'central',      label: 'Central',       icon: 'bell' },
   ];
 
   get isMoreActive(): boolean {
     return this.MORE_NAV.some(i => i.id === this.active);
   }
+
+  get brandName(): string { return this.data.estabelecimento.nome.split(' ')[0]; }
 
   constructor(public data: DataService) {
     const saved = localStorage.getItem('app-theme');
