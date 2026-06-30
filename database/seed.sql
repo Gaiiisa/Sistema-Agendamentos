@@ -33,13 +33,28 @@ TRUNCATE TABLE profissional_especialidades;
 TRUNCATE TABLE profissional_ferias;
 TRUNCATE TABLE profissional_folgas;
 TRUNCATE TABLE profissionais;
+TRUNCATE TABLE estabelecimento_horarios;
 TRUNCATE TABLE integracoes;
 TRUNCATE TABLE estabelecimentos;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ---------- Estabelecimento ----------
-INSERT INTO estabelecimentos (id, nome, plano, slug, cidade, cor_primaria) VALUES
-('e1', 'Navalha & Cia', 'Profissional', 'navalha-e-cia', 'São Paulo · SP', '#0e9f6e');
+INSERT INTO estabelecimentos
+  (id, nome, plano, slug, documento, tipo_negocio, cidade, cep, telefone, endereco, descricao, instagram, cor_primaria) VALUES
+('e1', 'Navalha & Cia', 'Profissional', 'navalha-e-cia', '12.345.678/0001-90', 'Barbearia',
+ 'São Paulo · SP', '01310-000', '(11) 3456-7890', 'Rua das Flores, 210 — Centro',
+ 'Barbearia premium no coração de SP. Cortes masculinos, barba e estética com os melhores profissionais.',
+ 'navalhaecia', '#0e9f6e');
+
+-- ---------- Horário de funcionamento (Seg–Sex 09–20, Sáb 09–18, Dom fechado; pausa 12:00–13:30) ----------
+INSERT INTO estabelecimento_horarios (estabelecimento_id, dia_semana, aberto, hora_inicio, hora_fim, pausa_inicio, pausa_fim) VALUES
+('e1',1,TRUE ,'09:00','20:00','12:00','13:30'),
+('e1',2,TRUE ,'09:00','20:00','12:00','13:30'),
+('e1',3,TRUE ,'09:00','20:00','12:00','13:30'),
+('e1',4,TRUE ,'09:00','20:00','12:00','13:30'),
+('e1',5,TRUE ,'09:00','20:00','12:00','13:30'),
+('e1',6,TRUE ,'09:00','18:00',NULL,NULL),
+('e1',0,FALSE,'10:00','16:00',NULL,NULL);
 
 -- ---------- Profissionais ----------
 INSERT INTO profissionais (id, estabelecimento_id, nome, apelido, cor, comissao_pct, contato, bio, meta_mensal, hora_inicio, hora_fim) VALUES
@@ -59,8 +74,11 @@ INSERT INTO profissional_especialidades (profissional_id, especialidade) VALUES
 ('p4','Corte'),('p4','Infantil'),('p4','Tesoura');
 
 -- ---------- Usuário (dono) ----------
-INSERT INTO usuarios (id, estabelecimento_id, nome, email, senha_hash, papel, cor, profissional_id) VALUES
-('u1','e1','Carlos Menezes','carlos@navalhaecia.com','$2b$10$exemploHashTrocarEmProducao0000000000000000000000','dono','#0e9f6e',NULL);
+-- Sem senha utilizável de propósito (não versionar credenciais). Para habilitar o
+-- login, rode:  node api/criar-admin.mjs   (gera/define a senha com hash bcrypt).
+-- '!' não é hash bcrypt válido => bcrypt.compare sempre falha até o reset.
+INSERT INTO usuarios (id, estabelecimento_id, nome, email, senha_hash, papel, ativo, cor, profissional_id) VALUES
+('u1','e1','Carlos Menezes','carlos@navalhaecia.com','!sem-senha-definida','dono',TRUE,'#0e9f6e',NULL);
 
 -- ---------- Serviços ----------
 INSERT INTO servicos (id, estabelecimento_id, nome, categoria, duracao_min, preco, custo, descricao, cor, combo, exige_sinal) VALUES
@@ -255,11 +273,13 @@ INSERT INTO contas_receber (id, estabelecimento_id, cliente_id, descricao, valor
 ('r6','e1','c10','Corte + Barba (fiado)',        70, DATE_SUB(CURRENT_DATE(), INTERVAL 20 DAY));
 
 -- ---------- Comissões (fechamento da quinzena) ----------
-INSERT INTO fechamentos_comissao (id, estabelecimento_id, profissional_id, periodo_inicio, periodo_fim, status, valor_pago, pago_em) VALUES
-('fc1','e1','p1','2026-06-01','2026-06-15','aberto',NULL,NULL),
-('fc2','e1','p2','2026-06-01','2026-06-15','aberto',NULL,NULL),
-('fc3','e1','p3','2026-06-01','2026-06-15','aberto',NULL,NULL),
-('fc4','e1','p4','2026-06-01','2026-06-15','pago',34.00,CONCAT(CURRENT_DATE(),' 18:00:00'));
+-- Fechamentos abertos: bruto/comissão são calculados ao vivo (vw_comissao_itens) até o fechamento.
+INSERT INTO fechamentos_comissao
+  (id, estabelecimento_id, profissional_id, periodo_inicio, periodo_fim, status, qtd_atendimentos, valor_bruto, valor_comissao, valor_pago, forma_pagamento, pago_em) VALUES
+('fc1','e1','p1','2026-06-01','2026-06-15','aberto',0,0,0,NULL,NULL,NULL),
+('fc2','e1','p2','2026-06-01','2026-06-15','aberto',0,0,0,NULL,NULL,NULL),
+('fc3','e1','p3','2026-06-01','2026-06-15','aberto',0,0,0,NULL,NULL,NULL),
+('fc4','e1','p4','2026-06-01','2026-06-15','pago',2,85.00,34.00,34.00,'pix',CONCAT(CURRENT_DATE(),' 18:00:00'));
 
 -- ---------- Fidelidade ----------
 INSERT INTO config_fidelidade (estabelecimento_id, tipo, meta_pontos, recompensa, cashback_pct, ativo) VALUES
@@ -272,8 +292,8 @@ INSERT INTO campanhas (id, estabelecimento_id, nome, tipo, alvo, cor, status) VA
 ('cp3','e1','Combo Corte+Barba -20%','promo','Tag: VIP','var(--accent)','agendada'),
 ('cp4','e1','Terça do Degradê','promo','Todos','var(--text-3)','rascunho');
 
-INSERT INTO modelos_mensagem (id, estabelecimento_id, nome, gatilho, texto) VALUES
-('md1','e1','Confirmação imediata','Ao agendar','Olá {cliente}! Seu horário na {estabelecimento} está confirmado para {data} às {hora} com {profissional}. Qualquer coisa, é só responder aqui. 💈'),
-('md2','e1','Lembrete véspera','1 dia antes','Oi {cliente}, passando pra lembrar do seu horário amanhã às {hora}. Confirma pra mim? Responda SIM ou NÃO.'),
-('md3','e1','Retorno (cliente sumido)','60 dias sem voltar','E aí {cliente}, sentimos sua falta! Que tal dar um trato no visual? Tem horário essa semana. 😎'),
-('md4','e1','Aniversário','No aniversário','Parabéns, {cliente}! 🎉 Pra comemorar, você tem 20% off no seu próximo corte esse mês. Vem!');
+INSERT INTO modelos_mensagem (id, estabelecimento_id, nome, descricao, categoria, gatilho, canal, assunto, texto, status) VALUES
+('md1','e1','Confirmação imediata','Confirmação automática ao criar o agendamento','Agendamento','agendamento_criado','whatsapp','','Olá {cliente}! Seu horário na {estabelecimento} está confirmado para {data} às {hora} com {profissional}. Qualquer coisa, é só responder aqui. 💈','ativo'),
+('md2','e1','Lembrete véspera','Enviado 1 dia antes do atendimento','Agendamento','lembrete_agendamento','whatsapp','','Oi {cliente}, passando pra lembrar do seu horário amanhã às {hora}. Confirma pra mim? Responda SIM ou NÃO.','ativo'),
+('md3','e1','Retorno (cliente sumido)','Para clientes sem visita há 60+ dias','Retenção','cliente_inativo','whatsapp','','E aí {cliente}, sentimos sua falta! Que tal dar um trato no visual? Tem horário essa semana. 😎','ativo'),
+('md4','e1','Aniversário','Parabéns com oferta especial no aniversário','Fidelidade','aniversario','whatsapp','','Parabéns, {cliente}! 🎉 Pra comemorar, você tem 20% off no seu próximo corte esse mês. Vem!','ativo');

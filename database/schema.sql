@@ -26,9 +26,17 @@ CREATE TABLE estabelecimentos (
   nome        VARCHAR(255) NOT NULL,
   plano       VARCHAR(255) NOT NULL DEFAULT 'Profissional',
   slug        VARCHAR(120) UNIQUE,                     -- usado na página pública de agendamento
+  documento   VARCHAR(20),                             -- CNPJ ou CPF (tela Configurações › Estabelecimento)
+  tipo_negocio VARCHAR(60) NOT NULL DEFAULT 'Barbearia', -- Barbearia, Salão, Studio, Clínica...
   cidade      VARCHAR(255),
+  cep         VARCHAR(9),
   telefone    VARCHAR(20),
   endereco    VARCHAR(255),
+  descricao   TEXT,                                    -- texto exibido no link público de agendamento
+  -- redes sociais (tela Configurações › Estabelecimento)
+  instagram      VARCHAR(120),
+  site           VARCHAR(255),
+  google_perfil  VARCHAR(255),
   fuso_horario VARCHAR(64) NOT NULL DEFAULT 'America/Sao_Paulo',
   -- identidade visual (alimenta a página pública)
   logo_url        TEXT,
@@ -53,6 +61,24 @@ CREATE TABLE integracoes (
   confirmacao_imediata BOOLEAN NOT NULL DEFAULT TRUE,   -- mensagem ao agendar
   lembrete_vespera     BOOLEAN NOT NULL DEFAULT TRUE,   -- lembrete 1 dia antes
   atualizado_em        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE
+);
+
+-- Horário de funcionamento por dia da semana (tela Configurações › Horários).
+-- dia_semana: 0=domingo ... 6=sábado. Define a janela em que a agenda online
+-- aceita marcações e o intervalo de pausa (almoço). Difere de profissional_folgas
+-- (folga individual) e de bloqueios_agenda (bloqueio pontual por data).
+CREATE TABLE estabelecimento_horarios (
+  estabelecimento_id CHAR(36) NOT NULL,
+  dia_semana   SMALLINT NOT NULL CHECK (dia_semana BETWEEN 0 AND 6),
+  aberto       BOOLEAN NOT NULL DEFAULT TRUE,
+  hora_inicio  TIME NOT NULL DEFAULT '09:00',
+  hora_fim     TIME NOT NULL DEFAULT '19:00',
+  pausa_inicio TIME,                                   -- início do almoço/pausa (NULL = sem pausa)
+  pausa_fim    TIME,
+  PRIMARY KEY (estabelecimento_id, dia_semana),
+  CHECK (hora_fim > hora_inicio),
+  CHECK (pausa_inicio IS NULL OR pausa_fim IS NULL OR pausa_fim > pausa_inicio),
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE
 );
 
@@ -109,11 +135,13 @@ CREATE TABLE usuarios (
   estabelecimento_id CHAR(36) NOT NULL,
   nome               VARCHAR(255) NOT NULL,
   email              VARCHAR(255) NOT NULL,
-  senha_hash         TEXT NOT NULL,
+  senha_hash         TEXT NOT NULL,                       -- bcrypt (nunca senha em texto puro)
   papel              ENUM('dono', 'admin', 'gerente', 'profissional', 'recepcao') NOT NULL DEFAULT 'profissional',
+  ativo              BOOLEAN NOT NULL DEFAULT TRUE,        -- status: inativo/bloqueado não loga
   cor                VARCHAR(7),
   profissional_id    CHAR(36),
   criado_em          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE (estabelecimento_id, email),                  -- email único por estabelecimento (multi-tenant)
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE,
   FOREIGN KEY (profissional_id) REFERENCES profissionais(id) ON DELETE SET NULL
@@ -420,7 +448,11 @@ CREATE TABLE fechamentos_comissao (
   periodo_inicio     DATE NOT NULL,
   periodo_fim        DATE NOT NULL,
   status             ENUM('aberto', 'pago') NOT NULL DEFAULT 'aberto',
-  valor_pago         NUMERIC(10,2),
+  qtd_atendimentos   INTEGER NOT NULL DEFAULT 0,           -- nº de atendimentos no fechamento
+  valor_bruto        NUMERIC(10,2) NOT NULL DEFAULT 0,     -- soma dos serviços do período
+  valor_comissao     NUMERIC(10,2) NOT NULL DEFAULT 0,     -- comissão calculada (base do pagamento)
+  valor_pago         NUMERIC(10,2),                        -- valor efetivamente pago
+  forma_pagamento    ENUM('pix', 'cartao', 'dinheiro'),    -- forma do pagamento da comissão
   pago_em            DATETIME,
   UNIQUE (profissional_id, periodo_inicio, periodo_fim),
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE,
@@ -478,10 +510,30 @@ CREATE TABLE modelos_mensagem (
   id                 CHAR(36) PRIMARY KEY DEFAULT (UUID()),
   estabelecimento_id CHAR(36) NOT NULL,
   nome               VARCHAR(255) NOT NULL,
-  gatilho            TEXT NOT NULL,
+  descricao          VARCHAR(255),                          -- subtítulo do modelo na UI
+  categoria          VARCHAR(60),                           -- Agendamento, Retenção, Fidelidade...
+  gatilho            TEXT NOT NULL,                          -- evento que dispara o envio
+  canal              ENUM('whatsapp', 'email', 'sms', 'app') NOT NULL DEFAULT 'whatsapp',
+  assunto            VARCHAR(255),                           -- usado quando canal = email
   texto              TEXT NOT NULL,
+  status             ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE
 );
+
+-- ============================================================
+-- Índices multi-tenant — quase todas as listagens filtram por estabelecimento_id.
+-- (agendamentos, bloqueios, lancamentos, contas_receber e movimentações já têm
+--  índices próprios definidos junto de suas tabelas.)
+-- ============================================================
+CREATE INDEX idx_profissionais_estab ON profissionais (estabelecimento_id);
+CREATE INDEX idx_servicos_estab      ON servicos (estabelecimento_id);
+CREATE INDEX idx_clientes_estab      ON clientes (estabelecimento_id);
+CREATE INDEX idx_produtos_estab      ON produtos (estabelecimento_id);
+CREATE INDEX idx_fornecedores_estab  ON fornecedores (estabelecimento_id);
+CREATE INDEX idx_campanhas_estab     ON campanhas (estabelecimento_id);
+CREATE INDEX idx_modelos_estab       ON modelos_mensagem (estabelecimento_id);
+CREATE INDEX idx_recorrencias_estab  ON recorrencias (estabelecimento_id);
+CREATE INDEX idx_projetos_estab      ON projetos (estabelecimento_id);
 
 -- ============================================================
 -- Views de exemplo — valores derivados (não armazenados)

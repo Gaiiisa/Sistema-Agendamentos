@@ -13,6 +13,9 @@ export class ApiService {
   bootstrap(): Observable<any> {
     return this.http.get<any>(`${this.base}/bootstrap`);
   }
+  get(path: string): Observable<any> {
+    return this.http.get<any>(`${this.base}${path}`);
+  }
   post(path: string, body: any): Observable<any> {
     return this.http.post<any>(`${this.base}${path}`, body);
   }

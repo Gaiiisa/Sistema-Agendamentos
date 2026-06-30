@@ -155,7 +155,9 @@ async function main() {
     const ini = fmt(ref);
     const fimMes = fmt(new Date(ref.getFullYear(), ref.getMonth() + 1, 0));
     for (const p of profs) {
-      fec.push([mkId(), EST, p.id, ini, fimMes, 'pago', rand(800, 3200), `${fimMes} 18:00:00`]);
+      const bruto = rand(800, 3200);
+      const comissao = Math.round(bruto * Number(p.comissao_pct) / 100);
+      fec.push([mkId(), EST, p.id, ini, fimMes, 'pago', rand(8, 30), bruto, comissao, comissao, pick(FORMAS), `${fimMes} 18:00:00`]);
     }
   }
 
@@ -166,7 +168,7 @@ async function main() {
   await bulk('contas_receber', '(id,estabelecimento_id,cliente_id,descricao,valor,vencimento,agendamento_id,pago_em)', cr);
   await bulk('fidelidade_movimentos', '(id,cliente_id,tipo,pontos,agendamento_id,criado_em)', fid);
   await bulk('campanha_envios', '(id,campanha_id,cliente_id,enviado_em,retornou_em)', env);
-  await bulk('fechamentos_comissao', '(id,estabelecimento_id,profissional_id,periodo_inicio,periodo_fim,status,valor_pago,pago_em)', fec);
+  await bulk('fechamentos_comissao', '(id,estabelecimento_id,profissional_id,periodo_inicio,periodo_fim,status,qtd_atendimentos,valor_bruto,valor_comissao,valor_pago,forma_pagamento,pago_em)', fec);
 
   console.log('Gerado:');
   console.log(`  agendamentos        ${ag.length}`);

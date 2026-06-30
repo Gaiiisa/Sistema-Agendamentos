@@ -63,8 +63,15 @@ export interface HistoricoComissaoPagamento {
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-  readonly estabelecimento = { nome: 'Navalha & Cia', plano: 'Profissional', cidade: 'São Paulo · SP' };
+  readonly estabelecimento = {
+    nome: 'Navalha & Cia', plano: 'Profissional', cidade: 'São Paulo · SP', slug: '',
+    documento: '', tipo_negocio: 'Barbearia', cep: '', telefone: '', endereco: '',
+    descricao: '', instagram: '', site: '', google_perfil: '',
+  };
   readonly usuario = { nome: 'Carlos Menezes', papel: 'Dono / Admin', cor: '#0e9f6e' };
+
+  // ---------- Horário de funcionamento / expediente (Configurações › Horários) ----------
+  expediente: { diaSemana: number; dia: string; abrev: string; aberto: boolean; inicio: string; fim: string; pausaInicio: string | null; pausaFim: string | null }[] = [];
 
   // ---------- Equipe / Profissionais ----------
   readonly staff: Staff[] = [
@@ -271,7 +278,7 @@ export class DataService {
   };
 
   // ---------- FASE 2 · Comissões ----------
-  readonly periodoComissao = '01 – 15 de junho';
+  periodoComissao = '01 – 15 de junho';
   readonly comissoes: { [id: string]: Comissao } = {
     p1: { status: 'aberto', itens: [
       { data: '2026-06-09', cli: 'c4', srv: 's2', valor: 70 },
@@ -393,6 +400,7 @@ export class DataService {
       const b: any = await firstValueFrom(this.api.bootstrap());
       Object.assign(this.estabelecimento, b.estabelecimento);
       Object.assign(this.usuario, b.usuario);
+      this.fill(this.expediente, b.horarios);
       this.fill(this.staff, b.staff);
       this.fill(this.servicos, b.servicos);
       this.fill(this.clientes, b.clientes);
@@ -407,9 +415,12 @@ export class DataService {
       this.fill(this.aReceber, b.aReceber);
       if (b.financeiro) Object.assign(this.financeiro, b.financeiro);
       this.refill(this.comissoes, b.comissoes);
+      if (b.periodoComissao) this.periodoComissao = b.periodoComissao;
+      this.fill(this.historicoComissoes, b.historicoComissoes);
       Object.assign(this.fidelidade, b.fidelidade);
       this.fill(this.campanhas, b.campanhas);
       this.fill(this.modelos, b.modelos);
+      if (b.relatorio) Object.assign(this.relatorio, b.relatorio);
     } catch (e) {
       console.warn('[DataService] API indisponível — usando dados mock locais.', e);
     }
@@ -426,6 +437,17 @@ export class DataService {
     if (!src) return;
     for (const k of Object.keys(obj)) delete obj[k];
     Object.assign(obj, src);
+  }
+
+  /** persiste os dados do estabelecimento (Configurações › Estabelecimento) */
+  updateEstabelecimento(changes: Record<string, any>) {
+    Object.assign(this.estabelecimento, changes);
+    this.api.put('/estabelecimento', changes).subscribe({ error: () => {} });
+  }
+
+  /** persiste o horário de funcionamento (Configurações › Horários) */
+  updateHorarios(dias: { diaSemana: number; aberto: boolean; inicio: string; fim: string; pausaInicio: string | null; pausaFim: string | null }[]) {
+    this.api.put('/horarios', { dias }).subscribe({ error: () => {} });
   }
 
   updateServico(id: string, changes: Partial<Servico>) {
@@ -596,6 +618,15 @@ export class DataService {
       if (changes.prof) ag.prof = changes.prof;
     }
     this.api.put('/agendamentos/' + id, changes).subscribe({ error: () => {} });
+  }
+
+  /** muda o status de um agendamento (na timeline de hoje e na lista) e persiste */
+  setApptStatus(id: string, status: string) {
+    const a = this.hoje.find(a => a.id === id);
+    if (a) a.status = status;
+    const ag = this.agendamentos.find(a => a.id === id);
+    if (ag) ag.status = status;
+    this.api.put('/agendamentos/' + id, { status }).subscribe({ error: () => {} });
   }
 
   addCliente(c: Omit<Cliente, 'id'>) {

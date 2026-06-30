@@ -39,12 +39,16 @@ import { DataService, Appt } from './data.service';
           <app-icon name="whatsapp" [size]="15"></app-icon> Lembrar
         </button>
         @if (a.status === 'pendente') {
-          <button class="btn btn-primary" (click)="act('Agendamento confirmado')">
+          <button class="btn btn-primary" (click)="act('Agendamento confirmado', 'confirmado')">
             <app-icon name="check" [size]="15"></app-icon> Confirmar
           </button>
-        } @else {
-          <button class="btn btn-primary" (click)="act('Atendimento iniciado')">
+        } @else if (a.status === 'confirmado') {
+          <button class="btn btn-primary" (click)="act('Atendimento iniciado', 'atendimento')">
             <app-icon name="play" [size]="14" [fill]="true"></app-icon> Iniciar atendimento
+          </button>
+        } @else if (a.status === 'atendimento') {
+          <button class="btn btn-primary" (click)="act('Atendimento concluído', 'concluido')">
+            <app-icon name="check" [size]="15"></app-icon> Concluir
           </button>
         }
       </div>
@@ -74,5 +78,9 @@ export class ApptDetailComponent {
   get p() { return this.data.prof(this.a.prof); }
   get dur() { return this.a._dur || this.s.dur; }
 
-  act(label: string) { this.close.emit(); this.notify.emit(label); }
+  act(label: string, status?: string) {
+    if (status) this.data.setApptStatus(this.a.id, status);
+    this.close.emit();
+    this.notify.emit(label);
+  }
 }

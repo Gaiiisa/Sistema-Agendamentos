@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
@@ -10,7 +10,7 @@ type Tab = 'conta' | 'estabelecimento' | 'horarios' | 'agenda' | 'pagamentos' | 
 interface TabDef { id: Tab; label: string; icon: string; }
 
 interface DiaFuncionamento {
-  dia: string; abrev: string; aberto: boolean; inicio: string; fim: string;
+  diaSemana: number; dia: string; abrev: string; aberto: boolean; inicio: string; fim: string;
 }
 
 @Component({
@@ -45,7 +45,7 @@ interface DiaFuncionamento {
 
           <div class="cfg-nav-divider"></div>
 
-          <button class="cfg-nav-item cfg-nav-danger">
+          <button class="cfg-nav-item cfg-nav-danger" (click)="logout.emit()">
             <span class="cfg-nav-ico">
               <app-icon name="x" [size]="15"></app-icon>
             </span>
@@ -1013,8 +1013,9 @@ interface DiaFuncionamento {
     }
   `],
 })
-export class ConfigComponent {
+export class ConfigComponent implements OnInit {
   @Output() notify = new EventEmitter<string>();
+  @Output() logout = new EventEmitter<void>();
 
   tab: Tab = 'conta';
 
@@ -1054,13 +1055,13 @@ export class ConfigComponent {
 
   // ── Horários ──
   diasFuncionamento: DiaFuncionamento[] = [
-    { dia: 'Segunda-feira',  abrev: 'Seg', aberto: true,  inicio: '09:00', fim: '20:00' },
-    { dia: 'Terça-feira',    abrev: 'Ter', aberto: true,  inicio: '09:00', fim: '20:00' },
-    { dia: 'Quarta-feira',   abrev: 'Qua', aberto: true,  inicio: '09:00', fim: '20:00' },
-    { dia: 'Quinta-feira',   abrev: 'Qui', aberto: true,  inicio: '09:00', fim: '20:00' },
-    { dia: 'Sexta-feira',    abrev: 'Sex', aberto: true,  inicio: '09:00', fim: '20:00' },
-    { dia: 'Sábado',         abrev: 'Sáb', aberto: true,  inicio: '09:00', fim: '18:00' },
-    { dia: 'Domingo',        abrev: 'Dom', aberto: false, inicio: '10:00', fim: '16:00' },
+    { diaSemana: 1, dia: 'Segunda-feira',  abrev: 'Seg', aberto: true,  inicio: '09:00', fim: '20:00' },
+    { diaSemana: 2, dia: 'Terça-feira',    abrev: 'Ter', aberto: true,  inicio: '09:00', fim: '20:00' },
+    { diaSemana: 3, dia: 'Quarta-feira',   abrev: 'Qua', aberto: true,  inicio: '09:00', fim: '20:00' },
+    { diaSemana: 4, dia: 'Quinta-feira',   abrev: 'Qui', aberto: true,  inicio: '09:00', fim: '20:00' },
+    { diaSemana: 5, dia: 'Sexta-feira',    abrev: 'Sex', aberto: true,  inicio: '09:00', fim: '20:00' },
+    { diaSemana: 6, dia: 'Sábado',         abrev: 'Sáb', aberto: true,  inicio: '09:00', fim: '18:00' },
+    { diaSemana: 0, dia: 'Domingo',        abrev: 'Dom', aberto: false, inicio: '10:00', fim: '16:00' },
   ];
   pausaAtiva = true;
   pausaInicio = '12:00';
@@ -1135,7 +1136,50 @@ export class ConfigComponent {
 
   round = Math.round;
 
+  ngOnInit() {
+    // Hidrata os formulários a partir do banco (quando disponível); senão mantém o mock.
+    const e: any = this.data.estabelecimento;
+    if (e.nome) this.estab.nome = e.nome;
+    if (e.tipo_negocio) this.estab.tipo = e.tipo_negocio;
+    if (e.documento) this.estab.doc = e.documento;
+    if (e.telefone) this.estab.tel = e.telefone;
+    if (e.endereco) this.estab.end = e.endereco;
+    if (e.cidade) this.estab.cidade = e.cidade;
+    if (e.cep) this.estab.cep = e.cep;
+    if (e.descricao) this.estab.desc = e.descricao;
+    if (e.instagram) this.estab.instagram = e.instagram;
+    if (e.google_perfil) this.estab.google = e.google_perfil;
+    if (e.site) this.estab.site = e.site;
+    this.conta.nome = this.data.usuario.nome;
+    this.conta.papel = this.data.usuario.papel;
+
+    if (this.data.expediente?.length) {
+      const ordem = [1, 2, 3, 4, 5, 6, 0];
+      this.diasFuncionamento = ordem
+        .map(ds => this.data.expediente.find(h => h.diaSemana === ds))
+        .filter((h): h is NonNullable<typeof h> => !!h)
+        .map(h => ({ diaSemana: h.diaSemana, dia: h.dia, abrev: h.abrev, aberto: h.aberto, inicio: h.inicio, fim: h.fim }));
+      const comPausa = this.data.expediente.find(h => h.pausaInicio);
+      if (comPausa) { this.pausaAtiva = true; this.pausaInicio = comPausa.pausaInicio!; this.pausaFim = comPausa.pausaFim!; }
+      else this.pausaAtiva = false;
+    }
+  }
+
   save(section: string) {
+    if (section === 'estab') {
+      this.data.updateEstabelecimento({
+        nome: this.estab.nome, tipo: this.estab.tipo, doc: this.estab.doc, tel: this.estab.tel,
+        end: this.estab.end, cidade: this.estab.cidade, cep: this.estab.cep, desc: this.estab.desc,
+        instagram: this.estab.instagram, google: this.estab.google, site: this.estab.site,
+      });
+    } else if (section === 'horarios') {
+      const dias = this.diasFuncionamento.map(d => ({
+        diaSemana: d.diaSemana, aberto: d.aberto, inicio: d.inicio, fim: d.fim,
+        pausaInicio: this.pausaAtiva && d.aberto ? this.pausaInicio : null,
+        pausaFim: this.pausaAtiva && d.aberto ? this.pausaFim : null,
+      }));
+      this.data.updateHorarios(dias);
+    }
     this.notify.emit('Alterações salvas com sucesso!');
   }
 }

@@ -2,6 +2,8 @@ import { Component, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from './icon.component';
+import { AuthService } from './auth.service';
+import { DataService } from './data.service';
 
 @Component({
   selector: 'app-login',
@@ -362,7 +364,7 @@ import { IconComponent } from './icon.component';
                 <span class="lead"><app-icon name="user" [size]="16"></app-icon></span>
                 <input
                   #emailInput
-                  id="email" type="text" placeholder="admin"
+                  id="email" type="text" placeholder="voce@empresa.com"
                   [(ngModel)]="email" name="email"
                   autocomplete="username" autocapitalize="none" spellcheck="false"
                   [disabled]="loading || done"
@@ -475,6 +477,8 @@ export class LoginComponent implements OnInit {
   readonly year = new Date().getFullYear();
   readonly spark = [40, 62, 48, 80, 58, 92, 70];
 
+  constructor(private auth: AuthService, private data: DataService) {}
+
   ngOnInit() {
     // tema persistido (mesma chave usada pela sidebar)
     const saved = localStorage.getItem('app-theme');
@@ -508,29 +512,31 @@ export class LoginComponent implements OnInit {
     alert('Recuperação de senha: enviaremos um link para o e-mail cadastrado. (Demonstração)');
   }
 
-  login() {
+  async login() {
     if (this.loading || this.done) return;   // previne múltiplos cliques
     this.error = '';
     this.touched = { email: true, senha: true };
 
     // validação antes do envio
     if (!this.email.trim() || !this.senha) {
-      this.error = 'Preencha usuário e senha para continuar.';
+      this.error = 'Preencha e-mail e senha para continuar.';
       return;
     }
 
-    // ── lógica de autenticação (inalterada) ──
-    if (this.email === 'admin' && this.senha === 'admin') {
-      this.loading = true;
-      if (this.remember) localStorage.setItem('login-user', this.email);
-      else localStorage.removeItem('login-user');
-      setTimeout(() => {
-        this.loading = false;
-        this.done = true;
-        setTimeout(() => this.success.emit(), 550);
-      }, 600);
-    } else {
-      this.error = 'Usuário ou senha incorretos.';
+    // ── autenticação real (API + banco) ──
+    this.loading = true;
+    if (this.remember) localStorage.setItem('login-user', this.email);
+    else localStorage.removeItem('login-user');
+    try {
+      await this.auth.login(this.email.trim(), this.senha);
+      await this.data.load();               // carrega os dados já autenticado
+      this.loading = false;
+      this.done = true;
+      setTimeout(() => this.success.emit(), 450);
+    } catch (e: any) {
+      this.loading = false;
+      // mensagem vinda do backend (401/403) ou fallback de rede
+      this.error = e?.error?.error || 'Não foi possível entrar. Verifique sua conexão e tente novamente.';
     }
   }
 }

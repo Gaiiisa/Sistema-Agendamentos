@@ -7,6 +7,10 @@
 /tmp
 /.angular
 
+# Auth — segredo JWT gerado em runtime (nunca versionar)
+/api/.auth-secret
+.env
+
 # IDE / OS
 .idea
 .vscode

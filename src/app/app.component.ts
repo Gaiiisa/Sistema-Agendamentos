@@ -3,6 +3,7 @@ import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DataService, Appt } from './data.service';
+import { AuthService } from './auth.service';
 import { IconComponent } from './icon.component';
 import { SidebarComponent } from './shared/sidebar.component';
 import { TopbarComponent } from './shared/topbar.component';
@@ -54,7 +55,7 @@ const TITLES: { [k: string]: [string, string] } = {
   ],
   template: `
     @if (!loggedIn) {
-      <app-login (success)="loggedIn = true"></app-login>
+      <app-login (success)="onLogin()"></app-login>
     } @else {
     <div class="app">
       <app-sidebar [active]="route" (nav)="route = $event" (onNotif)="showNotif = true"></app-sidebar>
@@ -78,7 +79,7 @@ const TITLES: { [k: string]: [string, string] } = {
             @case ('estoque') { <app-estoque #estoqueRef (notify)="notify($event)"></app-estoque> }
             @case ('fidelidade') { <app-fidelidade #fidelidadeRef (notify)="notify($event)"></app-fidelidade> }
             @case ('central')    { <app-central (notify)="notify($event)"></app-central> }
-            @case ('config') { <app-config (notify)="notify($event)"></app-config> }
+            @case ('config') { <app-config (notify)="notify($event)" (logout)="logout()"></app-config> }
             @default {
               <app-coming-soon [title]="TITLES[route] ? TITLES[route][0] : 'Em breve'"></app-coming-soon>
             }
@@ -115,7 +116,7 @@ export class AppComponent {
   @ViewChild('fidelidadeRef') fidelidadeRef?: any;
   @ViewChild('clientesRef') clientesRef?: any;
 
-  loggedIn = false;
+  get loggedIn() { return this.auth.authenticated; }
   route = 'dashboard';
   appts: Appt[] = this.data.hoje.map(a => ({ ...a }));
   showNew = false;
@@ -162,7 +163,21 @@ export class AppComponent {
     };
   }
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private auth: AuthService) {}
+
+  /** Pós-login: dados já foram carregados pela tela de login; sincroniza a timeline. */
+  onLogin() {
+    this.appts = this.data.hoje.map(a => ({ ...a }));
+    this.route = 'dashboard';
+  }
+
+  /** Encerra a sessão e volta para a tela de login. */
+  logout() {
+    this.auth.logout();
+    this.route = 'dashboard';
+    this.openAppt = null;
+    this.showNew = this.showNotif = false;
+  }
 
   get title() { return (TITLES[this.route] || ['', ''])[0]; }
   get sub() { return (TITLES[this.route] || ['', ''])[1]; }
