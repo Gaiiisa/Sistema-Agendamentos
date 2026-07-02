@@ -5,7 +5,8 @@ import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { StatusPillComponent } from '../shared/status-pill.component';
 import { MenuComponent } from '../shared/menu.component';
-import { DataService, Appt, Agendamento, Staff } from '../data.service';
+import { DataService, Appt, Agendamento, Staff, Bloqueio } from '../data.service';
+import { BloqueioModalComponent } from '../bloqueio-modal.component';
 
 interface Ghost { id: string; ini: string; dur: number; prof: string; }
 interface Drag {
@@ -27,7 +28,7 @@ const LIST_TABS = [
 @Component({
   selector: 'app-agenda',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, BloqueioModalComponent],
   template: `
     <div class="page" [style.paddingBottom.px]="24">
       <ng-container *ngTemplateOutlet="header"></ng-container>
@@ -73,15 +74,15 @@ const LIST_TABS = [
           <div class="filter-bar" style="padding:14px;border-bottom:1px solid var(--border)">
             <div class="search-inp">
               <app-icon name="search" [size]="16"></app-icon>
-              <input placeholder="Buscar cliente…" [value]="q" (input)="q = $any($event.target).value" />
+              <input placeholder="Buscar cliente…" [value]="q" (input)="q = $any($event.target).value; onFilterChange()" />
             </div>
-            <select class="select" style="width:auto" [value]="listProfF" (change)="listProfF = $any($event.target).value">
+            <select class="select" style="width:auto" [value]="listProfF" (change)="listProfF = $any($event.target).value; onFilterChange()">
               <option value="todos">Profissional</option>
               @for (p of data.staff; track p.id) {
                 <option [value]="p.id">{{ p.apelido }}</option>
               }
             </select>
-            <select class="select" style="width:auto" [value]="listStatusF" (change)="listStatusF = $any($event.target).value">
+            <select class="select" style="width:auto" [value]="listStatusF" (change)="listStatusF = $any($event.target).value; onFilterChange()">
               <option value="todos">Status</option>
               @for (s of data.status; track s) {
                 <option [value]="s">{{ data.statusLabels[s] }}</option>
@@ -131,7 +132,7 @@ const LIST_TABS = [
                 </tr>
               </thead>
               <tbody>
-                @for (r of rows; track r.id) {
+                @for (r of pageRows; track r.id) {
                   <tr [style.background]="sel.includes(r.id) ? 'var(--accent-soft)' : null">
                     <td class="card-check">
                       <div [class]="'checkbox' + (sel.includes(r.id) ? ' on' : '')" (click)="toggle(r.id)">
@@ -172,12 +173,21 @@ const LIST_TABS = [
             }
           </div>
 
-          <!-- footer -->
+          <!-- footer + paginação -->
           <div class="row" style="padding:12px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-3)">
-            {{ rows.length }} agendamento(s)
-            <div class="row" style="margin-left:auto;gap:4px">
-              <button class="btn btn-subtle btn-sm">Anterior</button>
-              <button class="btn btn-subtle btn-sm">Próxima</button>
+            @if (rows.length > 0) {
+              {{ pageStart }}–{{ pageEnd }} de {{ rows.length }} agendamento(s)
+            } @else {
+              0 agendamento(s)
+            }
+            <div class="row" style="margin-left:auto;gap:6px;align-items:center">
+              <span class="tnum" style="font-size:12px">Página {{ page + 1 }} / {{ totalPages }}</span>
+              <button class="btn btn-subtle btn-sm" [disabled]="page === 0"
+                [style]="page === 0 ? 'opacity:0.5;cursor:not-allowed' : null"
+                (click)="prevPage()">Anterior</button>
+              <button class="btn btn-subtle btn-sm" [disabled]="page >= totalPages - 1"
+                [style]="page >= totalPages - 1 ? 'opacity:0.5;cursor:not-allowed' : null"
+                (click)="nextPage()">Próxima</button>
             </div>
           </div>
         </div>
@@ -192,8 +202,8 @@ const LIST_TABS = [
                 <div></div>
                 @for (d of dias; track d; let i = $index) {
                   <div [style.textAlign]="'center'" style="font-weight:700;font-size:13px;padding:6px 0;border-radius:8px"
-                    [style.color]="i === 1 ? 'var(--accent-text)' : 'var(--text)'"
-                    [style.background]="i === 1 ? 'var(--accent-soft)' : 'transparent'">{{ d }}</div>
+                    [style.color]="isTodayDia(i) ? 'var(--accent-text)' : 'var(--text)'"
+                    [style.background]="isTodayDia(i) ? 'var(--accent-soft)' : 'transparent'">{{ d }}</div>
                 }
                 @for (h of semanaHrs; track h) {
                   <div class="mono" style="font-size:11px;color:var(--text-3);padding:14px 6px 0;text-align:right">{{ h }}</div>
@@ -223,9 +233,9 @@ const LIST_TABS = [
                 }
                 @for (day of mesCells; track day) {
                   <div class="mes-cell" [style.minHeight.px]="92" style="border-radius:10px;padding:8px"
-                    [style.border]="'1px solid ' + (day === 9 ? 'var(--accent)' : 'var(--border)')"
-                    [style.background]="day === 9 ? 'var(--accent-soft)' : isPastDay(day) ? 'var(--surface-2)' : 'var(--surface)'">
-                    <div style="font-weight:700;font-size:13px" [style.color]="day === 9 ? 'var(--accent-text)' : isPastDay(day) ? 'var(--text-3)' : 'var(--text)'">{{ day }}</div>
+                    [style.border]="'1px solid ' + (isTodayCell(day) ? 'var(--accent)' : 'var(--border)')"
+                    [style.background]="isTodayCell(day) ? 'var(--accent-soft)' : isPastDay(day) ? 'var(--surface-2)' : 'var(--surface)'">
+                    <div style="font-weight:700;font-size:13px" [style.color]="isTodayCell(day) ? 'var(--accent-text)' : isPastDay(day) ? 'var(--text-3)' : 'var(--text)'">{{ day }}</div>
                     @if (mesCnt(day) > 0) {
                       <div style="margin-top:6px;font-size:11.5px;font-weight:600;color:var(--text-2)">
                         <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:var(--accent);margin-right:5px"></span>{{ mesCnt(day) }} agend.
@@ -266,9 +276,25 @@ const LIST_TABS = [
                   <app-icon name="chevR" [size]="16"></app-icon>
                 </button>
               </div>
-              @if (mobileDayGroups.length === 0) {
+              @if (mobileDayGroups.length === 0 && bloqueiosDoDia.length === 0) {
                 <div style="padding:32px;text-align:center">
                   <div class="muted" style="font-size:14px">Nenhum agendamento para esse dia.</div>
+                </div>
+              }
+              @for (b of bloqueiosDoDia; track b.id) {
+                <div (click)="abrirBloqueio(b)"
+                  style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;background:var(--surface-2)">
+                  <div class="mono" style="font-size:12px;font-weight:700;min-width:38px;color:var(--text-3)">{{ b.ini }}</div>
+                  <div style="width:3px;align-self:stretch;border-radius:99px;flex-shrink:0;background:var(--text-3)"></div>
+                  <div style="width:32px;height:32px;border-radius:99px;background:var(--surface-3);display:grid;place-items:center;flex-shrink:0">
+                    <app-icon name="lock" [size]="15" style="color:var(--text-2)"></app-icon>
+                  </div>
+                  <div style="flex:1;min-width:0;line-height:1.3">
+                    <div style="font-weight:700;font-size:13.5px">{{ tipoLabel(b.tipo) }} · {{ b.ini }}–{{ b.fim }}</div>
+                    <div class="muted" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                      {{ b.prof ? data.prof(b.prof).apelido : 'Todo o estabelecimento' }}{{ b.motivo ? ' · ' + b.motivo : '' }}
+                    </div>
+                  </div>
                 </div>
               }
               @for (group of mobileDayGroups; track group.time) {
@@ -382,6 +408,22 @@ const LIST_TABS = [
                           style="position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize"></div>
                       </div>
                     }
+                    @for (b of bloqueiosCol(p); track b.id) {
+                      <div (click)="abrirBloqueio(b)"
+                        [title]="'Bloqueio' + (b.motivo ? ' · ' + b.motivo : '')"
+                        [ngStyle]="bloqueioStyle(b)">
+                        <div class="row" style="gap:5px;justify-content:space-between;align-items:center">
+                          <span class="mono" style="font-size:11px;font-weight:700;color:var(--text-2)">{{ b.ini }}–{{ b.fim }}</span>
+                          <app-icon name="lock" [size]="12" style="color:var(--text-2)"></app-icon>
+                        </div>
+                        <div style="font-weight:700;font-size:13px;margin-top:2px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                          {{ tipoLabel(b.tipo) }}{{ b.prof ? '' : ' (geral)' }}
+                        </div>
+                        @if (b.motivo) {
+                          <div style="font-size:12px;margin-top:2px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.motivo }}</div>
+                        }
+                      </div>
+                    }
                   </div>
                 }
               </div>
@@ -471,6 +513,17 @@ const LIST_TABS = [
       </div>
     }
 
+    <!-- ===== Modal de bloqueio ===== -->
+    @if (showBloqueioModal) {
+      <app-bloqueio-modal
+        [bloqueio]="bloqueioEditando"
+        [dataInicial]="currentDate"
+        (close)="fecharBloqueio()"
+        (saved)="onBloqueioSalvo($event)"
+        (removed)="onBloqueioRemovido($event)">
+      </app-bloqueio-modal>
+    }
+
     <!-- ===== Header template ===== -->
     <ng-template #header>
       <div class="col" style="gap:14px;margin-bottom:16px">
@@ -505,7 +558,7 @@ const LIST_TABS = [
           @if (mode === 'lista') {
             <div class="seg" style="margin-left:auto">
               @for (t of listTabs; track t.id) {
-                <button [class.on]="listTab === t.id" (click)="listTab = t.id; sel = []">{{ t.label }}</button>
+                <button [class.on]="listTab === t.id" (click)="listTab = t.id; onFilterChange()">{{ t.label }}</button>
               }
             </div>
           }
@@ -522,7 +575,7 @@ const LIST_TABS = [
               <option value="todos">Todos os profissionais</option>
               @for (p of data.staff; track p.id) { <option [value]="p.id">{{ p.nome }}</option> }
             </select>
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto">
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto" (click)="abrirNovoBloqueio()">
               <app-icon name="lock" [size]="14"></app-icon> Bloquear horário
             </button>
           </div>
@@ -556,10 +609,46 @@ export class AgendaComponent {
     { id: 'atendimento', label: 'Em atendim.' },
   ];
 
-  readonly dias = ['Seg 8', 'Ter 9', 'Qua 10', 'Qui 11', 'Sex 12', 'Sáb 13'];
-  readonly diasDatas = ['2026-06-08','2026-06-09','2026-06-10','2026-06-11','2026-06-12','2026-06-13'];
   readonly mesDows = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-  readonly mesCells = Array.from({ length: 30 }, (_, i) => i + 1);
+  private readonly DIAS_ABR = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  /** Data-base "hoje" recalculada quando a tela é criada. Todo o restante da
+   * agenda navega a partir daqui através de `currentDayOffset`. */
+  private readonly baseToday: Date = (() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; })();
+
+  private isoLocal(d: Date): string {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+  private addDays(base: Date, n: number): Date { const d = new Date(base); d.setDate(d.getDate() + n); return d; }
+
+  /** Segunda-feira da semana visível (a partir da data atualmente selecionada).
+   * dow: 0=dom, 1=seg, ..., 6=sáb. Trata domingo como último dia da semana. */
+  private semanaSegunda(): Date {
+    const base = this.addDays(this.baseToday, this.currentDayOffset);
+    const dow = base.getDay();
+    const back = dow === 0 ? 6 : dow - 1;
+    return this.addDays(base, -back);
+  }
+
+  /** Rótulos "Seg 8, Ter 9…" da semana visível (segunda a sábado). */
+  get dias(): string[] {
+    const seg = this.semanaSegunda();
+    return Array.from({ length: 6 }, (_, i) => {
+      const d = this.addDays(seg, i);
+      return `${this.DIAS_ABR[d.getDay()]} ${d.getDate()}`;
+    });
+  }
+  get diasDatas(): string[] {
+    const seg = this.semanaSegunda();
+    return Array.from({ length: 6 }, (_, i) => this.isoLocal(this.addDays(seg, i)));
+  }
+
+  /** Dias do mês visível — sempre o mês da data atualmente selecionada. */
+  get mesCells(): number[] {
+    const base = this.addDays(this.baseToday, this.currentDayOffset);
+    const dias = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+    return Array.from({ length: dias }, (_, i) => i + 1);
+  }
 
   // ---- agenda state ----
   view = 'dia';
@@ -572,6 +661,15 @@ export class AgendaComponent {
   pending: Pending | null = null;
   semanaModal: { label: string; appts: Agendamento[] } | null = null;
   expandedSlots: { [time: string]: boolean } = {};
+
+  // ---- modal de bloqueio ----
+  showBloqueioModal = false;
+  bloqueioEditando: Bloqueio | null = null;
+
+  readonly TIPO_LABELS: { [k: string]: string } = {
+    almoco: 'Almoço', folga: 'Folga', manutencao: 'Manutenção', evento: 'Evento', outro: 'Bloqueio',
+  };
+  tipoLabel(t: string): string { return this.TIPO_LABELS[t] || 'Bloqueio'; }
   private wasDragged = false;
   private moveHandler?: (e: PointerEvent) => void;
   private upHandler?: () => void;
@@ -590,17 +688,13 @@ export class AgendaComponent {
   get isToday(): boolean { return this.currentDayOffset === 0; }
 
   get currentDateLabel(): string {
-    const base = new Date('2026-06-09T12:00:00');
-    base.setDate(base.getDate() + this.currentDayOffset);
-    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const d = this.addDays(this.baseToday, this.currentDayOffset);
     const months = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    return `${days[base.getDay()]}, ${base.getDate()} de ${months[base.getMonth()]}`;
+    return `${this.DIAS_ABR[d.getDay()]}, ${d.getDate()} de ${months[d.getMonth()]}`;
   }
 
   get currentDate(): string {
-    const base = new Date('2026-06-09T12:00:00');
-    base.setDate(base.getDate() + this.currentDayOffset);
-    return base.toISOString().slice(0, 10);
+    return this.isoLocal(this.addDays(this.baseToday, this.currentDayOffset));
   }
 
   get dayAppts(): Appt[] {
@@ -742,12 +836,24 @@ export class AgendaComponent {
     const drag = this.drag;
     if (gh && drag) {
       const a = this.appts.find(x => x.id === gh.id);
-      if (a && drag.mode === 'move' && (a.ini !== gh.ini || a.prof !== gh.prof)) {
-        const origIni = a.ini; const origProf = a.prof;
-        a.ini = gh.ini; a.prof = gh.prof;
-        this.pending = { apptId: a.id, newIni: gh.ini, newProf: gh.prof, origIni, origProf };
-      } else if (a) {
-        a.ini = gh.ini; a.prof = gh.prof; a._dur = gh.dur;
+      if (a) {
+        const dur = gh.dur || this.durOf(a);
+        const conflito = this.data.bloqueadoParaAgendamento(gh.prof, this.currentDate, gh.ini, dur);
+        if (conflito) {
+          // reverte visualmente — não altera o agendamento
+          this.drag = null; this.ghost = null;
+          document.body.style.cursor = ''; document.body.style.userSelect = '';
+          this.detach();
+          alert(`Não é possível mover para esse horário: existe um bloqueio (${this.tipoLabel(conflito.tipo)}) das ${conflito.ini} às ${conflito.fim}.`);
+          return;
+        }
+        if (drag.mode === 'move' && (a.ini !== gh.ini || a.prof !== gh.prof)) {
+          const origIni = a.ini; const origProf = a.prof;
+          a.ini = gh.ini; a.prof = gh.prof;
+          this.pending = { apptId: a.id, newIni: gh.ini, newProf: gh.prof, origIni, origProf };
+        } else {
+          a.ini = gh.ini; a.prof = gh.prof; a._dur = gh.dur;
+        }
       }
     }
     this.drag = null; this.ghost = null;
@@ -771,6 +877,49 @@ export class AgendaComponent {
     this.pending = null;
   }
 
+  // ---- Bloqueios: helpers de renderização ----
+  get bloqueiosDoDia(): Bloqueio[] {
+    return this.data.bloqueios.filter(b => b.data === this.currentDate);
+  }
+
+  bloqueiosCol(p: Staff): Bloqueio[] {
+    return this.bloqueiosDoDia.filter(b => b.prof === null || b.prof === p.id);
+  }
+
+  bloqueioStyle(b: Bloqueio) {
+    const iniMin = this.data.toMin(b.ini);
+    const dur = Math.max(this.SNAP, this.data.toMin(b.fim) - iniMin);
+    const top = this.TOP_OFFSET + (iniMin - this.DAY_START) * this.PX_MIN;
+    const height = Math.max(dur * this.PX_MIN - 3, 44);
+    return {
+      position: 'absolute', top: top + 'px', left: '4px', right: '4px',
+      height: height + 'px',
+      background: 'repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 8px, var(--surface-3) 8px, var(--surface-3) 16px)',
+      border: '1px dashed var(--border-strong)',
+      borderRadius: '8px', padding: '6px 9px',
+      cursor: 'pointer', overflow: 'hidden',
+      zIndex: 1, userSelect: 'none',
+    };
+  }
+
+  abrirNovoBloqueio() {
+    this.bloqueioEditando = null;
+    this.showBloqueioModal = true;
+  }
+
+  abrirBloqueio(b: Bloqueio) {
+    this.bloqueioEditando = b;
+    this.showBloqueioModal = true;
+  }
+
+  fecharBloqueio() {
+    this.showBloqueioModal = false;
+    this.bloqueioEditando = null;
+  }
+
+  onBloqueioSalvo(_b: Bloqueio) { this.fecharBloqueio(); }
+  onBloqueioRemovido(_id: string) { this.fecharBloqueio(); }
+
   semanaSlotAppts(di: number, h: string): Agendamento[] {
     const date = this.diasDatas[di];
     const slotMin = this.data.toMin(h);
@@ -786,45 +935,125 @@ export class AgendaComponent {
     this.semanaModal = { label: `${this.dias[di]} · ${h}–${slotEnd}`, appts };
   }
 
+  /** Mês/ano do calendário visível (segue o dia selecionado). */
+  private viewMonthPrefix(): string {
+    const d = this.addDays(this.baseToday, this.currentDayOffset);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+  private mesDate(day: number): string {
+    return `${this.viewMonthPrefix()}-${String(day).padStart(2, '0')}`;
+  }
+
   get mesTrailing(): null[] {
-    const d = new Date('2026-06-30T12:00:00');
-    const dow = d.getDay();
+    const base = this.addDays(this.baseToday, this.currentDayOffset);
+    const ultimo = new Date(base.getFullYear(), base.getMonth() + 1, 0);
+    const dow = ultimo.getDay();
     const segBased = dow === 0 ? 6 : dow - 1;
     return Array(segBased === 6 ? 0 : 6 - segBased).fill(null);
   }
 
   mesCnt(day: number): number {
-    const date = `2026-06-${String(day).padStart(2, '0')}`;
+    const date = this.mesDate(day);
     return this.data.agendamentos.filter(a => a.data === date && a.status !== 'cancelado' && a.status !== 'faltou').length;
   }
 
-  isPastDay(day: number): boolean { return day < 9; }
+  isPastDay(day: number): boolean {
+    const today = this.isoLocal(this.baseToday);
+    return this.mesDate(day) < today;
+  }
+
+  isTodayCell(day: number): boolean {
+    return this.mesDate(day) === this.isoLocal(this.baseToday);
+  }
+
+  isTodayDia(i: number): boolean {
+    return this.diasDatas[i] === this.isoLocal(this.baseToday);
+  }
 
   mesFaturamento(day: number): number {
-    const date = `2026-06-${String(day).padStart(2, '0')}`;
+    const date = this.mesDate(day);
     return this.data.agendamentos
       .filter(a => a.data === date && a.status !== 'cancelado' && a.status !== 'faltou')
       .reduce((sum, a) => sum + a.valor, 0);
   }
 
-  // ---- lista getters ----
-  get rows() {
+  // ---- lista: cache + paginação ----
+  readonly PAGE_SIZE = 50;
+  page = 0;
+
+  private _rowsCache: Agendamento[] | null = null;
+  private _rowsKey = '';
+
+  /** Lista filtrada e ordenada COMPLETA. Cacheada por (agendamentos.length +
+   * filtros), invalida-se automaticamente quando algum filtro muda. Isso é
+   * essencial porque o template referencia `rows` várias vezes por ciclo de
+   * change detection — sem cache, a lista de milhares de itens era ordenada
+   * e filtrada dezenas de vezes por interação, travando o navegador. */
+  get rows(): Agendamento[] {
+    const key = [
+      this.data.agendamentos.length, this.listTab, this.listProfF,
+      this.listStatusF, this.q,
+    ].join('|');
+    if (this._rowsCache && this._rowsKey === key) return this._rowsCache;
+
     let rows = [...this.data.agendamentos].sort((a, b) =>
       (b.data + b.hora).localeCompare(a.data + a.hora)
     );
     if (this.listTab === 'faltas')
       rows = rows.filter(r => r.status === 'faltou' || r.status === 'cancelado');
-    if (this.listTab === 'proximos')
-      rows = rows.filter(r => r.data >= '2026-06-09' && !['faltou', 'cancelado', 'concluido'].includes(r.status));
+    if (this.listTab === 'proximos') {
+      const hoje = this.isoLocal(this.baseToday);
+      rows = rows.filter(r => r.data >= hoje && !['faltou', 'cancelado', 'concluido'].includes(r.status));
+    }
     if (this.listProfF !== 'todos') rows = rows.filter(r => r.prof === this.listProfF);
     if (this.listStatusF !== 'todos') rows = rows.filter(r => r.status === this.listStatusF);
-    if (this.q)
-      rows = rows.filter(r => this.data.cli(r.cli).nome.toLowerCase().includes(this.q.toLowerCase()));
+    if (this.q) {
+      const qLower = this.q.toLowerCase();
+      rows = rows.filter(r => {
+        const c = this.data.cli(r.cli);
+        return c && c.nome.toLowerCase().includes(qLower);
+      });
+    }
+    this._rowsCache = rows;
+    this._rowsKey = key;
+    // reset da página se o total encolheu
+    const maxPage = Math.max(0, Math.ceil(rows.length / this.PAGE_SIZE) - 1);
+    if (this.page > maxPage) this.page = maxPage;
     return rows;
   }
 
-  get allSel(): boolean { return this.rows.length > 0 && this.rows.every(r => this.sel.includes(r.id)); }
-  toggleAll() { this.sel = this.allSel ? [] : this.rows.map(r => r.id); }
+  /** Linhas visíveis na página atual — é isso que a tabela renderiza. */
+  get pageRows(): Agendamento[] {
+    const start = this.page * this.PAGE_SIZE;
+    return this.rows.slice(start, start + this.PAGE_SIZE);
+  }
+  get totalPages(): number { return Math.max(1, Math.ceil(this.rows.length / this.PAGE_SIZE)); }
+  get pageStart(): number { return this.rows.length === 0 ? 0 : this.page * this.PAGE_SIZE + 1; }
+  get pageEnd(): number { return Math.min(this.rows.length, (this.page + 1) * this.PAGE_SIZE); }
+
+  prevPage() { if (this.page > 0) this.page--; }
+  nextPage() { if (this.page < this.totalPages - 1) this.page++; }
+
+  /** Chamado sempre que um filtro muda: invalida cache e volta para a 1ª página. */
+  onFilterChange() { this._rowsCache = null; this.page = 0; this.sel = []; }
+
+  /** allSel/toggleAll operam sobre a página visível — evita ações em massa
+   * acidentais sobre milhares de linhas. */
+  get allSel(): boolean {
+    const pr = this.pageRows;
+    return pr.length > 0 && pr.every(r => this.sel.includes(r.id));
+  }
+  toggleAll() {
+    const pr = this.pageRows;
+    if (this.allSel) {
+      const ids = new Set(pr.map(r => r.id));
+      this.sel = this.sel.filter(id => !ids.has(id));
+    } else {
+      const set = new Set(this.sel);
+      for (const r of pr) set.add(r.id);
+      this.sel = Array.from(set);
+    }
+  }
   toggle(id: string) { this.sel = this.sel.includes(id) ? this.sel.filter(x => x !== id) : [...this.sel, id]; }
 
   get totalFaltas(): number { return this.data.agendamentos.filter(r => r.status === 'faltou').length; }

@@ -22,4 +22,7 @@ export class ApiService {
   put(path: string, body: any): Observable<any> {
     return this.http.put<any>(`${this.base}${path}`, body);
   }
+  delete(path: string): Observable<any> {
+    return this.http.delete<any>(`${this.base}${path}`);
+  }
 }

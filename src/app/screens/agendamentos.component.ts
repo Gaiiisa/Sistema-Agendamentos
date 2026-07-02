@@ -208,10 +208,12 @@ export class AgendamentosComponent {
     );
     if (this.tab === 'faltas')
       rows = rows.filter(r => r.status === 'faltou' || r.status === 'cancelado');
-    if (this.tab === 'proximos')
+    if (this.tab === 'proximos') {
+      const hoje = new Date().toISOString().slice(0, 10);
       rows = rows.filter(
-        r => r.data >= '2026-06-09' && !['faltou', 'cancelado', 'concluido'].includes(r.status)
+        r => r.data >= hoje && !['faltou', 'cancelado', 'concluido'].includes(r.status)
       );
+    }
     if (this.profF !== 'todos') rows = rows.filter(r => r.prof === this.profF);
     if (this.statusF !== 'todos') rows = rows.filter(r => r.status === this.statusF);
     if (this.q)

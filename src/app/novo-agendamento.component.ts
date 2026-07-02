@@ -78,7 +78,7 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
         <div class="field">
           <label>Data e hora{{ sObj ? ' · termina ' + data.fromMin(data.toMin(hora) + sObj.dur) : '' }}</label>
           <div class="row" style="gap:8px">
-            <input class="input" value="Hoje, 09/06" readonly style="flex:1" />
+            <input class="input" [value]="'Hoje, ' + hojeLabel" readonly style="flex:1" />
             <input class="input" type="time" [value]="hora" (input)="hora=$any($event.target).value" style="width:100px" />
           </div>
         </div>
@@ -106,6 +106,13 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
         <textarea class="input" placeholder="Preferências, alergias, detalhes…" [value]="obs" (input)="obs=$any($event.target).value"></textarea>
       </div>
 
+      @if (erroConflito) {
+        <div style="background:var(--st-faltou-bg);color:var(--st-faltou);border-radius:var(--r-md);padding:10px 12px;font-size:13px;display:flex;align-items:center;gap:8px">
+          <app-icon name="alert" [size]="15"></app-icon>
+          <span>{{ erroConflito }}</span>
+        </div>
+      }
+
       <div modalFoot>
         <button class="btn btn-ghost" (click)="close.emit()">Cancelar</button>
         <button class="btn btn-primary" [disabled]="!valid" [style]="!valid ? 'opacity:0.5;cursor:not-allowed' : null"
@@ -126,8 +133,14 @@ export class NovoAgendamentoComponent {
   hora = '14:00';
   sinal = false;
   obs = '';
+  erroConflito = '';
 
   constructor(public data: DataService) {}
+
+  get hojeLabel(): string {
+    const d = new Date();
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
 
   get sObj(): Servico | null { return this.srv ? this.data.srv(this.srv) : null; }
   get profsValidos(): Staff[] {
@@ -149,6 +162,14 @@ export class NovoAgendamentoComponent {
 
   onSave() {
     if (!this.valid) return;
+    this.erroConflito = '';
+    const dur = this.sObj?.dur ?? 30;
+    const hoje = new Date().toISOString().slice(0, 10);
+    const conflito = this.data.bloqueadoParaAgendamento(this.prof, hoje, this.hora, dur);
+    if (conflito) {
+      this.erroConflito = `Existe um bloqueio (${conflito.tipo}) das ${conflito.ini} às ${conflito.fim} nesse profissional.`;
+      return;
+    }
     this.save.emit({ cli: this.cli, srv: this.srv, prof: this.prof, ini: this.hora, status: 'confirmado', sinal: this.sinal });
   }
 

@@ -29,6 +29,15 @@ export interface Agendamento {
   id: string; cli: string; srv: string; prof: string; data: string; hora: string;
   status: string; valor: number;
 }
+export interface Bloqueio {
+  id: string;
+  prof: string | null;     // null = bloqueio do estabelecimento inteiro
+  data: string;            // 'YYYY-MM-DD'
+  ini: string;             // 'HH:MM'
+  fim: string;             // 'HH:MM'
+  tipo: 'almoco' | 'folga' | 'manutencao' | 'evento' | 'outro';
+  motivo: string;
+}
 export interface HistItem { data: string; srv: string; prof: string; valor: number; }
 export interface Produto {
   id: string; nome: string; cat: string; qtd: number; min: number; custo: number;
@@ -169,6 +178,9 @@ export class DataService {
     { id: 'g42',cli: 'c2',  srv: 's3',  prof: 'p3', data: '2026-06-06', hora: '14:00', status: 'concluido', valor: 35 },
     { id: 'g43',cli: 'c7',  srv: 's1',  prof: 'p1', data: '2026-06-06', hora: '16:00', status: 'cancelado', valor: 45 },
   ];
+
+  // ---------- Bloqueios de agenda (almoço, folga pontual, manutenção…) ----------
+  readonly bloqueios: Bloqueio[] = [];
 
   // ---------- Histórico (para ficha do cliente) ----------
   readonly historico: { [id: string]: HistItem[] } = {
@@ -406,6 +418,7 @@ export class DataService {
       this.fill(this.clientes, b.clientes);
       this.fill(this.hoje, b.hoje);
       this.fill(this.agendamentos, b.agendamentos);
+      this.fill(this.bloqueios, b.bloqueios);
       this.refill(this.historico, b.historico);
       Object.assign(this.kpis, b.kpis);
       this.fill(this.produtos, b.produtos);
@@ -643,6 +656,88 @@ export class DataService {
       status: a.status || 'confirmado', sinal: !!a.sinal,
       valor: s ? s.preco : 0, _dur: s ? s.dur : 30,
     }).subscribe({ error: () => {} });
+  }
+
+  // ---------- Bloqueios de agenda ----------
+  /** bloqueios visíveis para um dado (data + profissional). Um bloqueio geral
+   * (prof=null) aparece para todos os profissionais. */
+  bloqueiosDia(data: string, profId?: string): Bloqueio[] {
+    return this.bloqueios.filter(b =>
+      b.data === data && (b.prof === null || !profId || b.prof === profId),
+    );
+  }
+
+  /** Verifica se um intervalo colide com bloqueios existentes ou agendamentos
+   * ativos. `ignoreId` é usado ao editar um bloqueio (para não colidir consigo). */
+  conflitoBloqueio(prof: string | null, data: string, ini: string, fim: string, ignoreId?: string): string | null {
+    if (!ini || !fim) return 'Informe hora inicial e final.';
+    if (this.toMin(fim) <= this.toMin(ini)) return 'Hora final deve ser posterior à inicial.';
+    const s = this.toMin(ini), e = this.toMin(fim);
+
+    for (const b of this.bloqueios) {
+      if (b.id === ignoreId) continue;
+      if (b.data !== data) continue;
+      // colide se: mesmo profissional, ou algum dos dois é bloqueio geral
+      if (prof && b.prof && b.prof !== prof) continue;
+      const bs = this.toMin(b.ini), be = this.toMin(b.fim);
+      if (bs < e && be > s) return 'Já existe outro bloqueio nesse período.';
+    }
+
+    const ativos = new Set(['pendente', 'confirmado', 'atendimento']);
+    for (const a of this.agendamentos) {
+      if (a.data !== data) continue;
+      if (!ativos.has(a.status)) continue;
+      if (prof && a.prof !== prof) continue;   // profissional específico
+      const aIni = this.toMin(a.hora);
+      const aDur = this.srv(a.srv)?.dur ?? 30;
+      const aFim = aIni + aDur;
+      if (aIni < e && aFim > s) return 'Já existe um agendamento nesse intervalo.';
+    }
+    return null;
+  }
+
+  /** Verifica se um novo agendamento colide com um bloqueio existente. */
+  bloqueadoParaAgendamento(prof: string, data: string, ini: string, dur: number): Bloqueio | null {
+    const s = this.toMin(ini), e = s + dur;
+    for (const b of this.bloqueios) {
+      if (b.data !== data) continue;
+      if (b.prof && b.prof !== prof) continue;   // bloqueio de outro profissional
+      const bs = this.toMin(b.ini), be = this.toMin(b.fim);
+      if (bs < e && be > s) return b;
+    }
+    return null;
+  }
+
+  async addBloqueio(bl: Omit<Bloqueio, 'id'>): Promise<Bloqueio> {
+    const novo: Bloqueio = { ...bl, id: 'bl' + Date.now() };
+    this.bloqueios.push(novo);
+    try {
+      const res: any = await firstValueFrom(this.api.post('/bloqueios', novo));
+      if (res && res.id) novo.id = res.id;
+    } catch (e) {
+      console.warn('[DataService] Falha ao persistir bloqueio.', e);
+    }
+    return novo;
+  }
+
+  async updateBloqueio(id: string, changes: Partial<Bloqueio>): Promise<void> {
+    const b = this.bloqueios.find(x => x.id === id);
+    if (b) Object.assign(b, changes);
+    try {
+      await firstValueFrom(this.api.put('/bloqueios/' + id, changes));
+    } catch (e) {
+      console.warn('[DataService] Falha ao atualizar bloqueio.', e);
+    }
+  }
+
+  async removeBloqueio(id: string): Promise<void> {
+    const idx = this.bloqueios.findIndex(b => b.id === id);
+    if (idx >= 0) this.bloqueios.splice(idx, 1);
+    try {
+      await firstValueFrom(this.api.delete('/bloqueios/' + id));
+    } catch (e) {
+      console.warn('[DataService] Falha ao excluir bloqueio.', e);
+    }
   }
 
   // ---------- helpers ----------

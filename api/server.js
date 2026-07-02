@@ -78,7 +78,7 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     ags, produtos, mov, caixaRow, lanc, receber,
     comItens, fechamentos, fid, camps, envios, modelos, kpiRows,
     fluxoRows, recCatRows, despCatRows, recFormaRows, recProfRows, mesRow, mesAntRow,
-    fidMovRow, fechPagos, semanaRows, horariosRows,
+    fidMovRow, fechPagos, semanaRows, horariosRows, bloqueiosRows,
   ] = await Promise.all([
     q('SELECT CURRENT_DATE() AS hoje'),
     q(`SELECT nome, plano, slug, documento, tipo_negocio, cidade, cep, telefone, endereco,
@@ -167,6 +167,8 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
         GROUP BY YEARWEEK(criado_em, 3) ORDER BY yw`, [EST]),
     // ----- horários de funcionamento (tela Configurações › Horários) -----
     q('SELECT * FROM estabelecimento_horarios WHERE estabelecimento_id=? ORDER BY dia_semana', [EST]),
+    // ----- bloqueios de agenda -----
+    q('SELECT * FROM bloqueios_agenda WHERE estabelecimento_id=? ORDER BY data, hora_inicio', [EST]),
   ]);
 
   // ----- staff -----
@@ -487,12 +489,19 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     pausaFim: h.pausa_fim ? hhmm(h.pausa_fim) : null,
   }));
 
+  // ----- bloqueios de agenda -----
+  const bloqueios = bloqueiosRows.map((b) => ({
+    id: b.id, prof: b.profissional_id || null, data: b.data,
+    ini: hhmm(b.hora_inicio), fim: hhmm(b.hora_fim),
+    tipo: b.tipo || 'outro', motivo: b.motivo || '',
+  }));
+
   res.json({
     estabelecimento: estab[0] || {}, usuario: usuario[0] ? { ...usuario[0], papel: PAPEL_LABEL[usuario[0].papel] || usuario[0].papel } : {},
     staff, servicos: servicos2, clientes: clientes2, hoje, agendamentos, historico,
     produtos: produtos2, movEstoque, caixa, lancamentos, aReceber,
     comissoes, fidelidade, campanhas, modelos: modelos2, kpis, financeiro,
-    relatorio, periodoComissao, historicoComissoes, horarios,
+    relatorio, periodoComissao, historicoComissoes, horarios, bloqueios,
   });
 }));
 
@@ -630,6 +639,88 @@ app.put('/api/horarios', wrap(async (req, res) => {
                hora_fim=VALUES(hora_fim), pausa_inicio=VALUES(pausa_inicio), pausa_fim=VALUES(pausa_fim)`,
       [EST, d.diaSemana, d.aberto ? 1 : 0, d.inicio, d.fim, d.pausaInicio || null, d.pausaFim || null]);
   }
+  res.json({ ok: true });
+}));
+
+// ------------------------------------------------------------
+// Bloqueios de agenda (almoço, folga pontual, manutenção, etc.)
+// ------------------------------------------------------------
+// Verifica conflito com bloqueios existentes ou agendamentos ativos
+// no mesmo profissional/dia. Retorna { ok: true } ou { ok: false, motivo }.
+async function conflitoBloqueio({ id, prof, data, ini, fim }) {
+  if (!data || !ini || !fim) return { ok: false, motivo: 'Período inválido.' };
+  if (String(ini) >= String(fim)) return { ok: false, motivo: 'Hora final deve ser posterior à inicial.' };
+
+  // outros bloqueios (mesmo profissional OU bloqueio geral do salão)
+  const blQuery = `
+    SELECT id, hora_inicio, hora_fim, motivo FROM bloqueios_agenda
+    WHERE estabelecimento_id=? AND data=?
+      AND (profissional_id <=> ? OR profissional_id IS NULL OR ? IS NULL)
+      AND (? IS NULL OR id <> ?)
+      AND hora_inicio < ? AND hora_fim > ?`;
+  const outros = await q(blQuery, [EST, data, prof || null, prof || null, id || null, id || null, fim, ini]);
+  if (outros.length) return { ok: false, motivo: 'Já existe outro bloqueio nesse período.' };
+
+  // agendamentos ativos que colidem
+  const ags = await q(
+    `SELECT id, hora_inicio, duracao_min FROM agendamentos
+      WHERE estabelecimento_id=? AND data=?
+        AND status IN ('pendente','confirmado','atendimento')
+        AND (? IS NULL OR profissional_id=?)`,
+    [EST, data, prof || null, prof || null],
+  );
+  const iniMin = toMin(ini), fimMin = toMin(fim);
+  for (const a of ags) {
+    const aIni = toMin(hhmm(a.hora_inicio));
+    const aFim = aIni + Number(a.duracao_min || 0);
+    if (aIni < fimMin && aFim > iniMin) {
+      return { ok: false, motivo: 'Já existe um agendamento nesse intervalo.' };
+    }
+  }
+  return { ok: true };
+}
+
+// criar bloqueio
+app.post('/api/bloqueios', wrap(async (req, res) => {
+  const b = req.body || {};
+  const id = b.id || randomUUID();
+  const check = await conflitoBloqueio({ id: null, prof: b.prof || null, data: b.data, ini: b.ini, fim: b.fim });
+  if (!check.ok) return res.status(409).json({ error: check.motivo });
+  await q(
+    `INSERT INTO bloqueios_agenda (id, estabelecimento_id, profissional_id, data, hora_inicio, hora_fim, tipo, motivo)
+     VALUES (?,?,?,?,?,?,?,?)`,
+    [id, EST, b.prof || null, b.data, b.ini, b.fim, b.tipo || 'outro', b.motivo || null],
+  );
+  res.json({ id });
+}));
+
+// atualizar bloqueio
+app.put('/api/bloqueios/:id', wrap(async (req, res) => {
+  const id = req.params.id;
+  const rows = await q('SELECT * FROM bloqueios_agenda WHERE id=? AND estabelecimento_id=?', [id, EST]);
+  if (!rows[0]) return res.status(404).json({ error: 'Bloqueio não encontrado.' });
+  const cur = rows[0];
+  const b = req.body || {};
+  const next = {
+    prof: b.prof === undefined ? cur.profissional_id : (b.prof || null),
+    data: b.data === undefined ? cur.data : b.data,
+    ini:  b.ini  === undefined ? hhmm(cur.hora_inicio) : b.ini,
+    fim:  b.fim  === undefined ? hhmm(cur.hora_fim)    : b.fim,
+    tipo: b.tipo === undefined ? cur.tipo   : b.tipo,
+    motivo: b.motivo === undefined ? cur.motivo : (b.motivo || null),
+  };
+  const check = await conflitoBloqueio({ id, prof: next.prof, data: next.data, ini: next.ini, fim: next.fim });
+  if (!check.ok) return res.status(409).json({ error: check.motivo });
+  await q(
+    `UPDATE bloqueios_agenda SET profissional_id=?, data=?, hora_inicio=?, hora_fim=?, tipo=?, motivo=? WHERE id=?`,
+    [next.prof, next.data, next.ini, next.fim, next.tipo, next.motivo, id],
+  );
+  res.json({ ok: true });
+}));
+
+// excluir bloqueio
+app.delete('/api/bloqueios/:id', wrap(async (req, res) => {
+  await q('DELETE FROM bloqueios_agenda WHERE id=? AND estabelecimento_id=?', [req.params.id, EST]);
   res.json({ ok: true });
 }));
 
