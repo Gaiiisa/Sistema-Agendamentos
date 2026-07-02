@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { DataService } from '../data.service';
+import { AuthService } from '../auth.service';
+import { ExportService, Formato, Periodo } from '../export.service';
 
 interface RelCard {
   id: string;
@@ -101,12 +103,26 @@ interface ExportItem {
           </div>
           <div class="row" style="gap:6px;padding:4px 14px 14px;flex-wrap:wrap;align-items:center">
             @for (fmt of r.formatos; track fmt) {
-              <button class="btn btn-ghost btn-sm" style="gap:4px" (click)="exportar(r, fmt)">
-                <app-icon name="download" [size]="13"></app-icon>
+              <button class="btn btn-ghost btn-sm" style="gap:4px"
+                [disabled]="exportando === r.id + ':' + fmt"
+                [style.opacity]="exportando === r.id + ':' + fmt ? 0.6 : 1"
+                (click)="exportar(r, fmt)">
+                @if (exportando === r.id + ':' + fmt) {
+                  <span class="spinner-mini"></span>
+                } @else {
+                  <app-icon name="download" [size]="13"></app-icon>
+                }
                 {{ fmt.toUpperCase() }}
               </button>
             }
-            <span class="muted" style="font-size:11px;margin-left:auto">{{ r.cat }}</span>
+            @if (r.sensivel && !podeVerSensivel) {
+              <span style="font-size:11px;color:var(--st-faltou);margin-left:auto"
+                title="Somente Dono/Admin/Gerente podem exportar este relatório">
+                <app-icon name="lock" [size]="11"></app-icon> restrito
+              </span>
+            } @else {
+              <span class="muted" style="font-size:11px;margin-left:auto">{{ r.cat }}</span>
+            }
           </div>
         </div>
       }
@@ -307,6 +323,14 @@ interface ExportItem {
     }
     .cbtn.on { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
     .cbtn.wpp.on { background: rgba(37,211,102,.12); color: #25d366; border-color: transparent; }
+
+    /* Spinner de carregamento no botão de exportação */
+    .spinner-mini {
+      display: inline-block; width: 13px; height: 13px; border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.15); border-top-color: var(--accent);
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `],
 })
 export class CentralComponent {
@@ -393,8 +417,19 @@ export class CentralComponent {
     { id: 'n25', nome: 'Alerta operacional do dia',      cat: 'Administrativo',         prior: 'media', obrig: false, ativo: true,  canais: { sistema: true,  email: false, whatsapp: false, push: false }, envio: 'digest',   exemplo: 'Hoje a agenda do Bruno está com 1 horário só.' },
   ];
 
-  constructor(public data: DataService) {
+  /** Identificador da exportação em andamento no formato `${reportId}:${formato}`.
+   * Enquanto não é null, o botão correspondente fica travado com spinner. */
+  exportando: string | null = null;
+
+  constructor(public data: DataService, private auth: AuthService, private exportSvc: ExportService) {
     this.NOTIF_CATS.forEach(c => this.catsAbertas.add(c));
+  }
+
+  /** Perfis com permissão para acessar relatórios sensíveis (financeiro,
+   * comissões, equipe, gerencial). */
+  get podeVerSensivel(): boolean {
+    const cod = this.auth.usuario?.papelCod || '';
+    return ['dono', 'admin', 'gerente'].includes(cod);
   }
 
   get relsFiltrados(): RelCard[] {
@@ -450,19 +485,41 @@ export class CentralComponent {
 
   setEnvio(n: NotifConfig, v: 'imediato' | 'digest') { n.envio = v; }
 
-  exportar(r: RelCard, fmt: string) {
-    const label: Record<string, string> = { semana: 'Semana atual', mes: 'Mês atual', ano: 'Ano atual' };
-    const now = new Date();
-    const d = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}`;
-    const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    this.exportHistory.unshift({
-      quando: `${d} ${t}`,
-      relatorio: r.nome,
-      formato: fmt.toUpperCase(),
-      periodo: label[this.periodo] ?? this.periodo,
-      por: this.data.usuario.nome,
-    });
-    this.notify.emit(`${r.nome} exportado em ${fmt.toUpperCase()}`);
+  async exportar(r: RelCard, fmt: string) {
+    if (this.exportando) return;
+
+    // ----- gate de permissão -----
+    if (r.sensivel && !this.podeVerSensivel) {
+      this.notify.emit('Você não tem permissão para exportar este relatório.');
+      return;
+    }
+
+    const chave = `${r.id}:${fmt}`;
+    this.exportando = chave;
+    try {
+      const nomeUsuario = this.auth.usuario?.nome || this.data.usuario.nome;
+      const { arquivo, linhas } = await this.exportSvc.export(
+        r.id, fmt as Formato, this.periodo as Periodo, nomeUsuario,
+      );
+
+      // Registra no histórico local
+      const now = new Date();
+      const d = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+      const t = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      this.exportHistory.unshift({
+        quando: `${d} ${t}`,
+        relatorio: r.nome,
+        formato: fmt.toUpperCase(),
+        periodo: this.exportSvc.periodRange(this.periodo as Periodo).label,
+        por: nomeUsuario,
+      });
+      this.notify.emit(`${r.nome} exportado (${linhas} linha${linhas === 1 ? '' : 's'}) — ${arquivo}`);
+    } catch (e: any) {
+      const msg = e?.message || 'Falha ao gerar o arquivo.';
+      this.notify.emit(`Não foi possível exportar: ${msg}`);
+    } finally {
+      this.exportando = null;
+    }
   }
 
   salvarNotifs() {

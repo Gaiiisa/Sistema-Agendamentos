@@ -745,11 +745,87 @@ export class AgendaComponent {
   heightOf(a: Appt) { return Math.max(this.aDur(a) * this.PX_MIN - 3, this.MIN_CARD_H); }
   cardTime(a: Appt) { return a.ini + '–' + this.data.fromMin(this.data.toMin(a.ini) + this.aDur(a)); }
 
+  // ---- Layout de colunas para agendamentos sobrepostos ----
+  // Cada card ocupa uma "faixa" dentro da coluna do profissional. Cards que se
+  // sobrepõem no tempo dividem a largura em N faixas (estilo Google Calendar),
+  // garantindo que todos fiquem visíveis lado a lado.
+  private _layoutCache = new Map<string, { key: string; layout: Map<string, { col: number; cols: number }> }>();
+
+  private layoutForProf(p: Staff): Map<string, { col: number; cols: number }> {
+    const appts = this.apptsFor(p);
+    // Chave que representa o estado atual dos appts desse profissional.
+    // Usa posição "estática" (a.ini/durOf) para manter o layout estável durante
+    // o drag — o card arrastado usa full-width via cardStyle+dragging.
+    const key = appts
+      .map(a => `${a.id}:${this.data.toMin(a.ini)}:${this.durOf(a)}`)
+      .join('|');
+    const cached = this._layoutCache.get(p.id);
+    if (cached && cached.key === key) return cached.layout;
+
+    // Duração mínima em minutos que respeita MIN_CARD_H (68px). Um card curto
+    // ocupa visualmente mais do que sua duração real — precisamos considerar
+    // isso ao detectar sobreposição, senão dois cards colam mesmo sem colidir
+    // no tempo, e o segundo tapa o primeiro.
+    const minDurVis = this.MIN_CARD_H / this.PX_MIN;
+
+    interface Item { id: string; start: number; end: number; }
+    const items: Item[] = appts.map(a => {
+      const start = this.data.toMin(a.ini);
+      const durVis = Math.max(this.durOf(a), minDurVis);
+      return { id: a.id, start, end: start + durVis };
+    }).sort((x, y) => x.start - y.start || x.end - y.end);
+
+    const layout = new Map<string, { col: number; cols: number }>();
+    let cluster: Item[] = [];
+    let clusterEnd = -1;
+
+    const flush = () => {
+      // Aloca uma coluna para cada item; reaproveita colunas livres.
+      const colsEnds: number[] = []; // end-time do último item de cada coluna
+      const assigned: { id: string; col: number }[] = [];
+      for (const it of cluster) {
+        let placed = -1;
+        for (let c = 0; c < colsEnds.length; c++) {
+          if (colsEnds[c] <= it.start) { colsEnds[c] = it.end; placed = c; break; }
+        }
+        if (placed === -1) { colsEnds.push(it.end); placed = colsEnds.length - 1; }
+        assigned.push({ id: it.id, col: placed });
+      }
+      const total = colsEnds.length;
+      for (const a of assigned) layout.set(a.id, { col: a.col, cols: total });
+    };
+
+    for (const it of items) {
+      if (cluster.length === 0 || it.start < clusterEnd) {
+        cluster.push(it);
+        clusterEnd = Math.max(clusterEnd, it.end);
+      } else {
+        flush();
+        cluster = [it];
+        clusterEnd = it.end;
+      }
+    }
+    if (cluster.length) flush();
+
+    this._layoutCache.set(p.id, { key, layout });
+    return layout;
+  }
+
   cardStyle(a: Appt) {
     const s = this.data.srv(a.srv);
     const dragging = this.isDragging(a);
+    // O card arrastado flutua em full-width acima do layout estático.
+    const info = dragging
+      ? { col: 0, cols: 1 }
+      : (this.layoutForProf(this.data.prof(a.prof)).get(a.id) || { col: 0, cols: 1 });
+    const { col, cols } = info;
+
+    // Faixas percentuais com um pequeno respiro (4px em cada lado).
+    const left  = `calc(${col} * (100% / ${cols}) + 4px)`;
+    const width = `calc(100% / ${cols} - 8px)`;
+
     return {
-      position: 'absolute', top: this.topOf(a) + 'px', left: '4px', right: '4px',
+      position: 'absolute', top: this.topOf(a) + 'px', left, width,
       height: this.heightOf(a) + 'px',
       background: dragging ? 'var(--surface)' : `color-mix(in oklch, ${s.cor} 12%, #ffffff)`,
       borderLeft: `3px solid ${s.cor}`,

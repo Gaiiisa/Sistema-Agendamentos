@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
@@ -9,6 +9,8 @@ import { AreaChartComponent } from '../shared/area-chart.component';
 import { DonutComponent } from '../shared/donut.component';
 import { HeatmapComponent } from '../shared/heatmap.component';
 import { DataService, Appt, Cliente } from '../data.service';
+import { AuthService } from '../auth.service';
+import { ExportService, Formato, Periodo } from '../export.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -349,9 +351,35 @@ import { DataService, Appt, Cliente } from '../data.service';
           <button [class.on]="periodo==='mes'"    (click)="periodo='mes'">Mês</button>
           <button [class.on]="periodo==='ano'"    (click)="periodo='ano'">Ano</button>
         </div>
-        <button class="btn btn-ghost btn-sm" (click)="onNotify.emit('Relatório exportado em PDF')">
-          <app-icon name="download" [size]="15"></app-icon> Exportar
-        </button>
+        <div style="position:relative" data-export-root>
+          <button class="btn btn-ghost btn-sm"
+            [disabled]="exportando !== null"
+            [style.opacity]="exportando !== null ? 0.6 : 1"
+            (click)="exportOpen = !exportOpen">
+            @if (exportando) {
+              <span class="spinner-mini"></span>
+            } @else {
+              <app-icon name="download" [size]="15"></app-icon>
+            }
+            Exportar
+            <app-icon [name]="exportOpen ? 'chevD' : 'chevR'" [size]="12" style="margin-left:2px;color:var(--text-3)"></app-icon>
+          </button>
+          @if (exportOpen) {
+            <div style="position:absolute;top:calc(100% + 4px);right:0;z-index:30;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-pop);padding:5px;min-width:180px">
+              <div class="muted" style="padding:6px 10px 4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px">
+                Relatório gerencial · {{ periodoLabel }}
+              </div>
+              @for (f of ['pdf','xlsx','csv']; track f) {
+                <button (click)="exportarGerencial(f)"
+                  style="display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border-radius:7px;text-align:left;font-size:13.5px;font-weight:500;background:transparent;border:none;cursor:pointer;color:var(--text)"
+                  (mouseenter)="hoverBg($event, 'var(--surface-2)')" (mouseleave)="hoverBg($event, 'transparent')">
+                  <app-icon [name]="f === 'pdf' ? 'download' : f === 'xlsx' ? 'list' : 'list'" [size]="14" style="color:var(--text-3)"></app-icon>
+                  Exportar em {{ f.toUpperCase() }}
+                </button>
+              }
+            </div>
+          }
+        </div>
       </div>
 
       <!-- KPIs relatórios (5) -->
@@ -645,6 +673,14 @@ import { DataService, Appt, Cliente } from '../data.service';
       </div>
 
     </div>`,
+  styles: [`
+    .spinner-mini {
+      display: inline-block; width: 13px; height: 13px; border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.15); border-top-color: var(--accent);
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  `],
 })
 export class DashboardComponent {
   @Output() onNew = new EventEmitter<void>();
@@ -660,7 +696,57 @@ export class DashboardComponent {
 
   periodo = 'mes';
 
-  constructor(public data: DataService) {}
+  // ---- exportação do "Relatório gerencial" ----
+  exportOpen = false;
+  exportando: string | null = null;
+
+  constructor(
+    public data: DataService,
+    private auth: AuthService,
+    private exportSvc: ExportService,
+    private host: ElementRef,
+  ) {}
+
+  /** Rótulo do período visível no popover de exportação. */
+  get periodoLabel(): string {
+    return this.exportSvc.periodRange(this.periodo as Periodo).label;
+  }
+
+  /** Fecha o popover ao clicar fora dele. */
+  @HostListener('document:mousedown', ['$event'])
+  onDocMouseDown(e: MouseEvent) {
+    if (!this.exportOpen) return;
+    const el = (this.host.nativeElement as HTMLElement).querySelector('[data-export-root]');
+    if (el && !el.contains(e.target as Node)) this.exportOpen = false;
+  }
+
+  async exportarGerencial(f: string) {
+    if (this.exportando) return;
+    // O relatório gerencial é sensível — exige perfil dono/admin/gerente.
+    const cod = this.auth.usuario?.papelCod || '';
+    if (!['dono', 'admin', 'gerente'].includes(cod)) {
+      this.exportOpen = false;
+      this.onNotify.emit('Você não tem permissão para exportar o relatório gerencial.');
+      return;
+    }
+    this.exportOpen = false;
+    this.exportando = f;
+    try {
+      const nome = this.auth.usuario?.nome || this.data.usuario.nome;
+      const { arquivo, linhas } = await this.exportSvc.export(
+        'r20', f as Formato, this.periodo as Periodo, nome,
+      );
+      this.onNotify.emit(`Relatório gerencial exportado (${linhas} linha${linhas === 1 ? '' : 's'}) — ${arquivo}`);
+    } catch (e: any) {
+      this.onNotify.emit(`Não foi possível exportar: ${e?.message || 'erro desconhecido'}`);
+    } finally {
+      this.exportando = null;
+    }
+  }
+
+  hoverBg(e: Event, color: string) {
+    (e.currentTarget as HTMLElement).style.background = color;
+  }
 
   // ── Dashboard ──
   get k() { return this.data.kpis; }
@@ -729,15 +815,196 @@ export class DashboardComponent {
   }
 
   // ── Relatórios ──
-  get r() { return this.data.relatorio; }
-  get rDelta() { return Math.round((this.r.faturamento - this.r.faturamentoAnt) / this.r.faturamentoAnt * 100); }
+  // Chave que representa o "estado" dos dados usados pelo relatório. Enquanto
+  // ela não mudar, o `r` retorna o objeto cacheado — evitando recomputar N
+  // vezes por ciclo de change detection (a lista de agendamentos costuma ser
+  // grande).
+  private _rCache: any = null;
+  private _rKey = '';
+
+  get r(): any {
+    const key = `${this.periodo}|${this.data.agendamentos.length}|${this.data.lancamentos.length}`;
+    if (this._rCache && this._rKey === key) return this._rCache;
+    this._rCache = this.buildRelatorio(this.periodo);
+    this._rKey = key;
+    return this._rCache;
+  }
+
+  get rDelta(): number {
+    const ant = this.r.faturamentoAnt;
+    if (!ant) return this.r.faturamento > 0 ? 100 : 0;
+    return Math.round((this.r.faturamento - ant) / ant * 100);
+  }
   get totalClientes() { return this.r.novos + this.r.recorrentes; }
-  get taxaRetorno() { return this.data.taxaRetorno(); }
+  get taxaRetorno(): number {
+    const total = this.totalClientes;
+    return total ? Math.round(this.r.recorrentes / total * 100) : 0;
+  }
   get metas() { return this.data.metasEquipe(); }
   get risco() { return this.data.clientesEmRisco(); }
 
+  // ---- construção do relatório a partir do período selecionado ----
+  private static readonly MESES_LBL = [
+    'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+    'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro',
+  ];
+  private static readonly MES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  private static readonly DIAS_TXT = ['dom','seg','ter','qua','qui','sex','sab'];
+  private static readonly FORMA_LBL: Record<string,string> = { pix: 'Pix', cartao: 'Cartão', dinheiro: 'Dinheiro' };
+
+  private fmtISO(d: Date): string {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  private periodRange(periodo: string) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    if (periodo === 'semana') {
+      const dow = today.getDay();
+      const back = dow === 0 ? 6 : dow - 1;                             // segunda como início
+      const ini = new Date(today); ini.setDate(today.getDate() - back);
+      const fim = new Date(ini);   fim.setDate(ini.getDate() + 6);
+      const iniAnt = new Date(ini); iniAnt.setDate(ini.getDate() - 7);
+      const fimAnt = new Date(fim); fimAnt.setDate(fim.getDate() - 7);
+      const M = DashboardComponent.MES_ABR;
+      const label = `Semana · ${ini.getDate()} ${M[ini.getMonth()]} – ${fim.getDate()} ${M[fim.getMonth()]}`;
+      return { ini, fim, iniAnt, fimAnt, label };
+    }
+    if (periodo === 'ano') {
+      const y = today.getFullYear();
+      return {
+        ini: new Date(y, 0, 1), fim: new Date(y, 11, 31),
+        iniAnt: new Date(y - 1, 0, 1), fimAnt: new Date(y - 1, 11, 31),
+        label: `Ano · ${y}`,
+      };
+    }
+    // mes (default)
+    const y = today.getFullYear(), m = today.getMonth();
+    return {
+      ini: new Date(y, m, 1), fim: new Date(y, m + 1, 0),
+      iniAnt: new Date(y, m - 1, 1), fimAnt: new Date(y, m, 0),
+      label: `${DashboardComponent.MESES_LBL[m]} · ${y}`,
+    };
+  }
+
+  private buildRelatorio(periodo: string): any {
+    const base = this.data.relatorio;
+    const { ini, fim, iniAnt, fimAnt, label } = this.periodRange(periodo);
+    const iniISO = this.fmtISO(ini), fimISO = this.fmtISO(fim);
+    const iniAntISO = this.fmtISO(iniAnt), fimAntISO = this.fmtISO(fimAnt);
+    const todayISO = this.fmtISO(new Date());
+
+    const inRange = (d: string, a: string, b: string) => d >= a && d <= b;
+
+    const ags    = this.data.agendamentos.filter(a => inRange(a.data, iniISO, fimISO));
+    const agsAnt = this.data.agendamentos.filter(a => inRange(a.data, iniAntISO, fimAntISO));
+    const concluidos    = ags.filter(a => a.status === 'concluido');
+    const concluidosAnt = agsAnt.filter(a => a.status === 'concluido');
+    const faltas = ags.filter(a => a.status === 'faltou');
+
+    const faturamento    = concluidos.reduce((s, a) => s + a.valor, 0);
+    const faturamentoAnt = concluidosAnt.reduce((s, a) => s + a.valor, 0);
+    const atendimentos   = concluidos.length;
+    const ticketMedio    = atendimentos ? Math.round(faturamento / atendimentos) : 0;
+
+    const finalizaveis = ags.filter(a => a.status === 'concluido' || a.status === 'faltou');
+    const noShowQtd   = faltas.length;
+    const noShowTaxa  = finalizaveis.length ? Math.round((noShowQtd / finalizaveis.length) * 1000) / 10 : 0;
+    const noShowCusto = faltas.reduce((s, a) => s + a.valor, 0);
+
+    // novos × recorrentes — primeira visita concluída (histórico global)
+    const primeira: Record<string, string> = {};
+    for (const a of this.data.agendamentos) {
+      if (a.status !== 'concluido') continue;
+      if (!primeira[a.cli] || a.data < primeira[a.cli]) primeira[a.cli] = a.data;
+    }
+    let novos = 0, recorrentes = 0;
+    for (const cli of new Set(concluidos.map(a => a.cli))) {
+      if (primeira[cli] && inRange(primeira[cli], iniISO, fimISO)) novos++;
+      else recorrentes++;
+    }
+
+    // forma de pagamento — lançamentos de receita no período
+    const lancs = this.data.lancamentos.filter(l =>
+      l.tipo === 'receita' && inRange(l.data, iniISO, fimISO),
+    );
+    const formaMap: Record<string, number> = {};
+    for (const l of lancs) formaMap[l.forma] = (formaMap[l.forma] || 0) + l.valor;
+    const totalForma = Object.values(formaMap).reduce((s, v) => s + v, 0);
+    const porForma = Object.entries(formaMap)
+      .map(([forma, valor]) => ({
+        forma: DashboardComponent.FORMA_LBL[forma] || forma, valor,
+        pct: totalForma ? Math.round(valor / totalForma * 100) : 0,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+
+    // ranking de serviços — concluídos no período
+    const rankMap: Record<string, { srv: string; qtd: number; receita: number }> = {};
+    for (const a of concluidos) {
+      (rankMap[a.srv] ||= { srv: a.srv, qtd: 0, receita: 0 });
+      rankMap[a.srv].qtd++;
+      rankMap[a.srv].receita += a.valor;
+    }
+    const rankingServicos = Object.values(rankMap).sort((a, b) => b.receita - a.receita).slice(0, 5);
+
+    // ocupação — minutos vendidos / capacidade dos profissionais até hoje
+    const ativos = new Set(['concluido', 'atendimento', 'confirmado', 'pendente']);
+    const fimCap = fimISO < todayISO ? fimISO : todayISO;      // capacidade só até hoje
+    const ativosPeriodo = ags.filter(a => a.data <= fimCap && ativos.has(a.status));
+    let vendidosMin = 0;
+    for (const a of ativosPeriodo) {
+      const s = this.data.srv(a.srv);
+      vendidosMin += (s ? s.dur : 30);
+    }
+    let capMin = 0;
+    const iniT = ini.getTime();
+    const fimT = Math.min(fim.getTime(), new Date(fimCap + 'T00:00:00').getTime());
+    for (let t = iniT; t <= fimT; t += 86_400_000) {
+      const d = new Date(t);
+      const diaTxt = DashboardComponent.DIAS_TXT[d.getDay()];
+      for (const p of this.data.staff) {
+        if (p.folga.includes(diaTxt)) continue;
+        capMin += this.data.toMin(p.fim) - this.data.toMin(p.inicio);
+      }
+    }
+    const ocupacao = capMin ? Math.min(100, Math.round(vendidosMin / capMin * 100)) : 0;
+
+    // heatmap dia-semana × faixa horária
+    const heatDias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const faixas = [9, 11, 13, 15, 17, 19];
+    const heatmap = faixas.map(() => heatDias.map(() => 0));
+    const heatRele = new Set(['concluido', 'atendimento', 'confirmado']);
+    for (const a of ags) {
+      if (!heatRele.has(a.status)) continue;
+      const dow = new Date(a.data + 'T00:00:00').getDay();
+      if (dow < 1 || dow > 6) continue;
+      const h = Number(a.hora.slice(0, 2));
+      let fi = -1;
+      for (let i = faixas.length - 1; i >= 0; i--) if (h >= faixas[i]) { fi = i; break; }
+      if (fi >= 0) heatmap[fi][dow - 1]++;
+    }
+    const heatMax = Math.max(0, ...heatmap.flat());
+    const heatmapScaled = heatmap.map(row => row.map(v => (heatMax ? Math.round(v / heatMax * 5) : 0)));
+
+    return {
+      periodo: label,
+      faturamento, faturamentoAnt,
+      atendimentos, ticketMedio, ocupacao,
+      noShowTaxa, noShowQtd, noShowCusto,
+      novos, recorrentes,
+      porForma, rankingServicos,
+      heatmapDias: heatDias,
+      heatmapFaixas: faixas.map(h => `${h}h`),
+      heatmap: heatmapScaled,
+      // "Evolução do faturamento" (últimas 8 semanas) mantém a série do backend —
+      // é uma visão histórica independente do filtro.
+      faturamentoSemanal: base.faturamentoSemanal || [0],
+      faturamentoSemanalLabels: base.faturamentoSemanalLabels || [''],
+      metaSemanal: base.metaSemanal || 5000,
+    };
+  }
+
   get rankServicosMax(): number {
-    return Math.max(1, ...this.r.rankingServicos.map(x => x.receita));
+    return Math.max(1, ...this.r.rankingServicos.map((x: any) => x.receita));
   }
 
   get freqMedia(): number {
@@ -755,7 +1022,7 @@ export class DashboardComponent {
   }
 
   get donutForma() {
-    return this.r.porForma.map(f => ({
+    return this.r.porForma.map((f: any) => ({
       valor: f.valor, label: f.forma, cor: this.FORMA_COR[f.forma] || 'var(--text-3)',
     }));
   }

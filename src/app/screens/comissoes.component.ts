@@ -15,7 +15,7 @@ import { DataService } from '../data.service';
   <!-- header row -->
   <div class="row" style="margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div class="col" style="line-height:1.3">
-      <div style="font-weight:700;font-size:16px">Período: {{ data.periodoComissao }}</div>
+      <div style="font-weight:700;font-size:16px">Período: {{ periodoLabel }}</div>
       <div class="muted" style="font-size:13px">Cálculo automático sobre atendimentos concluídos.</div>
     </div>
     <div class="seg" style="margin-left:auto">
@@ -138,7 +138,7 @@ import { DataService } from '../data.service';
 
       <div style="text-align:center;padding-bottom:6px">
         <div style="font-weight:800;font-size:17px;letter-spacing:-0.01em">{{ data.estabelecimento.nome }}</div>
-        <div class="muted" style="font-size:13px">Recibo de comissão · {{ data.periodoComissao }}</div>
+        <div class="muted" style="font-size:13px">Recibo de comissão · {{ periodoLabel }}</div>
       </div>
 
       <div class="divider"></div>
@@ -300,25 +300,86 @@ export class ComissoesComponent {
 
   constructor(public data: DataService) {}
 
-  calc(profId: string) {
+  private static readonly MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  private static readonly MES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+  private fmtISO(d: Date): string {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  /** Faixa (ini, fim, rótulo) do período selecionado, calculada a partir de hoje. */
+  private periodRange(): { ini: string; fim: string; label: string } {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const y = today.getFullYear(), m = today.getMonth(), day = today.getDate();
+
+    if (this.periodo === 'semana') {
+      const dow = today.getDay();
+      const back = dow === 0 ? 6 : dow - 1;
+      const ini = new Date(today); ini.setDate(today.getDate() - back);
+      const fim = new Date(ini);   fim.setDate(ini.getDate() + 6);
+      const M = ComissoesComponent.MES_ABR;
+      return {
+        ini: this.fmtISO(ini), fim: this.fmtISO(fim),
+        label: `Semana · ${ini.getDate()} ${M[ini.getMonth()]} – ${fim.getDate()} ${M[fim.getMonth()]}`,
+      };
+    }
+    if (this.periodo === 'mes') {
+      const ini = new Date(y, m, 1);
+      const fim = new Date(y, m + 1, 0);
+      const mesCap = ComissoesComponent.MESES[m].charAt(0).toUpperCase() + ComissoesComponent.MESES[m].slice(1);
+      return { ini: this.fmtISO(ini), fim: this.fmtISO(fim), label: `${mesCap} · ${y}` };
+    }
+    // quinzena (padrão)
+    const primeira = day <= 15;
+    const ini = new Date(y, m, primeira ? 1 : 16);
+    const fim = primeira ? new Date(y, m, 15) : new Date(y, m + 1, 0);
+    return {
+      ini: this.fmtISO(ini), fim: this.fmtISO(fim),
+      label: `${String(ini.getDate()).padStart(2, '0')} – ${String(fim.getDate()).padStart(2, '0')} de ${ComissoesComponent.MESES[m]}`,
+    };
+  }
+
+  get periodoLabel(): string { return this.periodRange().label; }
+
+  private calcInRange(profId: string, ini: string, fim: string) {
     const p = this.data.prof(profId);
-    const c = this.data.comissoes[profId];
-    const bruto = c.itens.reduce((s, i) => s + i.valor, 0);
-    const comissao = Math.round(bruto * p.comissao / 100);
-    return { p, c, bruto, comissao, qtd: c.itens.length };
+    const src = this.data.comissoes[profId] || { status: 'aberto', itens: [] };
+    const itens = src.itens.filter(i => i.data >= ini && i.data <= fim);
+    const bruto = itens.reduce((s, i) => s + i.valor, 0);
+    const comissao = Math.round(bruto * (p?.comissao || 0) / 100);
+    return { p, c: { status: src.status, itens }, bruto, comissao, qtd: itens.length };
+  }
+
+  /** API mantida para chamadas externas (se houver). */
+  calc(profId: string) {
+    const { ini, fim } = this.periodRange();
+    return this.calcInRange(profId, ini, fim);
   }
 
   calcComissaoItem(valor: number, comissaoPct: number): number {
     return Math.round(valor * comissaoPct / 100);
   }
 
+  // Cache dos dados computados por período. Sem cache, `dados` recomputa a
+  // filtragem+redução em cada acesso — e o template referencia dados/allSel
+  // várias vezes por ciclo de change detection.
+  private _dadosCache: any = null;
+  private _dadosKey = '';
+
   get dados() {
-    return this.data.staff.map(p => this.calc(p.id));
+    const totalItens = this.data.staff.reduce(
+      (s, p) => s + (this.data.comissoes[p.id]?.itens.length || 0), 0);
+    const key = `${this.periodo}|${totalItens}`;
+    if (this._dadosCache && this._dadosKey === key) return this._dadosCache;
+    const { ini, fim } = this.periodRange();
+    this._dadosCache = this.data.staff.map(p => this.calcInRange(p.id, ini, fim));
+    this._dadosKey = key;
+    return this._dadosCache;
   }
 
-  get totalComissao() { return this.dados.reduce((s, d) => s + d.comissao, 0); }
-  get aPagar() { return this.dados.filter(d => d.c.status === 'aberto').reduce((s, d) => s + d.comissao, 0); }
-  get pago() { return this.dados.filter(d => d.c.status === 'pago').reduce((s, d) => s + d.comissao, 0); }
+  get totalComissao(): number { return this.dados.reduce((s: number, d: any) => s + d.comissao, 0); }
+  get aPagar(): number { return this.dados.filter((d: any) => d.c.status === 'aberto').reduce((s: number, d: any) => s + d.comissao, 0); }
+  get pago(): number { return this.dados.filter((d: any) => d.c.status === 'pago').reduce((s: number, d: any) => s + d.comissao, 0); }
 
   get histProf() {
     if (!this.historico) return [];
