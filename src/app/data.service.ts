@@ -15,6 +15,9 @@ export interface Staff {
 export interface Servico {
   id: string; nome: string; cat: string; dur: number; preco: number; custo: number;
   desc: string; cor: string; exec: string[]; combo?: boolean; sinal?: boolean;
+  itens?: string[];      // IDs dos serviços que compõem o combo (só quando combo=true)
+  sinalPct?: number;     // % do valor exigido como sinal; se vazio, usa o % global do config
+  ativo?: boolean;       // default true; false = oculto do agendamento, aparece riscado no catálogo
 }
 export interface Cliente {
   id: string; nome: string; wpp: string; email: string; nasc: string; tags: string[];
@@ -42,6 +45,7 @@ export interface HistItem { data: string; srv: string; prof: string; valor: numb
 export interface Produto {
   id: string; nome: string; cat: string; qtd: number; min: number; custo: number;
   preco: number | null; fornecedor: string; consumo: string | null;
+  imagem?: string | null;
 }
 export interface MovEstoque { id: string; prod: string; tipo: string; qtd: number; motivo: string; data: string; hora: string; }
 export interface Lancamento { id: string; tipo: string; cat: string; desc: string; valor: number; forma: string; data: string; hora: string; prof?: string; }
@@ -89,6 +93,9 @@ export class DataService {
     { id: 'p3', nome: 'Lucas Ferreira', apelido: 'Lucas',  cor: '#9333ea', especialidades: ['Barba', 'Pigmentação', 'Hidratação'], comissao: 45, contato: '(11) 98123-9087', bio: 'Mestre da barba terapia.', meta: 6500, vendido: 5980, folga: ['ter'], inicio: '09:00', fim: '19:00' },
     { id: 'p4', nome: 'Bruno Alves',    apelido: 'Bruno',  cor: '#ea580c', especialidades: ['Corte', 'Infantil', 'Tesoura'], comissao: 40, contato: '(11) 99012-5534', bio: 'Paciência de monge com a criançada.', meta: 5500, vendido: 4210, folga: ['dom'], inicio: '09:00', fim: '18:00' },
   ];
+
+  // ---------- Categorias avulsas de serviço (criadas manualmente na tela de Serviços) ----------
+  readonly categoriasServico: string[] = [];
 
   // ---------- Serviços ----------
   readonly servicos: Servico[] = [
@@ -212,15 +219,15 @@ export class DataService {
 
   // ---------- FASE 2 · Estoque ----------
   readonly produtos: Produto[] = [
-    { id: 'pr1', nome: 'Pomada Modeladora',      cat: 'Finalização', qtd: 3,  min: 8,  custo: 18, preco: 35, fornecedor: 'Barba Brava Dist.', consumo: 'Corte Masculino' },
-    { id: 'pr2', nome: 'Lâmina de Barbear (cx)', cat: 'Insumo',      qtd: 2,  min: 5,  custo: 25, preco: null, fornecedor: 'SupplyMax', consumo: 'Barba Completa' },
+    { id: 'pr1', nome: 'Pomada Modeladora',      cat: 'Finalização', qtd: 3,  min: 8,  custo: 18, preco: 35, fornecedor: 'Barba Brava Dist.', consumo: 's1' },
+    { id: 'pr2', nome: 'Lâmina de Barbear (cx)', cat: 'Insumo',      qtd: 2,  min: 5,  custo: 25, preco: null, fornecedor: 'SupplyMax', consumo: 's3' },
     { id: 'pr3', nome: 'Óleo para Barba',        cat: 'Barba',       qtd: 14, min: 6,  custo: 22, preco: 45, fornecedor: 'Barba Brava Dist.', consumo: null },
-    { id: 'pr4', nome: 'Shampoo Profissional 1L',cat: 'Lavagem',     qtd: 9,  min: 4,  custo: 35, preco: 60, fornecedor: 'Beauty Pro', consumo: 'Hidratação Capilar' },
-    { id: 'pr5', nome: 'Tinta Pigment. Barba',   cat: 'Química',     qtd: 6,  min: 3,  custo: 40, preco: null, fornecedor: 'Beauty Pro', consumo: 'Pigmentação de Barba' },
+    { id: 'pr4', nome: 'Shampoo Profissional 1L',cat: 'Lavagem',     qtd: 9,  min: 4,  custo: 35, preco: 60, fornecedor: 'Beauty Pro', consumo: 's9' },
+    { id: 'pr5', nome: 'Tinta Pigment. Barba',   cat: 'Química',     qtd: 6,  min: 3,  custo: 40, preco: null, fornecedor: 'Beauty Pro', consumo: 's6' },
     { id: 'pr6', nome: 'Pó Mentolado',           cat: 'Finalização', qtd: 11, min: 5,  custo: 12, preco: 25, fornecedor: 'Barba Brava Dist.', consumo: null },
-    { id: 'pr7', nome: 'Cera Capilar',           cat: 'Finalização', qtd: 1,  min: 6,  custo: 20, preco: 38, fornecedor: 'SupplyMax', consumo: 'Corte Masculino' },
+    { id: 'pr7', nome: 'Cera Capilar',           cat: 'Finalização', qtd: 1,  min: 6,  custo: 20, preco: 38, fornecedor: 'SupplyMax', consumo: 's1' },
     { id: 'pr8', nome: 'Toalhas Descart. (pct)', cat: 'Insumo',      qtd: 22, min: 10, custo: 15, preco: null, fornecedor: 'SupplyMax', consumo: null },
-    { id: 'pr9', nome: 'Pó Descolorante',        cat: 'Química',     qtd: 4,  min: 2,  custo: 48, preco: null, fornecedor: 'Beauty Pro', consumo: 'Platinado / Global' },
+    { id: 'pr9', nome: 'Pó Descolorante',        cat: 'Química',     qtd: 4,  min: 2,  custo: 48, preco: null, fornecedor: 'Beauty Pro', consumo: 's10' },
   ];
   readonly movEstoque: MovEstoque[] = [
     { id: 'm1', prod: 'pr1', tipo: 'saida',   qtd: 1, motivo: 'Consumo — Corte Masculino', data: '2026-06-09', hora: '11:42' },
@@ -415,6 +422,7 @@ export class DataService {
       this.fill(this.expediente, b.horarios);
       this.fill(this.staff, b.staff);
       this.fill(this.servicos, b.servicos);
+      this.fill(this.categoriasServico, b.categoriasServico);
       this.fill(this.clientes, b.clientes);
       this.fill(this.hoje, b.hoje);
       this.fill(this.agendamentos, b.agendamentos);
@@ -469,10 +477,39 @@ export class DataService {
     this.api.put('/servicos/' + id, changes).subscribe({ error: () => {} });
   }
 
+  /** Alterna ativo/inativo de um serviço. Serviços inativos ficam ocultos das telas de agendamento. */
+  toggleServicoAtivo(id: string) {
+    const s = this.servicos.find(s => s.id === id);
+    if (!s) return;
+    const novo = !(s.ativo !== false);
+    this.updateServico(id, { ativo: novo });
+  }
+
   addServico(servico: Omit<Servico, 'id'>) {
     const novo = { ...servico, id: 'sn' + Date.now() } as Servico;
     this.servicos.push(novo);
     this.api.post('/servicos', novo).subscribe({ error: () => {} });
+  }
+
+  /** Cria uma categoria avulsa de serviço (persiste no banco). No-op se já existir. */
+  addCategoriaServico(nome: string) {
+    const trimmed = nome.trim();
+    if (!trimmed) return;
+    const existe = this.categoriasServico.some(c => c.toLowerCase() === trimmed.toLowerCase())
+      || this.servicos.some(s => s.cat.toLowerCase() === trimmed.toLowerCase());
+    if (existe) return;
+    this.categoriasServico.push(trimmed);
+    this.api.post('/categorias-servico', { nome: trimmed }).subscribe({ error: () => {} });
+  }
+
+  /** Remove uma categoria avulsa. Só remove se nenhum serviço a estiver usando. */
+  removeCategoriaServico(nome: string): boolean {
+    if (this.servicos.some(s => s.cat === nome)) return false;
+    const i = this.categoriasServico.indexOf(nome);
+    if (i < 0) return false;
+    this.categoriasServico.splice(i, 1);
+    this.api.delete('/categorias-servico/' + encodeURIComponent(nome)).subscribe({ error: () => {} });
+    return true;
   }
 
   updateStaff(id: string, changes: Partial<Staff>) {
@@ -526,6 +563,13 @@ export class DataService {
     const novo = { ...p, id: 'prn' + Date.now() } as Produto;
     this.produtos.push(novo);
     this.api.post('/produtos', novo).subscribe({ error: () => {} });
+  }
+
+  baixaAutomatica(srvId: string) {
+    const nome = this.srv(srvId)?.nome ?? srvId;
+    for (const p of this.produtos.filter(p => p.consumo === srvId)) {
+      this.registrarMov(p.id, 'saida', 1, `Baixa automática — ${nome}`);
+    }
   }
 
   registrarMov(prod: string, tipo: 'entrada' | 'saida', qtd: number, motivo: string) {
@@ -622,13 +666,25 @@ export class DataService {
     }, 0);
   }
 
-  updateAppt(id: string, changes: { ini?: string; prof?: string }) {
+  updateAppt(id: string, changes: { ini?: string; prof?: string; data?: string }) {
     const a = this.hoje.find(a => a.id === id);
-    if (a) Object.assign(a, changes);
+    if (a) {
+      if (changes.ini) a.ini = changes.ini;
+      if (changes.prof) a.prof = changes.prof;
+    }
     const ag = this.agendamentos.find(a => a.id === id);
     if (ag) {
       if (changes.ini) ag.hora = changes.ini;
       if (changes.prof) ag.prof = changes.prof;
+      if (changes.data) ag.data = changes.data;
+    }
+    // Se remarcou pra outro dia, remove da timeline de hoje.
+    if (changes.data) {
+      const hojeIso = new Date().toISOString().slice(0, 10);
+      if (changes.data !== hojeIso) {
+        const i = this.hoje.findIndex(x => x.id === id);
+        if (i >= 0) this.hoje.splice(i, 1);
+      }
     }
     this.api.put('/agendamentos/' + id, changes).subscribe({ error: () => {} });
   }
@@ -636,9 +692,13 @@ export class DataService {
   /** muda o status de um agendamento (na timeline de hoje e na lista) e persiste */
   setApptStatus(id: string, status: string) {
     const a = this.hoje.find(a => a.id === id);
+    const anterior = a?.status;
     if (a) a.status = status;
     const ag = this.agendamentos.find(a => a.id === id);
     if (ag) ag.status = status;
+    if (status === 'concluido' && anterior !== 'concluido' && a) {
+      this.baixaAutomatica(a.srv);
+    }
     this.api.put('/agendamentos/' + id, { status }).subscribe({ error: () => {} });
   }
 

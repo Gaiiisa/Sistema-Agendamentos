@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from './icon.component';
 import { AvatarComponent } from './shared/avatar.component';
 import { ModalComponent } from './shared/modal.component';
+import { SelectComponent, SelectOption } from './shared/select.component';
 import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
 
 @Component({
   selector: 'app-novo-agendamento',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, ModalComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, ModalComponent, SelectComponent],
   template: `
     <app-modal title="Novo agendamento" (close)="close.emit()">
       <!-- cliente -->
@@ -51,7 +52,7 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
       <div class="field">
         <label>Serviço</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          @for (s of data.servicos.slice(0, 6); track s.id) {
+          @for (s of servicosAtivos.slice(0, 6); track s.id) {
             <button (click)="pick(s.id)"
               style="display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:var(--r-md);text-align:left"
               [style.border]="'1px solid ' + (srv === s.id ? 'var(--accent)' : 'var(--border-strong)')"
@@ -70,10 +71,7 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="field">
           <label>Profissional</label>
-          <select class="select" [value]="prof" (change)="prof=$any($event.target).value">
-            <option value="">Selecione…</option>
-            @for (p of profsValidos; track p.id) { <option [value]="p.id">{{ p.nome }}</option> }
-          </select>
+          <app-select [value]="prof" (valueChange)="prof=$event" [options]="profOptions" placeholder="Selecione…"></app-select>
         </div>
         <div class="field">
           <label>Data e hora{{ sObj ? ' · termina ' + data.fromMin(data.toMin(hora) + sObj.dur) : '' }}</label>
@@ -143,8 +141,12 @@ export class NovoAgendamentoComponent {
   }
 
   get sObj(): Servico | null { return this.srv ? this.data.srv(this.srv) : null; }
+  get servicosAtivos(): Servico[] { return this.data.servicos.filter(s => s.ativo !== false); }
   get profsValidos(): Staff[] {
     return this.sObj ? this.data.staff.filter(p => this.sObj!.exec.includes(p.id)) : this.data.staff;
+  }
+  get profOptions(): SelectOption[] {
+    return this.profsValidos.map(p => ({ value: p.id, label: p.nome }));
   }
   get cliMatch(): Cliente[] {
     return this.cliQ

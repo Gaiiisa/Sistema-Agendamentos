@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
 import { MenuComponent } from '../shared/menu.component';
 import { ModalComponent } from '../shared/modal.component';
+import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService } from '../data.service';
 import type { MenuItem } from '../shared/menu.component';
 import type { Produto } from '../data.service';
@@ -11,7 +12,7 @@ import type { Produto } from '../data.service';
 @Component({
   selector: 'app-estoque',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, MenuComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, IconComponent, MenuComponent, ModalComponent, SelectComponent],
   template: `
 <div class="page">
 
@@ -124,8 +125,12 @@ import type { Produto } from '../data.service';
               <tr>
                 <td class="card-header">
                   <div class="row" style="gap:10px">
-                    <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0">
-                      <app-icon name="pkg" [size]="15" style="color:var(--text-2)"></app-icon>
+                    <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                      @if (p.imagem) {
+                        <img [src]="p.imagem" [alt]="p.nome" style="width:100%;height:100%;object-fit:cover">
+                      } @else {
+                        <app-icon name="pkg" [size]="15" style="color:var(--text-2)"></app-icon>
+                      }
                     </div>
                     <span style="font-weight:600">{{ p.nome }}</span>
                   </div>
@@ -143,10 +148,10 @@ import type { Produto } from '../data.service';
                 <td class="tnum" data-label="Custo">{{ data.money(p.custo) }}</td>
                 <td class="muted" data-label="Fornecedor" style="font-size:13px">{{ p.fornecedor }}</td>
                 <td data-label="Baixa auto.">
-                  @if (p.consumo) {
+                  @if (p.consumo && data.srv(p.consumo)) {
                     <span class="row" style="gap:5px;font-size:12.5px;color:var(--st-atendimento)">
                       <app-icon name="sparkle" [size]="13"></app-icon>
-                      {{ p.consumo }}
+                      {{ data.srv(p.consumo).nome }}
                     </span>
                   } @else {
                     <span class="muted" style="font-size:12.5px">—</span>
@@ -252,36 +257,95 @@ import type { Produto } from '../data.service';
       <div style="display:flex;flex-direction:column;gap:16px">
 
         <div style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--surface-2);border-radius:var(--r-md)">
-          <div style="width:36px;height:36px;border-radius:9px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm);flex-shrink:0">
-            <app-icon name="pkg" [size]="17" style="color:var(--text-2)"></app-icon>
+          <div style="width:36px;height:36px;border-radius:9px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm);flex-shrink:0;overflow:hidden">
+            @if (prodSel?.imagem) {
+              <img [src]="prodSel!.imagem!" [alt]="prodSel?.nome" style="width:100%;height:100%;object-fit:cover">
+            } @else {
+              <app-icon name="pkg" [size]="17" style="color:var(--text-2)"></app-icon>
+            }
           </div>
           <div class="col" style="line-height:1.35">
             <span style="font-weight:700;font-size:15px">{{ prodSel?.nome }}</span>
-            <span class="muted" style="font-size:12.5px">{{ prodSel?.cat }} · estoque atual: <strong>{{ prodSel?.qtd }} un</strong></span>
+            <span class="muted" style="font-size:12.5px">{{ prodSel?.cat }} · mínimo: <strong>{{ prodSel?.min }} un</strong></span>
           </div>
         </div>
 
+        <!-- Preview atual → novo -->
+        @if (prodSel) {
+          <div class="row" style="gap:14px;align-items:center;padding:14px;background:var(--surface-2);border-radius:var(--r-md)">
+            <div class="col" style="gap:2px;align-items:center;flex:1">
+              <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.4px">Atual</span>
+              <span class="tnum" style="font-size:22px;font-weight:700">{{ prodSel.qtd }} un</span>
+            </div>
+            <app-icon name="chevR" [size]="20" style="color:var(--text-3);flex-shrink:0"></app-icon>
+            <div class="col" style="gap:2px;align-items:center;flex:1">
+              <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.4px">Após</span>
+              <span class="tnum" style="font-size:22px;font-weight:700" [style.color]="NIVEL[novoNivel].cor">{{ novaQtd }} un</span>
+            </div>
+            <span class="pill"
+              [style.background]="NIVEL[novoNivel].bg"
+              [style.color]="NIVEL[novoNivel].cor"
+              style="flex-shrink:0">
+              <span class="pdot"></span>
+              {{ NIVEL[novoNivel].label }}
+            </span>
+          </div>
+        }
+
+        <!-- Quantidade + stepper + presets -->
         <div class="field">
           <label>Quantidade</label>
-          <input class="input" type="number" [(ngModel)]="movQtd" min="1" style="max-width:160px">
+          <div class="row" style="gap:10px;align-items:center;flex-wrap:wrap">
+            <div class="row" style="gap:6px;align-items:center">
+              <button class="btn btn-sm" (click)="dec()" [disabled]="movQtd <= 1"
+                style="width:34px;padding:5px 0;font-size:16px;line-height:1">−</button>
+              <input class="input" type="number" [(ngModel)]="movQtd" min="1"
+                style="width:90px;text-align:center">
+              <button class="btn btn-sm" (click)="inc(1)"
+                style="width:34px;padding:5px 0;font-size:16px;line-height:1">+</button>
+            </div>
+            <div class="row" style="gap:6px">
+              <button class="btn btn-sm btn-subtle" (click)="inc(5)">+5</button>
+              <button class="btn btn-sm btn-subtle" (click)="inc(10)">+10</button>
+              <button class="btn btn-sm btn-subtle" (click)="inc(25)">+25</button>
+            </div>
+          </div>
           @if (modalTipo === 'saida' && prodSel && movQtd > prodSel.qtd) {
-            <span style="color:var(--st-faltou);font-size:12.5px;margin-top:4px;display:block">
+            <span style="color:var(--st-faltou);font-size:12.5px;margin-top:6px;display:flex;align-items:center;gap:5px">
+              <app-icon name="alert" [size]="13"></app-icon>
               Quantidade maior que o estoque disponível ({{ prodSel.qtd }} un)
+            </span>
+          } @else if (modalTipo === 'saida' && prodSel && movQtd > 0 && (prodSel.qtd - movQtd) <= prodSel.min) {
+            <span style="color:var(--st-pendente);font-size:12.5px;margin-top:6px;display:flex;align-items:center;gap:5px">
+              <app-icon name="alert" [size]="13"></app-icon>
+              Após a saída o estoque fica em {{ prodSel.qtd - movQtd }} un (mínimo {{ prodSel.min }}) — considere repor
             </span>
           }
         </div>
 
+        <!-- Motivo com chips + fallback livre -->
         <div class="field">
           <label>Motivo</label>
-          <input class="input" [(ngModel)]="movMotivo"
-            [placeholder]="modalTipo === 'entrada' ? 'Ex: Compra — Barba Brava Dist.' : 'Ex: Consumo — Corte Masculino'">
+          <div class="seg" style="flex-wrap:wrap;max-width:100%">
+            @for (m of motivosDisponiveis; track m) {
+              <button [class.on]="!movMotivoCustom && movMotivo === m"
+                (click)="movMotivo = m; movMotivoCustom = false">{{ m }}</button>
+            }
+            <button [class.on]="movMotivoCustom" (click)="ativarOutroMotivo()">Outro</button>
+          </div>
+          @if (movMotivoCustom) {
+            <input class="input" [(ngModel)]="movMotivo"
+              [placeholder]="modalTipo === 'entrada' ? 'Ex: Compra — Barba Brava Dist.' : 'Ex: Consumo — Corte Masculino'"
+              style="margin-top:8px">
+          }
         </div>
 
       </div>
 
       <div modalFoot>
         <button class="btn" (click)="closeModal()">Cancelar</button>
-        <button class="btn btn-primary" (click)="salvarMov()" [disabled]="movQtd < 1">
+        <button class="btn btn-primary" (click)="salvarMov()"
+          [disabled]="!movValido">
           {{ modalTipo === 'entrada' ? 'Registrar entrada' : 'Registrar saída' }}
         </button>
       </div>
@@ -291,6 +355,37 @@ import type { Produto } from '../data.service';
     @if (modalTipo === 'editar' || modalTipo === 'novo') {
       <div style="display:flex;flex-direction:column;gap:16px">
 
+        <!-- Imagem -->
+        <div class="field">
+          <label>Imagem do produto</label>
+          <div class="row" style="gap:12px;align-items:center">
+            <div style="width:72px;height:72px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;flex-shrink:0">
+              @if (draftImagem) {
+                <img [src]="draftImagem" alt="preview"
+                  style="width:100%;height:100%;object-fit:cover">
+              } @else {
+                <app-icon name="pkg" [size]="22" style="color:var(--text-3)"></app-icon>
+              }
+            </div>
+            <div class="col" style="gap:6px;flex:1">
+              <div class="row" style="gap:8px;flex-wrap:wrap">
+                <label class="btn btn-sm" style="cursor:pointer;margin:0">
+                  <app-icon name="download" [size]="13" style="transform:rotate(180deg)"></app-icon>
+                  {{ draftImagem ? 'Trocar imagem' : 'Escolher imagem' }}
+                  <input type="file" accept="image/*" (change)="onImgFile($event)" hidden>
+                </label>
+                @if (draftImagem) {
+                  <button class="btn btn-sm" (click)="removerImg()" style="color:var(--st-faltou)">
+                    <app-icon name="trash" [size]="13"></app-icon>
+                    Remover
+                  </button>
+                }
+              </div>
+              <span class="muted" style="font-size:12px">PNG, JPG ou WebP · até 2 MB</span>
+            </div>
+          </div>
+        </div>
+
         <div class="row" style="gap:12px;flex-wrap:wrap">
           <div class="field" style="flex:2;min-width:160px">
             <label>Nome do produto</label>
@@ -298,10 +393,7 @@ import type { Produto } from '../data.service';
           </div>
           <div class="field" style="flex:1;min-width:130px">
             <label>Categoria</label>
-            <input class="input" [(ngModel)]="draft.cat" list="prod-cats-list" placeholder="Ex: Finalização">
-            <datalist id="prod-cats-list">
-              @for (c of prodCats; track c) { <option [value]="c"></option> }
-            </datalist>
+            <app-select [(ngModel)]="draft.cat" [options]="prodCatsOptions" [allowCreate]="true" placeholder="Ex: Finalização"></app-select>
           </div>
         </div>
 
@@ -326,12 +418,12 @@ import type { Produto } from '../data.service';
 
         <div class="row" style="gap:12px;flex-wrap:wrap">
           <div class="field" style="flex:1;min-width:160px">
-            <label>Fornecedor</label>
+            <label>Fornecedor ou Link de compra</label>
             <input class="input" [(ngModel)]="draft.fornecedor" placeholder="Ex: Beauty Pro">
           </div>
           <div class="field" style="flex:1;min-width:180px">
             <label>Baixa automática (serviço vinculado)</label>
-            <input class="input" [(ngModel)]="draftConsumo" placeholder="Ex: Corte Masculino">
+            <app-select [(ngModel)]="draftConsumo" [options]="consumoOptions" placeholder="Sem serviço vinculado"></app-select>
           </div>
         </div>
 
@@ -360,8 +452,13 @@ export class EstoqueComponent {
   draft: Partial<Produto> = {};
   draftPreco: number | null = null;
   draftConsumo = '';
+  draftImagem: string | null = null;
   movQtd = 1;
   movMotivo = '';
+  movMotivoCustom = false;
+
+  readonly motivosEntrada = ['Compra', 'Devolução', 'Ajuste', 'Bonificação'];
+  readonly motivosSaida   = ['Consumo', 'Perda/quebra', 'Vencimento', 'Ajuste'];
 
   readonly NIVEL: Record<string, { label: string; cor: string; bg: string }> = {
     critico: { label: 'Crítico', cor: 'var(--st-faltou)',   bg: 'var(--st-faltou-bg)'   },
@@ -392,18 +489,61 @@ export class EstoqueComponent {
     return Array.from(new Set(this.data.produtos.map(p => p.cat)));
   }
 
+  get prodCatsOptions(): SelectOption[] {
+    return this.prodCats.map(c => ({ value: c, label: c }));
+  }
+
+  get consumoOptions(): SelectOption[] {
+    return [
+      { value: '', label: 'Sem serviço vinculado' },
+      ...this.data.servicos.map(s => ({ value: s.id, label: s.nome })),
+    ];
+  }
+
   openEntrada(p: Produto) {
     this.prodSel = p;
     this.movQtd = 1;
-    this.movMotivo = '';
+    this.movMotivo = this.motivosEntrada[0];
+    this.movMotivoCustom = false;
     this.modalTipo = 'entrada';
   }
 
   openSaida(p: Produto) {
     this.prodSel = p;
     this.movQtd = 1;
-    this.movMotivo = '';
+    this.movMotivo = this.motivosSaida[0];
+    this.movMotivoCustom = false;
     this.modalTipo = 'saida';
+  }
+
+  get motivosDisponiveis(): string[] {
+    return this.modalTipo === 'entrada' ? this.motivosEntrada : this.motivosSaida;
+  }
+
+  ativarOutroMotivo() {
+    this.movMotivoCustom = true;
+    this.movMotivo = '';
+  }
+
+  inc(n: number) { this.movQtd = (Number(this.movQtd) || 0) + n; }
+  dec()          { this.movQtd = Math.max(1, (Number(this.movQtd) || 1) - 1); }
+
+  get novaQtd(): number {
+    if (!this.prodSel) return 0;
+    const q = Number(this.movQtd) || 0;
+    return this.modalTipo === 'entrada' ? this.prodSel.qtd + q : this.prodSel.qtd - q;
+  }
+
+  get novoNivel(): 'critico' | 'baixo' | 'ok' {
+    if (!this.prodSel) return 'ok';
+    return this.nivel({ ...this.prodSel, qtd: Math.max(0, this.novaQtd) } as Produto);
+  }
+
+  get movValido(): boolean {
+    if (!this.prodSel || this.movQtd < 1) return false;
+    if (!this.movMotivo.trim()) return false;
+    if (this.modalTipo === 'saida' && this.movQtd > this.prodSel.qtd) return false;
+    return true;
   }
 
   openEditar(p: Produto) {
@@ -411,6 +551,7 @@ export class EstoqueComponent {
     this.draft = { ...p };
     this.draftPreco = p.preco;
     this.draftConsumo = p.consumo ?? '';
+    this.draftImagem = p.imagem ?? null;
     this.modalTipo = 'editar';
   }
 
@@ -419,8 +560,31 @@ export class EstoqueComponent {
     this.draft = { nome: '', cat: '', qtd: 0, min: 5, custo: 0, fornecedor: '' };
     this.draftPreco = null;
     this.draftConsumo = '';
+    this.draftImagem = null;
     this.modalTipo = 'novo';
   }
+
+  onImgFile(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.notify.emit('Arquivo precisa ser uma imagem');
+      input.value = '';
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      this.notify.emit('Imagem muito grande (máx. 2 MB)');
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => { this.draftImagem = reader.result as string; };
+    reader.readAsDataURL(file);
+    input.value = '';
+  }
+
+  removerImg() { this.draftImagem = null; }
 
   closeModal() {
     this.modalTipo = null;
@@ -436,10 +600,11 @@ export class EstoqueComponent {
   salvarProduto() {
     const preco = this.draftPreco != null && !isNaN(Number(this.draftPreco)) ? Number(this.draftPreco) : null;
     const consumo = this.draftConsumo.trim() || null;
+    const imagem = this.draftImagem;
     if (this.modalTipo === 'editar' && this.prodSel) {
-      this.data.updateProduto(this.prodSel.id, { ...this.draft, preco, consumo });
+      this.data.updateProduto(this.prodSel.id, { ...this.draft, preco, consumo, imagem });
     } else {
-      this.data.addProduto({ ...this.draft, preco, consumo } as Omit<Produto, 'id'>);
+      this.data.addProduto({ ...this.draft, preco, consumo, imagem } as Omit<Produto, 'id'>);
     }
     this.closeModal();
   }

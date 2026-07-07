@@ -78,7 +78,7 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     ags, produtos, mov, caixaRow, lanc, receber,
     comItens, fechamentos, fid, camps, envios, modelos, kpiRows,
     fluxoRows, recCatRows, despCatRows, recFormaRows, recProfRows, mesRow, mesAntRow,
-    fidMovRow, fechPagos, semanaRows, horariosRows, bloqueiosRows,
+    fidMovRow, fechPagos, semanaRows, horariosRows, bloqueiosRows, catServRows,
   ] = await Promise.all([
     q('SELECT CURRENT_DATE() AS hoje'),
     q(`SELECT nome, plano, slug, documento, tipo_negocio, cidade, cep, telefone, endereco,
@@ -169,6 +169,8 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     q('SELECT * FROM estabelecimento_horarios WHERE estabelecimento_id=? ORDER BY dia_semana', [EST]),
     // ----- bloqueios de agenda -----
     q('SELECT * FROM bloqueios_agenda WHERE estabelecimento_id=? ORDER BY data, hora_inicio', [EST]),
+    // ----- categorias de serviço (avulsas, criadas na tela de Serviços) -----
+    q('SELECT nome FROM categorias_servico WHERE estabelecimento_id=? ORDER BY nome', [EST]),
   ]);
 
   // ----- staff -----
@@ -190,7 +192,7 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     id: s.id, nome: s.nome, cat: s.categoria, dur: Number(s.duracao_min),
     preco: Number(s.preco), custo: Number(s.custo), desc: s.descricao || '',
     cor: s.cor || '#0e9f6e', exec: execBy[s.id] || [],
-    combo: !!s.combo, sinal: !!s.exige_sinal,
+    combo: !!s.combo, sinal: !!s.exige_sinal, ativo: s.ativo == null ? true : !!s.ativo,
   }));
 
   // ----- clientes -----
@@ -233,6 +235,7 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     min: Number(p.quantidade_minima), custo: Number(p.custo),
     preco: p.preco_venda == null ? null : Number(p.preco_venda),
     fornecedor: p.fornecedor_nome || '', consumo: p.consumo_nome || null,
+    imagem: p.imagem || null,
   }));
 
   // ----- movimentações -----
@@ -502,6 +505,7 @@ app.get('/api/bootstrap', wrap(async (req, res) => {
     produtos: produtos2, movEstoque, caixa, lancamentos, aReceber,
     comissoes, fidelidade, campanhas, modelos: modelos2, kpis, financeiro,
     relatorio, periodoComissao, historicoComissoes, horarios, bloqueios,
+    categoriasServico: catServRows.map((r) => r.nome),
   });
 }));
 
@@ -531,7 +535,7 @@ app.put('/api/agendamentos/:id', wrap(async (req, res) => {
 }));
 
 // serviços
-const SERVICO_MAP = { nome: 'nome', cat: 'categoria', dur: 'duracao_min', preco: 'preco', custo: 'custo', desc: 'descricao', cor: 'cor', combo: 'combo', sinal: 'exige_sinal' };
+const SERVICO_MAP = { nome: 'nome', cat: 'categoria', dur: 'duracao_min', preco: 'preco', custo: 'custo', desc: 'descricao', cor: 'cor', combo: 'combo', sinal: 'exige_sinal', ativo: 'ativo' };
 app.post('/api/servicos', wrap(async (req, res) => {
   const b = req.body, id = b.id || randomUUID();
   await q('INSERT INTO servicos (id, estabelecimento_id, nome, categoria, duracao_min, preco, custo, descricao, cor, combo, exige_sinal) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
@@ -542,6 +546,25 @@ app.post('/api/servicos', wrap(async (req, res) => {
 app.put('/api/servicos/:id', wrap(async (req, res) => {
   await updateRow('servicos', SERVICO_MAP, req.params.id, req.body);
   if (req.body.exec) await setExec(req.params.id, req.body.exec);
+  res.json({ ok: true });
+}));
+
+// categorias de serviço (avulsas)
+app.post('/api/categorias-servico', wrap(async (req, res) => {
+  const nome = String(req.body?.nome || '').trim();
+  if (!nome) return res.status(400).json({ error: 'Nome obrigatório.' });
+  await q('INSERT IGNORE INTO categorias_servico (id, estabelecimento_id, nome) VALUES (UUID(), ?, ?)', [EST, nome]);
+  res.json({ ok: true, nome });
+}));
+
+app.delete('/api/categorias-servico/:nome', wrap(async (req, res) => {
+  const nome = String(req.params.nome || '').trim();
+  if (!nome) return res.status(400).json({ error: 'Nome obrigatório.' });
+  const usados = await q('SELECT COUNT(*) AS n FROM servicos WHERE estabelecimento_id=? AND categoria=?', [EST, nome]);
+  if (Number(usados[0]?.n || 0) > 0) {
+    return res.status(409).json({ error: 'Categoria em uso por serviços — remova ou reclassifique-os antes.' });
+  }
+  await q('DELETE FROM categorias_servico WHERE estabelecimento_id=? AND nome=?', [EST, nome]);
   res.json({ ok: true });
 }));
 
@@ -563,12 +586,12 @@ app.put('/api/profissionais/:id', wrap(async (req, res) => {
 }));
 
 // produtos
-const PROD_MAP = { nome: 'nome', cat: 'categoria', qtd: 'quantidade', min: 'quantidade_minima', custo: 'custo', preco: 'preco_venda' };
+const PROD_MAP = { nome: 'nome', cat: 'categoria', qtd: 'quantidade', min: 'quantidade_minima', custo: 'custo', preco: 'preco_venda', imagem: 'imagem' };
 app.post('/api/produtos', wrap(async (req, res) => {
   const b = req.body, id = b.id || randomUUID();
   const fid = await fornecedorId(b.fornecedor);
-  await q('INSERT INTO produtos (id, estabelecimento_id, nome, categoria, quantidade, quantidade_minima, custo, preco_venda, fornecedor_id) VALUES (?,?,?,?,?,?,?,?,?)',
-    [id, EST, b.nome, b.cat, b.qtd || 0, b.min || 0, b.custo || 0, b.preco ?? null, fid]);
+  await q('INSERT INTO produtos (id, estabelecimento_id, nome, categoria, quantidade, quantidade_minima, custo, preco_venda, fornecedor_id, imagem) VALUES (?,?,?,?,?,?,?,?,?,?)',
+    [id, EST, b.nome, b.cat, b.qtd || 0, b.min || 0, b.custo || 0, b.preco ?? null, fid, b.imagem || null]);
   res.json({ id });
 }));
 app.put('/api/produtos/:id', wrap(async (req, res) => {

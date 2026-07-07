@@ -67,13 +67,13 @@ const TITLES: { [k: string]: [string, string] } = {
               <app-dashboard (onNew)="showNew = true" (onNav)="route = $event" (onOpen)="openAppt = $event"></app-dashboard>
             }
             @case ('agenda') {
-              <app-agenda [appts]="appts" (onOpen)="openAppt = $event" (onNew)="showNew = true" (onOpenCliente)="goCliente($event)"></app-agenda>
+              <app-agenda [appts]="appts" [initialProfFilter]="pendingProfFilter" (onOpen)="openAppt = $event" (onNew)="showNew = true" (onOpenCliente)="goCliente($event)"></app-agenda>
             }
             @case ('clientes') {
               <app-clientes #clientesRef [openId]="clienteId" (onOpen)="clienteId = $event" (onClose)="clienteId = null"></app-clientes>
             }
             @case ('servicos') { <app-servicos #servicosRef></app-servicos> }
-            @case ('equipe') { <app-equipe #equipeRef></app-equipe> }
+            @case ('equipe') { <app-equipe #equipeRef (verAgenda)="verAgendaDo($event)"></app-equipe> }
             @case ('financeiro') { <app-financeiro (notify)="notify($event)"></app-financeiro> }
             @case ('comissoes') { <app-comissoes (notify)="notify($event)"></app-comissoes> }
             @case ('estoque') { <app-estoque #estoqueRef (notify)="notify($event)"></app-estoque> }
@@ -124,6 +124,7 @@ export class AppComponent {
   openAppt: Appt | null = null;
   clienteId: string | null = null;
   toast: string | null = null;
+  pendingProfFilter: string | null = null;
 
   private toastTimer: any = null;
 
@@ -200,5 +201,10 @@ export class AppComponent {
   goCliente(id: string) {
     this.clienteId = id;
     this.route = 'clientes';
+  }
+
+  verAgendaDo(profId: string) {
+    this.pendingProfFilter = profId;
+    this.route = 'agenda';
   }
 }

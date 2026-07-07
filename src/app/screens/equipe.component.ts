@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
@@ -6,11 +6,12 @@ import { AvatarComponent } from '../shared/avatar.component';
 import { MenuComponent, MenuItem } from '../shared/menu.component';
 import { ModalComponent } from '../shared/modal.component';
 import { DataService, Staff } from '../data.service';
+import { FolgaModalComponent } from '../folga-modal.component';
 
 @Component({
   selector: 'app-equipe',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, MenuComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, MenuComponent, ModalComponent, FolgaModalComponent],
   template: `
     <div class="page">
 
@@ -219,6 +220,10 @@ import { DataService, Staff } from '../data.service';
 
       </app-modal>
     }
+
+    @if (folgaProf) {
+      <app-folga-modal [prof]="folgaProf" (close)="closeFolga()" (saved)="onFolgaSalva($event)"></app-folga-modal>
+    }
   `,
 })
 export class EquipeComponent {
@@ -234,16 +239,27 @@ export class EquipeComponent {
   draftEsp: string[] = [];
   espInput = '';
 
+  @Output() verAgenda = new EventEmitter<string>();
+
   constructor(public data: DataService) {}
 
   menuItems(p: Staff): MenuItem[] {
     return [
       { label: 'Editar perfil',  icon: 'edit',     onClick: () => this.openEdit(p) },
-      { label: 'Ver agenda',     icon: 'calendar' },
-      { label: 'Definir folga',  icon: 'clock'    },
+      { label: 'Ver agenda',     icon: 'calendar', onClick: () => this.verAgenda.emit(p.id) },
+      { label: 'Definir folga',  icon: 'clock',    onClick: () => this.openFolga(p) },
       { divider: true },
       { label: 'Desativar',      icon: 'x', danger: true },
     ];
+  }
+
+  folgaProf: Staff | null = null;
+  openFolga(p: Staff) { this.folgaProf = p; }
+  closeFolga() { this.folgaProf = null; }
+  onFolgaSalva(e: { dias: number; motivo: string }) {
+    const nome = this.folgaProf?.apelido || this.folgaProf?.nome || '';
+    this.closeFolga();
+    alert(`Folga de ${nome} registrada — ${e.dias} ${e.dias === 1 ? 'dia' : 'dias'} bloqueado(s).`);
   }
 
   openNovo() {

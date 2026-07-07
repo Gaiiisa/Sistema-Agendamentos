@@ -5,6 +5,7 @@ import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { StatusPillComponent } from '../shared/status-pill.component';
 import { MenuComponent } from '../shared/menu.component';
+import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService, Appt, Agendamento, Staff, Bloqueio } from '../data.service';
 import { BloqueioModalComponent } from '../bloqueio-modal.component';
 
@@ -21,14 +22,13 @@ interface Pending {
 
 const LIST_TABS = [
   { id: 'todos',   label: 'Todos' },
-  { id: 'proximos', label: 'Próximos' },
   { id: 'faltas',  label: 'Faltas & Cancelamentos' },
 ];
 
 @Component({
   selector: 'app-agenda',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, BloqueioModalComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, BloqueioModalComponent, SelectComponent],
   template: `
     <div class="page" [style.paddingBottom.px]="24">
       <ng-container *ngTemplateOutlet="header"></ng-container>
@@ -76,18 +76,12 @@ const LIST_TABS = [
               <app-icon name="search" [size]="16"></app-icon>
               <input placeholder="Buscar cliente…" [value]="q" (input)="q = $any($event.target).value; onFilterChange()" />
             </div>
-            <select class="select" style="width:auto" [value]="listProfF" (change)="listProfF = $any($event.target).value; onFilterChange()">
-              <option value="todos">Profissional</option>
-              @for (p of data.staff; track p.id) {
-                <option [value]="p.id">{{ p.apelido }}</option>
-              }
-            </select>
-            <select class="select" style="width:auto" [value]="listStatusF" (change)="listStatusF = $any($event.target).value; onFilterChange()">
-              <option value="todos">Status</option>
-              @for (s of data.status; track s) {
-                <option [value]="s">{{ data.statusLabels[s] }}</option>
-              }
-            </select>
+            <div style="width:auto;min-width:160px">
+              <app-select [value]="listProfF" (valueChange)="listProfF = $event; onFilterChange()" [options]="profFilterAliasOptions"></app-select>
+            </div>
+            <div style="width:auto;min-width:150px">
+              <app-select [value]="listStatusF" (valueChange)="listStatusF = $event; onFilterChange()" [options]="statusFilterOptions"></app-select>
+            </div>
             <button class="btn btn-ghost btn-sm" style="margin-left:auto">
               <app-icon name="download" [size]="15"></app-icon> Exportar
             </button>
@@ -396,10 +390,13 @@ const LIST_TABS = [
                         (click)="cardClick(a)"
                         [ngStyle]="cardStyle(a)">
                         <div class="row" style="gap:5px;justify-content:space-between">
-                          <span class="mono" style="font-size:11px;font-weight:700" [style.color]="data.srv(a.srv).cor">{{ cardTime(a) }}</span>
+                          <span class="mono" style="font-size:11px;font-weight:700;color:var(--text-2)">{{ cardTime(a) }}</span>
                           <div class="row" style="gap:4px">
                             @if (a.sinal) { <app-icon name="check" [size]="12" style="color:var(--accent)"></app-icon> }
-                            <span [style.width.px]="8" [style.height.px]="8" style="border-radius:99px;flex-shrink:0" [style.background]="dotColor(a.status)" [title]="data.statusLabels[a.status]"></span>
+                            <span aria-hidden="true"
+                              [style.width.px]="8" [style.height.px]="8"
+                              [style.background]="statusPalette(a.status).fg"
+                              style="border-radius:99px;flex-shrink:0"></span>
                           </div>
                         </div>
                         <div style="font-weight:700;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ data.cli(a.cli).nome }}</div>
@@ -571,13 +568,25 @@ const LIST_TABS = [
                 <button [class.on]="statusFilter === f.id" (click)="statusFilter = f.id">{{ f.label }}</button>
               }
             </div>
-            <select class="select" style="width:auto;min-width:180px" [value]="profFilter" (change)="profFilter = $any($event.target).value">
-              <option value="todos">Todos os profissionais</option>
-              @for (p of data.staff; track p.id) { <option [value]="p.id">{{ p.nome }}</option> }
-            </select>
+            <div style="width:auto;min-width:200px">
+              <app-select [value]="profFilter" (valueChange)="profFilter = $event" [options]="profFilterOptions"></app-select>
+            </div>
             <button class="btn btn-ghost btn-sm" style="margin-left:auto" (click)="abrirNovoBloqueio()">
               <app-icon name="lock" [size]="14"></app-icon> Bloquear horário
             </button>
+          </div>
+
+          <!-- Legenda de cores por status: o card na grade muda de cor conforme o status. -->
+          <div style="display:flex;flex-wrap:nowrap;gap:14px;align-items:center;padding:10px 14px;margin-top:8px;background:var(--surface-2);border-radius:var(--r-md);font-size:12.5px;overflow-x:auto;white-space:nowrap">
+            <span style="font-weight:700;color:var(--text-2);flex-shrink:0">Cor do card por status:</span>
+            @for (l of STATUS_LEGENDA; track l.id) {
+              <span style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0" [title]="l.desc + ' — ' + l.label">
+                <span [style.background]="statusPalette(l.id).bg"
+                      [style.borderLeft]="'3px solid ' + statusPalette(l.id).fg"
+                      style="width:22px;height:14px;border-radius:4px;border:1px solid color-mix(in oklch, currentColor 20%, transparent);flex-shrink:0"></span>
+                <span style="font-weight:600;color:var(--text-2)">{{ l.label }}</span>
+              </span>
+            }
           </div>
         }
       </div>
@@ -587,6 +596,31 @@ export class AgendaComponent {
   @Input() appts: Appt[] = [];
   @Output() onOpen = new EventEmitter<Appt>();
   @Output() onNew = new EventEmitter<void>();
+
+  /** Ao entrar na tela vindo de outra origem (ex.: botão "Ver agenda" da tela de Equipe),
+   *  o pai passa o id do profissional a filtrar. 'todos' ou vazio = sem filtro. */
+  @Input() set initialProfFilter(v: string | null | undefined) {
+    if (v) this.profFilter = v;
+  }
+
+  get profFilterOptions(): SelectOption[] {
+    return [
+      { value: 'todos', label: 'Todos os profissionais' },
+      ...this.data.staff.map(p => ({ value: p.id, label: p.nome })),
+    ];
+  }
+  get profFilterAliasOptions(): SelectOption[] {
+    return [
+      { value: 'todos', label: 'Profissional' },
+      ...this.data.staff.map(p => ({ value: p.id, label: p.apelido })),
+    ];
+  }
+  get statusFilterOptions(): SelectOption[] {
+    return [
+      { value: 'todos', label: 'Status' },
+      ...this.data.status.map(s => ({ value: s, label: this.data.statusLabels[s] })),
+    ];
+  }
   @Output() onOpenCliente = new EventEmitter<string>();
 
   // ---- modo principal ----
@@ -607,6 +641,14 @@ export class AgendaComponent {
     { id: 'pendente', label: 'Pendentes' },
     { id: 'confirmado', label: 'Confirmados' },
     { id: 'atendimento', label: 'Em atendim.' },
+  ];
+
+  readonly STATUS_LEGENDA: { id: string; label: string; desc: string }[] = [
+    { id: 'pendente',    label: 'Pendente',    desc: 'aguardando confirmação do cliente' },
+    { id: 'confirmado',  label: 'Confirmado',  desc: 'cliente confirmou; horário garantido' },
+    { id: 'atendimento', label: 'Em atendimento', desc: 'atendimento em andamento agora' },
+    { id: 'faltou',      label: 'Faltou',      desc: 'no-show — cliente não compareceu' },
+    { id: 'cancelado',   label: 'Cancelado',   desc: 'agendamento desmarcado' },
   ];
 
   readonly mesDows = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -732,7 +774,10 @@ export class AgendaComponent {
   get gridCols() { return `64px repeat(${this.profs.length}, 1fr)`; }
   get semanaHrs() { return this.data.horarios.filter((_, i) => i % 2 === 0); }
 
-  visible(a: Appt) { return this.statusFilter === 'todos' || a.status === this.statusFilter; }
+  visible(a: Appt) {
+    if (this.statusFilter === 'todos') return a.status !== 'concluido';
+    return a.status === this.statusFilter;
+  }
   durOf(a: Appt) { return a._dur || this.data.srv(a.srv).dur; }
   countFor(p: Staff) { return this.dayAppts.filter(a => a.prof === p.id && this.visible(a)).length; }
   apptsFor(p: Staff) { return this.dayAppts.filter(a => a.prof === p.id && this.visible(a)); }
@@ -811,8 +856,20 @@ export class AgendaComponent {
     return layout;
   }
 
+  /** Paleta por status (usa as variáveis CSS já definidas em styles.css). */
+  statusPalette(status: string): { bg: string; fg: string } {
+    const map: Record<string, { bg: string; fg: string }> = {
+      pendente:    { bg: 'var(--st-pendente-bg)',    fg: 'var(--st-pendente)' },
+      confirmado:  { bg: 'var(--st-confirmado-bg)',  fg: 'var(--st-confirmado)' },
+      atendimento: { bg: 'var(--st-atendimento-bg)', fg: 'var(--st-atendimento)' },
+      concluido:   { bg: 'var(--st-concluido-bg)',   fg: 'var(--st-concluido)' },
+      faltou:      { bg: 'var(--st-faltou-bg)',      fg: 'var(--st-faltou)' },
+      cancelado:   { bg: 'var(--st-cancelado-bg)',   fg: 'var(--st-cancelado)' },
+    };
+    return map[status] || map['pendente'];
+  }
+
   cardStyle(a: Appt) {
-    const s = this.data.srv(a.srv);
     const dragging = this.isDragging(a);
     // O card arrastado flutua em full-width acima do layout estático.
     const info = dragging
@@ -824,26 +881,21 @@ export class AgendaComponent {
     const left  = `calc(${col} * (100% / ${cols}) + 4px)`;
     const width = `calc(100% / ${cols} - 8px)`;
 
+    const pal = this.statusPalette(a.status);
     return {
       position: 'absolute', top: this.topOf(a) + 'px', left, width,
       height: this.heightOf(a) + 'px',
-      background: dragging ? 'var(--surface)' : `color-mix(in oklch, ${s.cor} 12%, #ffffff)`,
-      borderLeft: `3px solid ${s.cor}`,
-      border: `1px solid color-mix(in oklch, ${s.cor} 30%, #e3e0d8)`,
+      background: dragging ? 'var(--surface)' : pal.bg,
+      borderLeft: `3px solid ${pal.fg}`,
+      border: `1px solid color-mix(in oklch, ${pal.fg} 35%, transparent)`,
       borderLeftWidth: '3px', borderRadius: '8px', padding: '6px 9px',
       cursor: dragging ? 'grabbing' : 'grab', overflow: 'hidden',
       boxShadow: dragging ? 'var(--sh-pop)' : 'none',
-      opacity: a.status === 'cancelado' || a.status === 'faltou' ? 0.6 : 1,
-      zIndex: dragging ? 50 : 2, transition: dragging ? 'none' : 'box-shadow .12s',
+      opacity: a.status === 'cancelado' || a.status === 'faltou' ? 0.7 : 1,
+      zIndex: dragging ? 50 : 2,
+      transition: dragging ? 'none' : 'background .18s, border-color .18s, box-shadow .12s',
       userSelect: 'none',
     };
-  }
-
-  dotColor(status: string) {
-    return ({
-      pendente: 'var(--st-pendente)', confirmado: 'var(--accent)', atendimento: 'var(--st-atendimento)',
-      concluido: 'var(--st-concluido)', faltou: 'var(--st-faltou)', cancelado: 'var(--st-cancelado)',
-    } as any)[status];
   }
 
   cardClick(a: Appt) {
@@ -1077,10 +1129,6 @@ export class AgendaComponent {
     );
     if (this.listTab === 'faltas')
       rows = rows.filter(r => r.status === 'faltou' || r.status === 'cancelado');
-    if (this.listTab === 'proximos') {
-      const hoje = this.isoLocal(this.baseToday);
-      rows = rows.filter(r => r.data >= hoje && !['faltou', 'cancelado', 'concluido'].includes(r.status));
-    }
     if (this.listProfF !== 'todos') rows = rows.filter(r => r.prof === this.listProfF);
     if (this.listStatusF !== 'todos') rows = rows.filter(r => r.status === this.listStatusF);
     if (this.q) {

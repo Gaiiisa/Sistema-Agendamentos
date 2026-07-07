@@ -351,6 +351,7 @@ CREATE TABLE produtos (
   custo               NUMERIC(10,2) NOT NULL DEFAULT 0,
   preco_venda         NUMERIC(10,2),
   fornecedor_id       CHAR(36),
+  imagem              MEDIUMTEXT,
   ativo               BOOLEAN NOT NULL DEFAULT TRUE,
   criado_em           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE,

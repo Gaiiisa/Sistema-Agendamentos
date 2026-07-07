@@ -13,6 +13,17 @@ export type Periodo = 'semana' | 'mes' | 'ano';
 export type Formato = 'pdf' | 'csv' | 'xlsx';
 export type ColType = 'text' | 'money' | 'money2' | 'date' | 'time' | 'datetime' | 'number' | 'percent';
 
+export interface ReciboInput {
+  estabelecimento: string;
+  profissional: { nome: string; comissao: number };
+  periodo: string;
+  status: 'pago' | 'aberto';
+  itens: { data: string; cliente: string; servico: string; valor: number; comissao: number }[];
+  totalBruto: number;
+  totalComissao: number;
+  usuarioNome: string;
+}
+
 export interface Coluna {
   header: string;
   key: string;
@@ -114,6 +125,119 @@ export class ExportService {
       case 'number':   return Number(v).toLocaleString('pt-BR');
       default:         return String(v);
     }
+  }
+
+  // ------------------------------------------------------------
+  // Recibo de comissão (portrait, formato próprio) — usado pela
+  // tela de Comissões. Baixa direto e devolve o nome do arquivo.
+  // ------------------------------------------------------------
+  exportarRecibo(input: ReciboInput): string {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+    const margin = 40;
+
+    // ---- cabeçalho ----
+    doc.setFillColor(79, 70, 229);
+    doc.rect(0, 0, W, 70, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(input.estabelecimento || 'Recibo', margin, 32);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text('Recibo de comissão', margin, 52);
+
+    doc.setFontSize(9);
+    const dataGer = fmtDateLong(new Date());
+    doc.text(`Gerado ${dataGer}`, W - margin, 32, { align: 'right' });
+    doc.text(`por ${input.usuarioNome}`, W - margin, 46, { align: 'right' });
+
+    // ---- caixa do profissional ----
+    let y = 96;
+    doc.setFillColor(245, 245, 250);
+    doc.roundedRect(margin, y, W - margin * 2, 60, 6, 6, 'F');
+    doc.setTextColor(30, 30, 30);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text(input.profissional.nome, margin + 16, y + 24);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(110, 110, 110);
+    doc.text(
+      `Comissão de ${input.profissional.comissao}%  ·  ${input.itens.length} atendimento${input.itens.length === 1 ? '' : 's'}  ·  ${input.periodo}`,
+      margin + 16, y + 44,
+    );
+
+    // pill de status à direita
+    const pago = input.status === 'pago';
+    const statusTxt = pago ? 'PAGO' : 'EM ABERTO';
+    const rgb = pago ? [22, 163, 74] : [217, 119, 6];
+    const pillW = pago ? 60 : 82;
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.roundedRect(W - margin - pillW - 8, y + 18, pillW, 22, 11, 11, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(statusTxt, W - margin - 8 - pillW / 2, y + 33, { align: 'center' });
+
+    y += 80;
+
+    // ---- tabela de itens ----
+    autoTable(doc, {
+      startY: y,
+      head: [['Data', 'Cliente', 'Serviço', 'Valor', 'Comissão']],
+      body: input.itens.map(i => [
+        fmtDate(i.data), i.cliente, i.servico, fmtMoney(i.valor), fmtMoney(i.comissao),
+      ]),
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 9, cellPadding: 5 },
+      headStyles: { fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [246, 245, 242] },
+      columnStyles: {
+        0: { cellWidth: 62 },
+        3: { halign: 'right' },
+        4: { halign: 'right', fontStyle: 'bold' },
+      },
+    });
+    y = (doc as any).lastAutoTable.finalY + 20;
+
+    // ---- caixa de total ----
+    doc.setFillColor(220, 252, 231);
+    doc.roundedRect(margin, y, W - margin * 2, 56, 6, 6, 'F');
+    doc.setTextColor(21, 128, 61);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('Total a receber', margin + 16, y + 24);
+    doc.setFontSize(18);
+    doc.text(fmtMoney(input.totalComissao), W - margin - 16, y + 34, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(`Sobre ${fmtMoney(input.totalBruto)} em atendimentos`, margin + 16, y + 42);
+    y += 90;
+
+    // ---- assinaturas ----
+    const sigW = (W - margin * 2 - 40) / 2;
+    doc.setDrawColor(160, 160, 160);
+    doc.line(margin, y, margin + sigW, y);
+    doc.line(margin + sigW + 40, y, W - margin, y);
+    doc.setFontSize(9);
+    doc.setTextColor(110, 110, 110);
+    doc.text(`Recebido — ${input.profissional.nome}`, margin, y + 14);
+    doc.text('Autorizado', margin + sigW + 40, y + 14);
+
+    // ---- rodapé ----
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`${input.estabelecimento || ''} · Recibo gerado ${dataGer}`, W / 2, H - 20, { align: 'center' });
+
+    const slug = (input.profissional.nome || 'profissional')
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const arquivo = `recibo-${slug}-${this.stamp()}.pdf`;
+    doc.save(arquivo);
+    return arquivo;
   }
 
   // ------------------------------------------------------------

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
+import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService } from '../data.service';
 
 type Tab = 'conta' | 'estabelecimento' | 'horarios' | 'agenda' | 'pagamentos' | 'notificacoes' | 'plano' | 'integracoes';
@@ -16,7 +17,7 @@ interface DiaFuncionamento {
 @Component({
   selector: 'app-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, SelectComponent],
   template: `
     <div class="page cfg-page">
 
@@ -83,11 +84,7 @@ interface DiaFuncionamento {
                     </div>
                     <div class="field">
                       <label>Papel</label>
-                      <select class="select" [(ngModel)]="conta.papel">
-                        <option>Dono / Admin</option>
-                        <option>Gerente</option>
-                        <option>Atendente</option>
-                      </select>
+                      <app-select [(ngModel)]="conta.papel" [options]="PAPEL_OPTS"></app-select>
                     </div>
                   </div>
                   <div class="grid-2">
@@ -161,13 +158,7 @@ interface DiaFuncionamento {
                     </div>
                     <div class="field">
                       <label>Tipo de negócio</label>
-                      <select class="select" [(ngModel)]="estab.tipo">
-                        <option>Barbearia</option>
-                        <option>Salão de beleza</option>
-                        <option>Studio de estética</option>
-                        <option>Clínica</option>
-                        <option>Outro</option>
-                      </select>
+                      <app-select [(ngModel)]="estab.tipo" [options]="TIPO_ESTAB_OPTS"></app-select>
                     </div>
                   </div>
                   <div class="grid-2">
@@ -311,34 +302,17 @@ interface DiaFuncionamento {
                   <div class="grid-2">
                     <div class="field">
                       <label>Intervalo mínimo entre horários</label>
-                      <select class="select" [(ngModel)]="agenda.intervalo">
-                        <option value="15">15 minutos</option>
-                        <option value="30">30 minutos</option>
-                        <option value="45">45 minutos</option>
-                        <option value="60">1 hora</option>
-                      </select>
+                      <app-select [(ngModel)]="agenda.intervalo" [options]="INTERVALO_OPTS"></app-select>
                     </div>
                     <div class="field">
                       <label>Antecedência mínima para agendar</label>
-                      <select class="select" [(ngModel)]="agenda.antecedencia">
-                        <option value="1">1 hora</option>
-                        <option value="2">2 horas</option>
-                        <option value="4">4 horas</option>
-                        <option value="24">1 dia</option>
-                        <option value="48">2 dias</option>
-                      </select>
+                      <app-select [(ngModel)]="agenda.antecedencia" [options]="ANTECEDENCIA_OPTS"></app-select>
                     </div>
                   </div>
                   <div class="grid-2">
                     <div class="field">
                       <label>Máximo de dias para agendar</label>
-                      <select class="select" [(ngModel)]="agenda.maxDias">
-                        <option value="7">7 dias</option>
-                        <option value="15">15 dias</option>
-                        <option value="30">30 dias</option>
-                        <option value="60">60 dias</option>
-                        <option value="90">90 dias</option>
-                      </select>
+                      <app-select [(ngModel)]="agenda.maxDias" [options]="MAXDIAS_OPTS"></app-select>
                     </div>
                     <div class="field">
                       <label>Limite de agendamentos por dia</label>
@@ -387,13 +361,7 @@ interface DiaFuncionamento {
                   <div class="grid-2">
                     <div class="field">
                       <label>Prazo para cancelamento sem multa</label>
-                      <select class="select" [(ngModel)]="agenda.cancelamentoPrazo">
-                        <option value="0">Sem restrição</option>
-                        <option value="2">2 horas antes</option>
-                        <option value="4">4 horas antes</option>
-                        <option value="12">12 horas antes</option>
-                        <option value="24">24 horas antes</option>
-                      </select>
+                      <app-select [(ngModel)]="agenda.cancelamentoPrazo" [options]="CANCEL_PRAZO_OPTS"></app-select>
                     </div>
                     <div class="field">
                       <label>% de sinal exigido (serviços marcados)</label>
@@ -446,12 +414,7 @@ interface DiaFuncionamento {
                   <div class="grid-2">
                     <div class="field">
                       <label>Tipo de chave</label>
-                      <select class="select" [(ngModel)]="pagPix.tipo">
-                        <option>CPF/CNPJ</option>
-                        <option>Telefone</option>
-                        <option>E-mail</option>
-                        <option>Chave aleatória</option>
-                      </select>
+                      <app-select [(ngModel)]="pagPix.tipo" [options]="PIX_TIPO_OPTS"></app-select>
                     </div>
                     <div class="field">
                       <label>Chave Pix</label>
@@ -1016,6 +979,52 @@ interface DiaFuncionamento {
 export class ConfigComponent implements OnInit {
   @Output() notify = new EventEmitter<string>();
   @Output() logout = new EventEmitter<void>();
+
+  readonly PAPEL_OPTS: SelectOption[] = [
+    { value: 'Dono / Admin', label: 'Dono / Admin' },
+    { value: 'Gerente',      label: 'Gerente' },
+    { value: 'Atendente',    label: 'Atendente' },
+  ];
+  readonly TIPO_ESTAB_OPTS: SelectOption[] = [
+    { value: 'Barbearia',          label: 'Barbearia' },
+    { value: 'Salão de beleza',    label: 'Salão de beleza' },
+    { value: 'Studio de estética', label: 'Studio de estética' },
+    { value: 'Clínica',            label: 'Clínica' },
+    { value: 'Outro',              label: 'Outro' },
+  ];
+  readonly INTERVALO_OPTS: SelectOption[] = [
+    { value: '15', label: '15 minutos' },
+    { value: '30', label: '30 minutos' },
+    { value: '45', label: '45 minutos' },
+    { value: '60', label: '1 hora' },
+  ];
+  readonly ANTECEDENCIA_OPTS: SelectOption[] = [
+    { value: '1',  label: '1 hora' },
+    { value: '2',  label: '2 horas' },
+    { value: '4',  label: '4 horas' },
+    { value: '24', label: '1 dia' },
+    { value: '48', label: '2 dias' },
+  ];
+  readonly MAXDIAS_OPTS: SelectOption[] = [
+    { value: '7',  label: '7 dias' },
+    { value: '15', label: '15 dias' },
+    { value: '30', label: '30 dias' },
+    { value: '60', label: '60 dias' },
+    { value: '90', label: '90 dias' },
+  ];
+  readonly CANCEL_PRAZO_OPTS: SelectOption[] = [
+    { value: '0',  label: 'Sem restrição' },
+    { value: '2',  label: '2 horas antes' },
+    { value: '4',  label: '4 horas antes' },
+    { value: '12', label: '12 horas antes' },
+    { value: '24', label: '24 horas antes' },
+  ];
+  readonly PIX_TIPO_OPTS: SelectOption[] = [
+    { value: 'CPF/CNPJ',        label: 'CPF/CNPJ' },
+    { value: 'Telefone',        label: 'Telefone' },
+    { value: 'E-mail',          label: 'E-mail' },
+    { value: 'Chave aleatória', label: 'Chave aleatória' },
+  ];
 
   tab: Tab = 'conta';
 

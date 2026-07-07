@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CheckboxComponent } from './shared/checkbox.component';
 import { IconComponent } from './icon.component';
 import { AuthService } from './auth.service';
 import { DataService } from './data.service';
@@ -8,7 +9,7 @@ import { DataService } from './data.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent],
+  imports: [CommonModule, FormsModule, IconComponent, CheckboxComponent],
   styles: [`
     /* ════════════════════ Página ════════════════════ */
     .login-page {
@@ -422,13 +423,7 @@ import { DataService } from './data.service';
 
             <!-- opções -->
             <div class="fp-options">
-              <label class="remember">
-                <span class="box" [class.on]="remember">
-                  @if (remember) { <app-icon name="check" [size]="12" [stroke]="3"></app-icon> }
-                </span>
-                <input type="checkbox" [(ngModel)]="remember" name="remember" hidden>
-                Lembrar de mim
-              </label>
+              <app-checkbox [(ngModel)]="remember" name="remember" label="Lembrar de mim"></app-checkbox>
               <button type="button" class="forgot" (click)="forgot()">Esqueci a senha</button>
             </div>
 

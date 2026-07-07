@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
+import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
 import { ExportService, Formato, Periodo } from '../export.service';
@@ -39,7 +40,7 @@ interface ExportItem {
 @Component({
   selector: 'app-central',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, SelectComponent],
   template: `
 <div class="page">
 
@@ -179,16 +180,8 @@ interface ExportItem {
 
     <!-- Filtros -->
     <div class="row" style="gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
-      <div style="position:relative;min-width:190px">
-        <select class="select" style="width:100%;padding-left:34px"
-          (change)="modFiltro = $any($event.target).value">
-          <option value="Todos">Todos os módulos</option>
-          @for (cat of NOTIF_CATS; track cat) {
-            <option [value]="cat">{{ cat }}</option>
-          }
-        </select>
-        <app-icon name="filter" [size]="14"
-          style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none"></app-icon>
+      <div style="min-width:190px">
+        <app-select [value]="modFiltro" (valueChange)="modFiltro = $event" [options]="modOptions"></app-select>
       </div>
       <button class="btn btn-ghost btn-sm" style="gap:6px"
         [style.background]="soAtivas ? 'var(--accent-soft)' : ''"
@@ -352,6 +345,13 @@ export class CentralComponent {
     'Agendamentos', 'Clientes', 'Financeiro',
     'Vendas & Estoque', 'Marketing & Fidelidade', 'Administrativo',
   ];
+
+  get modOptions(): SelectOption[] {
+    return [
+      { value: 'Todos', label: 'Todos os módulos', icon: 'filter' },
+      ...this.NOTIF_CATS.map(c => ({ value: c, label: c })),
+    ];
+  }
 
   readonly RELS: RelCard[] = [
     { id: 'r1',  nome: 'Agendamentos',                obj: 'Todos os horários por status no período',         cat: 'Agendamentos',     formatos: ['xlsx','csv'],  icon: 'calendar' },

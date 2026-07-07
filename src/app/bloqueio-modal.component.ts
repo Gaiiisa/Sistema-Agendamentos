@@ -3,12 +3,13 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from './icon.component';
 import { ModalComponent } from './shared/modal.component';
+import { SelectComponent, SelectOption } from './shared/select.component';
 import { DataService, Bloqueio } from './data.service';
 
 @Component({
   selector: 'app-bloqueio-modal',
   standalone: true,
-  imports: [CommonModule, IconComponent, ModalComponent],
+  imports: [CommonModule, IconComponent, ModalComponent, SelectComponent],
   template: `
     <app-modal [title]="tituloModal" (close)="close.emit()">
       <!-- data -->
@@ -32,12 +33,7 @@ import { DataService, Bloqueio } from './data.service';
       <!-- profissional -->
       <div class="field">
         <label>Profissional</label>
-        <select class="select" [value]="profV" (change)="profV = $any($event.target).value">
-          <option value="">Todo o estabelecimento</option>
-          @for (p of data.staff; track p.id) {
-            <option [value]="p.id">{{ p.nome }}</option>
-          }
-        </select>
+        <app-select [value]="profV" (valueChange)="profV = $event" [options]="profOptions"></app-select>
       </div>
 
       <!-- tipo -->
@@ -105,6 +101,13 @@ export class BloqueioModalComponent implements OnInit {
     { id: 'evento',     label: 'Evento' },
     { id: 'outro',      label: 'Outro' },
   ];
+
+  get profOptions(): SelectOption[] {
+    return [
+      { value: '', label: 'Todo o estabelecimento' },
+      ...this.data.staff.map(p => ({ value: p.id, label: p.nome })),
+    ];
+  }
 
   dataV = '';
   iniV = '12:00';

@@ -5,6 +5,7 @@ import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { StatusPillComponent } from '../shared/status-pill.component';
 import { MenuComponent } from '../shared/menu.component';
+import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService } from '../data.service';
 
 const TABS = [
@@ -16,7 +17,7 @@ const TABS = [
 @Component({
   selector: 'app-agendamentos',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, SelectComponent],
   template: `
 <div class="page">
 
@@ -76,18 +77,12 @@ const TABS = [
         <app-icon name="search" [size]="16"></app-icon>
         <input placeholder="Buscar cliente…" [value]="q" (input)="q = $any($event.target).value" />
       </div>
-      <select class="select" style="width:auto" [value]="profF" (change)="profF = $any($event.target).value">
-        <option value="todos">Profissional</option>
-        @for (p of data.staff; track p.id) {
-          <option [value]="p.id">{{ p.apelido }}</option>
-        }
-      </select>
-      <select class="select" style="width:auto" [value]="statusF" (change)="statusF = $any($event.target).value">
-        <option value="todos">Status</option>
-        @for (s of data.status; track s) {
-          <option [value]="s">{{ data.statusLabels[s] }}</option>
-        }
-      </select>
+      <div style="width:auto;min-width:160px">
+        <app-select [value]="profF" (valueChange)="profF = $event" [options]="profFOptions"></app-select>
+      </div>
+      <div style="width:auto;min-width:150px">
+        <app-select [value]="statusF" (valueChange)="statusF = $event" [options]="statusFOptions"></app-select>
+      </div>
       <button class="btn btn-ghost btn-sm" style="margin-left:auto">
         <app-icon name="download" [size]="15"></app-icon> Exportar
       </button>
@@ -192,6 +187,19 @@ const TABS = [
 })
 export class AgendamentosComponent {
   @Output() onOpenCliente = new EventEmitter<string>();
+
+  get profFOptions(): SelectOption[] {
+    return [
+      { value: 'todos', label: 'Profissional' },
+      ...this.data.staff.map(p => ({ value: p.id, label: p.apelido })),
+    ];
+  }
+  get statusFOptions(): SelectOption[] {
+    return [
+      { value: 'todos', label: 'Status' },
+      ...this.data.status.map(s => ({ value: s, label: this.data.statusLabels[s] })),
+    ];
+  }
 
   tabs = TABS;
   tab = 'todos';

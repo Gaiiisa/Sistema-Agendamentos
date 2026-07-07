@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { ModalComponent } from '../shared/modal.component';
+import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService, Campanha, Modelo } from '../data.service';
 
 interface GatilhoConfig {
@@ -21,7 +22,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
 @Component({
   selector: 'app-fidelidade',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, ModalComponent, SelectComponent],
   template: `
 <div class="page">
 
@@ -342,24 +343,15 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
 
       <!-- Filtros -->
       <div class="row" style="gap:8px;flex-wrap:wrap">
-        <select class="input" style="flex:1;min-width:160px" [(ngModel)]="filtroGatilho">
-          <option value="">Todos os gatilhos</option>
-          @for (g of GATILHOS; track g.key) {
-            <option [value]="g.key">{{ g.label }}</option>
-          }
-        </select>
-        <select class="input" style="flex:1;min-width:130px" [(ngModel)]="filtroCanal">
-          <option value="">Todos os canais</option>
-          @for (c of CANAIS_CONFIG; track c.key) {
-            <option [value]="c.key">{{ c.label }}</option>
-          }
-        </select>
-        <select class="input" style="flex:1;min-width:130px" [(ngModel)]="filtroStatus">
-          <option value="">Todos os status</option>
-          <option value="ativo">Ativo</option>
-          <option value="rascunho">Rascunho</option>
-          <option value="inativo">Inativo</option>
-        </select>
+        <div style="flex:1;min-width:160px">
+          <app-select [(ngModel)]="filtroGatilho" [options]="filtroGatilhoOptions"></app-select>
+        </div>
+        <div style="flex:1;min-width:130px">
+          <app-select [(ngModel)]="filtroCanal" [options]="filtroCanalOptions"></app-select>
+        </div>
+        <div style="flex:1;min-width:130px">
+          <app-select [(ngModel)]="filtroStatus" [options]="FILTRO_STATUS_OPTS"></app-select>
+        </div>
         @if (filtroGatilho || filtroCanal || filtroStatus) {
           <button class="btn btn-ghost btn-sm" (click)="limparFiltros()">
             <app-icon name="x" [size]="14"></app-icon>
@@ -436,10 +428,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
         </div>
         <div class="field" style="flex:1;min-width:120px">
           <label>Categoria</label>
-          <input class="input" [(ngModel)]="draftModelo.cat" list="ml-cat" placeholder="Ex: Agendamento">
-          <datalist id="ml-cat">
-            @for (c of CATEGORIAS; track c) { <option [value]="c"></option> }
-          </datalist>
+          <app-select [(ngModel)]="draftModelo.cat" [options]="catModeloOptions" [allowCreate]="true" placeholder="Ex: Agendamento"></app-select>
         </div>
       </div>
 
@@ -452,12 +441,8 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
       <!-- Gatilho -->
       <div class="field">
         <label>Gatilho *</label>
-        <select class="input" [(ngModel)]="draftModelo.gatilho" (ngModelChange)="onGatilhoChange()">
-          <option value="">Selecione o gatilho...</option>
-          @for (g of GATILHOS; track g.key) {
-            <option [value]="g.key">{{ g.label }} — {{ g.modulo }}</option>
-          }
-        </select>
+        <app-select [(ngModel)]="draftModelo.gatilho" (ngModelChange)="onGatilhoChange()"
+          [options]="draftGatilhoOptions" placeholder="Selecione o gatilho..."></app-select>
         @if (gatilhoAtual) {
           <span style="font-size:12px;color:var(--text-3);margin-top:3px">{{ gatilhoAtual.desc }} · Disparo: {{ gatilhoAtual.disparo }}</span>
         }
@@ -723,6 +708,29 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
 export class FidelidadeComponent {
   @Output() notify = new EventEmitter<string>();
 
+  readonly FILTRO_STATUS_OPTS: SelectOption[] = [
+    { value: '',         label: 'Todos os status' },
+    { value: 'ativo',    label: 'Ativo' },
+    { value: 'rascunho', label: 'Rascunho' },
+    { value: 'inativo',  label: 'Inativo' },
+  ];
+
+  get filtroGatilhoOptions(): SelectOption[] {
+    return [
+      { value: '', label: 'Todos os gatilhos' },
+      ...this.GATILHOS.map(g => ({ value: g.key, label: g.label })),
+    ];
+  }
+  get filtroCanalOptions(): SelectOption[] {
+    return [
+      { value: '', label: 'Todos os canais' },
+      ...this.CANAIS_CONFIG.map(c => ({ value: c.key, label: c.label })),
+    ];
+  }
+  get draftGatilhoOptions(): SelectOption[] {
+    return this.GATILHOS.map(g => ({ value: g.key, label: `${g.label} — ${g.modulo}` }));
+  }
+
   tab = 'programa';
   tipo: string;
   meta: number;
@@ -802,6 +810,9 @@ export class FidelidadeComponent {
   ];
 
   readonly CATEGORIAS = ['Agendamento','Fidelidade','Retenção','Marketing','Boas-vindas','Pós-venda'];
+  get catModeloOptions(): SelectOption[] {
+    return this.CATEGORIAS.map(c => ({ value: c, label: c }));
+  }
 
   readonly STATUS_MODELO_OPCOES: [string, string, string, string][] = [
     ['ativo',    'Ativo',    'var(--accent-soft)',  'var(--accent-text)'],

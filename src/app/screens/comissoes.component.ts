@@ -4,6 +4,8 @@ import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { ModalComponent } from '../shared/modal.component';
 import { DataService } from '../data.service';
+import { AuthService } from '../auth.service';
+import { ExportService } from '../export.service';
 
 @Component({
   selector: 'app-comissoes',
@@ -183,7 +185,7 @@ import { DataService } from '../data.service';
 
       <div modalFoot>
         <button class="btn btn-ghost" (click)="recibo=null">Fechar</button>
-        <button class="btn btn-primary" (click)="recibo=null; notify.emit('Recibo gerado em PDF')">
+        <button class="btn btn-primary" (click)="baixarRecibo()" [disabled]="!recibo?.c?.itens?.length">
           <app-icon name="download" [size]="15"></app-icon> Baixar PDF
         </button>
       </div>
@@ -298,7 +300,33 @@ export class ComissoesComponent {
   readonly FORMA_COR: any = { pix: 'var(--st-atendimento)', dinheiro: 'var(--accent)', cartao: '#7c3aed' };
   readonly FORMA_BG: any = { pix: 'var(--st-atendimento-bg)', dinheiro: 'var(--accent-soft)', cartao: '#ede9fe' };
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private auth: AuthService, private exportSvc: ExportService) {}
+
+  baixarRecibo() {
+    if (!this.recibo) return;
+    try {
+      const arquivo = this.exportSvc.exportarRecibo({
+        estabelecimento: this.data.estabelecimento.nome,
+        profissional: { nome: this.recibo.p.nome, comissao: this.recibo.p.comissao },
+        periodo: this.periodoLabel,
+        status: this.recibo.c.status === 'pago' ? 'pago' : 'aberto',
+        itens: this.recibo.c.itens.map((i: any) => ({
+          data: i.data,
+          cliente: this.data.cli(i.cli)?.nome ?? '—',
+          servico: this.data.srv(i.srv)?.nome ?? '—',
+          valor: i.valor,
+          comissao: this.calcComissaoItem(i.valor, this.recibo.p.comissao),
+        })),
+        totalBruto: this.recibo.bruto,
+        totalComissao: this.recibo.comissao,
+        usuarioNome: this.auth.usuario?.nome || '—',
+      });
+      this.notify.emit(`Recibo baixado — ${arquivo}`);
+      this.recibo = null;
+    } catch (e: any) {
+      this.notify.emit(`Não foi possível gerar o recibo: ${e?.message || 'erro'}`);
+    }
+  }
 
   private static readonly MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   private static readonly MES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
