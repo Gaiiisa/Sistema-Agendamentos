@@ -477,17 +477,17 @@ interface DiaFuncionamento {
                       <div style="font-weight:600;font-size:13.5px">{{ n.label }}</div>
                       <div class="cfg-hint">{{ n.desc }}</div>
                     </div>
-                    <div class="cfg-notif-col">
+                    <div class="cfg-notif-col" data-ch="App">
                       <button class="cfg-toggle sm" [class.on]="n.app" (click)="n.app = !n.app">
                         <span class="cfg-toggle-knob"></span>
                       </button>
                     </div>
-                    <div class="cfg-notif-col">
+                    <div class="cfg-notif-col" data-ch="WhatsApp">
                       <button class="cfg-toggle sm" [class.on]="n.wpp" (click)="n.wpp = !n.wpp">
                         <span class="cfg-toggle-knob"></span>
                       </button>
                     </div>
-                    <div class="cfg-notif-col">
+                    <div class="cfg-notif-col" data-ch="E-mail">
                       <button class="cfg-toggle sm" [class.on]="n.email" (click)="n.email = !n.email">
                         <span class="cfg-toggle-knob"></span>
                       </button>
@@ -562,8 +562,8 @@ interface DiaFuncionamento {
               <!-- Comparativo de planos -->
               <div class="cfg-card">
                 <div class="cfg-card-head">Comparativo de planos</div>
-                <div class="cfg-card-body" style="padding:0">
-                  <table class="tbl cfg-plan-tbl">
+                <div class="cfg-card-body tbl-scroll" style="padding:0">
+                  <table class="tbl cfg-plan-tbl" style="min-width:520px">
                     <thead>
                       <tr>
                         <th>Recurso</th>
@@ -970,9 +970,40 @@ interface DiaFuncionamento {
       }
     }
 
-    @media (max-width: 600px) {
-      .cfg-notif-col { width: 52px; }
+    @media (max-width: 640px) {
+      /* Dias de funcionamento: horários descem para a linha de baixo */
+      .cfg-dia-row { flex-wrap: wrap; row-gap: 10px; }
+      .cfg-dia-toggle { min-width: 0; }
+      .cfg-dia-horas { flex: 1 1 100%; padding-left: 52px; }
+      .cfg-dia-horas .cfg-time-input { flex: 1; width: auto; min-width: 0; max-width: 130px; }
+
+      /* Notificações: cabeçalho de colunas some; rótulo aparece sob cada toggle */
+      .cfg-card-head .cfg-notif-col { display: none; }
+      .cfg-notif-row { flex-wrap: wrap; row-gap: 10px; }
+      .cfg-notif-info { flex: 1 1 100%; }
+      .cfg-notif-row .cfg-notif-col {
+        width: auto; flex: 1;
+        flex-direction: column; gap: 5px;
+      }
+      .cfg-notif-row .cfg-notif-col::after {
+        content: attr(data-ch);
+        font-size: 9.5px; font-weight: 700;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        color: var(--text-3);
+      }
+
+      /* Plano: hero empilha; botão de upgrade em largura total */
+      .cfg-plan-hero { flex-wrap: wrap; }
+      .cfg-plan-hero .btn { width: 100%; justify-content: center; }
+
+      /* API key: input em linha própria, botões abaixo */
+      .cfg-key-row { flex-wrap: wrap; }
+      .cfg-key-row .input { flex: 1 1 100%; }
+
       .cfg-integs { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 420px) {
+      .cfg-integs { grid-template-columns: 1fr; }
     }
   `],
 })

@@ -139,13 +139,13 @@ interface ExportItem {
       @if (exportHistory.length === 0) {
         <div class="empty">Nenhuma exportação realizada ainda.</div>
       } @else {
-        <div style="overflow-x:auto">
-          <table class="tbl">
+        <div class="tbl-scroll">
+          <table class="tbl tbl-card">
             <thead>
               <tr>
-                <th>Quando</th>
                 <th>Relatório</th>
                 <th>Formato</th>
+                <th>Quando</th>
                 <th>Período</th>
                 <th>Por quem</th>
               </tr>
@@ -153,11 +153,11 @@ interface ExportItem {
             <tbody>
               @for (h of exportHistory; track $index) {
                 <tr>
-                  <td class="muted tnum" style="font-size:12.5px;white-space:nowrap">{{ h.quando }}</td>
-                  <td style="font-weight:500;font-size:13px">{{ h.relatorio }}</td>
-                  <td><span class="tag" style="font-size:11px">{{ h.formato }}</span></td>
-                  <td class="muted" style="font-size:12.5px">{{ h.periodo }}</td>
-                  <td>
+                  <td class="card-header" style="font-weight:500;font-size:13px">{{ h.relatorio }}</td>
+                  <td data-label="Formato"><span class="tag" style="font-size:11px">{{ h.formato }}</span></td>
+                  <td class="muted tnum" data-label="Quando" style="font-size:12.5px;white-space:nowrap">{{ h.quando }}</td>
+                  <td class="muted" data-label="Período" style="font-size:12.5px">{{ h.periodo }}</td>
+                  <td data-label="Por quem">
                     <div class="row" style="gap:6px;align-items:center">
                       <app-avatar [nome]="h.por" cor="#0e9f6e" [size]="22"></app-avatar>
                       <span style="font-size:13px">{{ h.por }}</span>
@@ -180,7 +180,7 @@ interface ExportItem {
 
     <!-- Filtros -->
     <div class="row" style="gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
-      <div style="min-width:190px">
+      <div style="flex:1 1 190px;min-width:0;max-width:280px">
         <app-select [value]="modFiltro" (valueChange)="modFiltro = $event" [options]="modOptions"></app-select>
       </div>
       <button class="btn btn-ghost btn-sm" style="gap:6px"
@@ -324,6 +324,14 @@ interface ExportItem {
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Mobile: chips e toggles com área de toque confortável */
+    @media (max-width: 768px) {
+      .cbtn { padding: 7px 12px; font-size: 12.5px; min-height: 34px; }
+      .ntoggle { width: 44px; height: 24px; border-radius: 12px; }
+      .ntoggle span { width: 18px; height: 18px; }
+      .ntoggle.on span { transform: translateX(20px); }
+    }
   `],
 })
 export class CentralComponent {

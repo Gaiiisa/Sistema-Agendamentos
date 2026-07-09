@@ -30,7 +30,7 @@ const TABS = [
 
   <!-- faltas summary (only on faltas tab) -->
   @if (tab === 'faltas') {
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+    <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));margin-bottom:16px">
 
       <!-- MiniStat: Faltas -->
       <div class="stat" style="flex-direction:row;align-items:center;gap:14px">

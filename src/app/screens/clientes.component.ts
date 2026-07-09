@@ -17,7 +17,7 @@ import { DataService } from '../data.service';
 
   <!-- toolbar -->
   <div class="row" style="margin-bottom:16px; flex-wrap:wrap; gap:10px">
-    <div class="search-inp" style="min-width:300px">
+    <div class="search-inp" style="flex:1;min-width:min(300px, 100%)">
       <app-icon name="search" [size]="16"></app-icon>
       <input placeholder="Buscar por nome ou WhatsApp…"
              [value]="q"
@@ -157,7 +157,7 @@ import { DataService } from '../data.service';
         <div style="flex:1; overflow-y:auto; padding:22px; display:flex; flex-direction:column; gap:18px">
 
           <!-- métricas -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+          <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px">
             <!-- Metric: Total gasto -->
             <div class="card" style="padding:12px 14px">
               <div class="stat-val tnum" style="font-size:21px">{{ data.money(c.total) }}</div>

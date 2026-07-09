@@ -38,7 +38,7 @@ const LIST_TABS = [
 
         <!-- faltas summary -->
         @if (listTab === 'faltas') {
-          <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+          <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));margin-bottom:16px">
             <div class="stat" style="flex-direction:row;align-items:center;gap:14px">
               <div class="stat-ico" style="background:var(--st-faltou-bg);width:42px;height:42px">
                 <app-icon name="alert" [size]="20" style="color:var(--st-faltou)"></app-icon>
@@ -89,7 +89,7 @@ const LIST_TABS = [
 
           <!-- bulk action bar -->
           @if (sel.length > 0) {
-            <div class="row" style="padding:10px 16px;background:var(--accent-soft);border-bottom:1px solid var(--accent-soft-2);gap:10px">
+            <div class="row" style="padding:10px 16px;background:var(--accent-soft);border-bottom:1px solid var(--accent-soft-2);gap:8px 10px;flex-wrap:wrap">
               <div style="font-weight:600;font-size:13.5px;color:var(--accent-text)">{{ sel.length }} selecionado(s)</div>
               <button class="btn btn-sm" style="background:var(--surface);color:var(--accent-text);margin-left:auto">
                 <app-icon name="check" [size]="14"></app-icon> Confirmar
@@ -168,7 +168,7 @@ const LIST_TABS = [
           </div>
 
           <!-- footer + paginação -->
-          <div class="row" style="padding:12px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-3)">
+          <div class="row" style="padding:12px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-3);flex-wrap:wrap;gap:8px 10px">
             @if (rows.length > 0) {
               {{ pageStart }}–{{ pageEnd }} de {{ rows.length }} agendamento(s)
             } @else {
@@ -191,8 +191,8 @@ const LIST_TABS = [
         <!-- ===== Modo Agenda: Semana / Mês ===== -->
         @if (view !== 'dia') {
           @if (view === 'semana') {
-            <div class="card" style="padding:16px;overflow-x:auto">
-              <div style="display:grid;grid-template-columns:56px repeat(6, minmax(120px,1fr));gap:1px">
+            <div class="card agenda-semana-wrap" style="padding:16px;overflow-x:auto">
+              <div class="agenda-semana-grid" style="display:grid;grid-template-columns:56px repeat(6, minmax(120px,1fr));gap:1px;min-width:min-content">
                 <div></div>
                 @for (d of dias; track d; let i = $index) {
                   <div [style.textAlign]="'center'" style="font-weight:700;font-size:13px;padding:6px 0;border-radius:8px"
@@ -220,8 +220,8 @@ const LIST_TABS = [
               </div>
             </div>
           } @else {
-            <div class="card" style="padding:16px">
-              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">
+            <div class="card mes-card" style="padding:16px">
+              <div class="mes-grid" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
                 @for (d of mesDows; track d) {
                   <div style="text-align:center;font-size:12px;font-weight:700;color:var(--text-3);padding:4px 0">{{ d }}</div>
                 }
@@ -232,7 +232,7 @@ const LIST_TABS = [
                     <div style="font-weight:700;font-size:13px" [style.color]="isTodayCell(day) ? 'var(--accent-text)' : isPastDay(day) ? 'var(--text-3)' : 'var(--text)'">{{ day }}</div>
                     @if (mesCnt(day) > 0) {
                       <div style="margin-top:6px;font-size:11.5px;font-weight:600;color:var(--text-2)">
-                        <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:var(--accent);margin-right:5px"></span>{{ mesCnt(day) }} agend.
+                        <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:var(--accent);margin-right:5px"></span>{{ mesCnt(day) }}<span class="m-hide"> agend.</span>
                       </div>
                     }
                     @if (isPastDay(day) && mesFaturamento(day) > 0) {
@@ -258,7 +258,7 @@ const LIST_TABS = [
                     <app-icon name="chevL" [size]="16"></app-icon>
                   </button>
                 } @else {
-                  <div style="width:32px"></div>
+                  <div style="width:40px"></div>
                 }
                 <div style="flex:1;text-align:center;font-size:14px;font-weight:700">
                   {{ currentDateLabel }}
@@ -438,10 +438,8 @@ const LIST_TABS = [
 
     <!-- ===== Modal de confirmação de remarcação ===== -->
     @if (pending) {
-      <div style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:grid;place-items:center"
-        (click)="cancelDrop()">
-        <div style="background:var(--surface);border-radius:var(--r-lg);padding:24px 28px;min-width:320px;max-width:420px;box-shadow:var(--sh-pop)"
-          (click)="$event.stopPropagation()">
+      <div class="mini-modal-overlay" (click)="cancelDrop()">
+        <div class="mini-modal" style="padding:24px 28px" (click)="$event.stopPropagation()">
           <div style="font-weight:700;font-size:16px;margin-bottom:4px">Confirmar remarcação?</div>
           <div class="muted" style="font-size:13px;margin-bottom:20px">Verifique as alterações abaixo antes de salvar.</div>
           <div class="col" style="gap:12px;margin-bottom:24px">
@@ -476,10 +474,8 @@ const LIST_TABS = [
 
     <!-- ===== Modal de agendamentos do slot semanal ===== -->
     @if (semanaModal) {
-      <div style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:grid;place-items:center"
-        (click)="semanaModal = null">
-        <div style="background:var(--surface);border-radius:var(--r-lg);min-width:380px;max-width:500px;max-height:80vh;overflow:hidden;box-shadow:var(--sh-pop)"
-          (click)="$event.stopPropagation()">
+      <div class="mini-modal-overlay" (click)="semanaModal = null">
+        <div class="mini-modal wide" style="max-height:80vh" (click)="$event.stopPropagation()">
           <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
             <div style="flex:1">
               <div style="font-weight:700;font-size:15px">{{ semanaModal.label }}</div>
@@ -577,7 +573,7 @@ const LIST_TABS = [
           </div>
 
           <!-- Legenda de cores por status: o card na grade muda de cor conforme o status. -->
-          <div style="display:flex;flex-wrap:nowrap;gap:14px;align-items:center;padding:10px 14px;margin-top:8px;background:var(--surface-2);border-radius:var(--r-md);font-size:12.5px;overflow-x:auto;white-space:nowrap">
+          <div class="agenda-legenda" style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:10px 14px;margin-top:8px;background:var(--surface-2);border-radius:var(--r-md);font-size:12.5px">
             <span style="font-weight:700;color:var(--text-2);flex-shrink:0">Cor do card por status:</span>
             @for (l of STATUS_LEGENDA; track l.id) {
               <span style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0" [title]="l.desc + ' — ' + l.label">

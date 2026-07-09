@@ -81,8 +81,8 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
           </div>
 
           @if (tipo === 'pontos') {
-            <div class="row" style="gap:14px;align-items:flex-end">
-              <div class="field" style="flex:1">
+            <div class="row" style="gap:14px;align-items:flex-end;flex-wrap:wrap">
+              <div class="field" style="flex:1;min-width:150px">
                 <label>A cada quantos cortes</label>
                 <div class="row" style="gap:8px">
                   <button class="btn btn-ghost btn-icon-only" (click)="meta = meta > 1 ? meta - 1 : 1">
@@ -94,8 +94,8 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
                   </button>
                 </div>
               </div>
-              <div style="font-size:22px;color:var(--text-3);padding-bottom:8px">→</div>
-              <div class="field" style="flex:1.4">
+              <div class="tn-hide-mobile" style="font-size:22px;color:var(--text-3);padding-bottom:8px">→</div>
+              <div class="field" style="flex:1.4;min-width:180px">
                 <label>Recompensa</label>
                 <input class="input" [value]="data.fidelidade.recompensa">
               </div>
@@ -172,17 +172,19 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
         <div class="card card-pad">
           <div style="font-weight:700;font-size:14px;margin-bottom:12px">Quase lá — clientes perto de uma recompensa</div>
           @for (item of quaseLa; track item[0]) {
-            <div class="row" style="gap:11px;padding:8px 0">
+            <div class="row" style="gap:8px 11px;padding:8px 0;flex-wrap:wrap">
               <app-avatar [nome]="data.cli(item[0]).nome" cor="#0e9f6e" [size]="30"></app-avatar>
-              <span style="font-weight:600;font-size:13.5px;flex:1">{{ data.cli(item[0]).nome }}</span>
-              <div class="progress" style="width:90px">
-                <span [style.width]="(item[1] / meta * 100) + '%'"></span>
+              <span style="font-weight:600;font-size:13.5px;flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ data.cli(item[0]).nome }}</span>
+              <div class="row" style="gap:8px;margin-left:auto;flex-shrink:0">
+                <div class="progress" style="width:80px">
+                  <span [style.width]="(item[1] / meta * 100) + '%'"></span>
+                </div>
+                <span class="mono" style="font-size:12.5px;font-weight:600;width:38px;text-align:right">{{ item[1] }}/{{ meta }}</span>
+                <button class="btn btn-whatsapp btn-sm">
+                  <app-icon name="whatsapp" [size]="14"></app-icon>
+                  Avisar
+                </button>
               </div>
-              <span class="mono" style="font-size:12.5px;font-weight:600;width:38px;text-align:right">{{ item[1] }}/{{ meta }}</span>
-              <button class="btn btn-whatsapp btn-sm">
-                <app-icon name="whatsapp" [size]="14"></app-icon>
-                Avisar
-              </button>
             </div>
           }
         </div>
@@ -635,10 +637,10 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
       <!-- Tipo -->
       <div class="field">
         <label>Tipo</label>
-        <div class="row" style="gap:10px;margin-top:4px">
+        <div class="row" style="gap:10px;margin-top:4px;flex-wrap:wrap">
           @for (t of TIPOS_CAMP; track t[0]) {
             <button type="button" (click)="setTipoCamp(t[0])"
-              style="flex:1;display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:var(--r-md);border:1px solid;transition:background .15s,border-color .15s"
+              style="flex:1 1 140px;display:flex;align-items:center;gap:9px;padding:11px 14px;border-radius:var(--r-md);border:1px solid;transition:background .15s,border-color .15s"
               [style.borderColor]="draftCamp.tipo === t[0] ? 'var(--accent)' : 'var(--border-strong)'"
               [style.background]="draftCamp.tipo === t[0] ? 'var(--accent-soft)' : 'var(--surface)'">
               <div style="width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex-shrink:0"

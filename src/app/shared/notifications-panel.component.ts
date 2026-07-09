@@ -66,7 +66,7 @@ interface Notification {
   `,
   styles: [`
     .notif-drawer {
-      width: 380px;
+      width: min(380px, 100vw);
       display: flex;
       flex-direction: column;
     }

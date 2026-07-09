@@ -155,8 +155,9 @@ export class AppComponent {
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
     return {
       position: 'fixed',
-      bottom: isMobile ? '76px' : '24px',
+      bottom: isMobile ? 'calc(76px + env(safe-area-inset-bottom, 0px))' : '24px',
       left: '50%', transform: 'translateX(-50%)',
+      maxWidth: 'min(92vw, 480px)',
       background: 'var(--accent)', color: 'var(--on-accent)', padding: '11px 18px', border: 'none',
       borderRadius: 'var(--r-md)', boxShadow: 'var(--sh-pop)', zIndex: '200',
       display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600', fontSize: '14px',

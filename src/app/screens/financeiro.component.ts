@@ -252,11 +252,11 @@ import { DataService, Lancamento } from '../data.service';
     <div class="col" style="gap:16px">
 
       <!-- status do caixa -->
-      <div class="card card-pad" style="display:flex;align-items:center;gap:14px;border-left:3px solid var(--accent)">
-        <div style="width:42px;height:42px;border-radius:11px;background:var(--accent-soft);display:grid;place-items:center">
+      <div class="card card-pad" style="display:flex;align-items:center;gap:14px;border-left:3px solid var(--accent);flex-wrap:wrap">
+        <div style="width:42px;height:42px;border-radius:11px;background:var(--accent-soft);display:grid;place-items:center;flex-shrink:0">
           <app-icon name="money" [size]="20" style="color:var(--accent)"></app-icon>
         </div>
-        <div class="col" style="line-height:1.35">
+        <div class="col" style="line-height:1.35;flex:1;min-width:200px">
           <span style="font-weight:700;font-size:15px">Caixa aberto desde {{ data.caixa.abertura }}</span>
           <span class="muted" style="font-size:13px">Operador: {{ data.caixa.operador }} · abertura {{ data.money(data.caixa.valorAbertura) }}</span>
         </div>
@@ -377,7 +377,7 @@ import { DataService, Lancamento } from '../data.service';
     <div class="col" style="gap:16px">
 
       <!-- resumo do período filtrado -->
-      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr))">
         <div class="stat">
           <div class="stat-top"><div class="stat-label">Entradas no período</div></div>
           <div class="stat-val tnum" style="color:var(--accent-text)">{{ data.money(totalFiltrado.rec) }}</div>
@@ -409,6 +409,7 @@ import { DataService, Lancamento } from '../data.service';
             <app-icon name="download" [size]="15"></app-icon> Exportar
           </button>
         </div>
+        <div class="tbl-scroll">
         <table class="tbl tbl-card">
           <thead>
             <tr>
@@ -466,6 +467,7 @@ import { DataService, Lancamento } from '../data.service';
             }
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   }
@@ -523,6 +525,7 @@ import { DataService, Lancamento } from '../data.service';
           <div class="card-title">Contas a receber</div>
           <span class="muted" style="margin-left:auto;font-size:12.5px">ordenado por vencimento</span>
         </div>
+        <div class="tbl-scroll">
         <table class="tbl tbl-card">
           <thead>
             <tr>
@@ -565,6 +568,7 @@ import { DataService, Lancamento } from '../data.service';
             }
           </tbody>
         </table>
+        </div>
       </div>
 
     </div>

@@ -134,7 +134,7 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     { id: 'financeiro', label: 'Financeiro',  icon: 'money' },
   ];
 
-  // Itens restantes no sheet "Mais"
+  // Itens restantes no sheet "Mais" (config só aparece aqui — no desktop fica no ícone de engrenagem)
   readonly MORE_NAV: NavItem[] = [
     { id: 'servicos',     label: 'Serviços',     icon: 'scissors' },
     { id: 'equipe',       label: 'Equipe',       icon: 'team' },
@@ -142,6 +142,7 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     { id: 'estoque',      label: 'Estoque',      icon: 'box' },
     { id: 'fidelidade',   label: 'Fidelidade',   icon: 'gift' },
     { id: 'central',      label: 'Central',       icon: 'bell' },
+    { id: 'config',       label: 'Configurações', icon: 'settings' },
   ];
 
   get isMoreActive(): boolean {

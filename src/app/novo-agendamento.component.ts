@@ -51,10 +51,10 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
       <!-- serviço -->
       <div class="field">
         <label>Serviço</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:8px">
           @for (s of servicosAtivos.slice(0, 6); track s.id) {
             <button (click)="pick(s.id)"
-              style="display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:var(--r-md);text-align:left"
+              style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r-md);text-align:left;min-height:52px"
               [style.border]="'1px solid ' + (srv === s.id ? 'var(--accent)' : 'var(--border-strong)')"
               [style.background]="srv === s.id ? 'var(--accent-soft)' : 'var(--surface)'">
               <span style="width:9px;height:9px;border-radius:3px;flex-shrink:0" [style.background]="s.cor"></span>
@@ -68,7 +68,7 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
       </div>
 
       <!-- profissional + hora -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px">
         <div class="field">
           <label>Profissional</label>
           <app-select [value]="prof" (valueChange)="prof=$event" [options]="profOptions" placeholder="Selecione…"></app-select>
@@ -76,8 +76,8 @@ import { DataService, Servico, Staff, Cliente, Appt } from './data.service';
         <div class="field">
           <label>Data e hora{{ sObj ? ' · termina ' + data.fromMin(data.toMin(hora) + sObj.dur) : '' }}</label>
           <div class="row" style="gap:8px">
-            <input class="input" [value]="'Hoje, ' + hojeLabel" readonly style="flex:1" />
-            <input class="input" type="time" [value]="hora" (input)="hora=$any($event.target).value" style="width:100px" />
+            <input class="input" [value]="'Hoje, ' + hojeLabel" readonly style="flex:1;min-width:0" />
+            <input class="input" type="time" [value]="hora" (input)="hora=$any($event.target).value" style="width:110px;flex-shrink:0" />
           </div>
         </div>
       </div>

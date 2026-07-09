@@ -17,7 +17,7 @@ import type { Produto } from '../data.service';
 <div class="page">
 
   <!-- ── Stat grid ── -->
-  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+  <div class="stat-grid" style="margin-bottom:16px">
 
     <div class="stat">
       <div class="stat-top">
@@ -64,9 +64,9 @@ import type { Produto } from '../data.service';
   <!-- ── Alerta de reposição ── -->
   @if (alerta.length > 0) {
     <div class="card card-pad" style="margin-bottom:16px;border-left:3px solid var(--st-faltou)">
-      <div class="row" style="margin-bottom:10px">
-        <app-icon name="alert" [size]="17" style="color:var(--st-faltou)"></app-icon>
-        <div style="font-weight:700;font-size:14.5px">{{ alerta.length }} produtos no nível mínimo</div>
+      <div class="row" style="margin-bottom:10px;flex-wrap:wrap">
+        <app-icon name="alert" [size]="17" style="color:var(--st-faltou);flex-shrink:0"></app-icon>
+        <div style="font-weight:700;font-size:14.5px;flex:1;min-width:180px">{{ alerta.length }} produtos no nível mínimo</div>
         <button class="btn btn-primary btn-sm" style="margin-left:auto"
           (click)="notify.emit('Pedido de reposição gerado')">
           <app-icon name="pkg" [size]="14"></app-icon>
@@ -180,12 +180,12 @@ import type { Produto } from '../data.service';
   @if (tab === 'historico') {
     <div class="card">
       <div style="overflow-x:auto">
-      <table class="tbl">
+      <table class="tbl tbl-card">
         <thead>
           <tr>
-            <th>Data / Hora</th>
             <th>Produto</th>
             <th>Movimentação</th>
+            <th>Data / Hora</th>
             <th>Motivo</th>
             <th>Qtd</th>
           </tr>
@@ -193,9 +193,8 @@ import type { Produto } from '../data.service';
         <tbody>
           @for (m of movSorted; track m.id) {
             <tr>
-              <td class="mono muted" style="font-size:13px">{{ data.fmtData(m.data) }} · {{ m.hora }}</td>
-              <td style="font-weight:600">{{ data.prod(m.prod).nome }}</td>
-              <td>
+              <td class="card-header" style="font-weight:600">{{ data.prod(m.prod).nome }}</td>
+              <td data-label="Movimento">
                 @if (m.tipo === 'entrada') {
                   <span class="pill pill-confirmado">
                     <app-icon name="plus" [size]="12"></app-icon>
@@ -208,8 +207,9 @@ import type { Produto } from '../data.service';
                   </span>
                 }
               </td>
-              <td class="muted">{{ m.motivo }}</td>
-              <td class="tnum" [style.fontWeight]="700"
+              <td class="mono muted" data-label="Data / Hora" style="font-size:13px">{{ data.fmtData(m.data) }} · {{ m.hora }}</td>
+              <td class="muted" data-label="Motivo">{{ m.motivo }}</td>
+              <td class="tnum" data-label="Qtd" [style.fontWeight]="700"
                 [style.color]="m.tipo === 'entrada' ? 'var(--accent-text)' : 'var(--st-faltou)'">
                 {{ m.tipo === 'entrada' ? '+' : '−' }}{{ m.qtd }}
               </td>

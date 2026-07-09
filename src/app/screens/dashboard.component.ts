@@ -20,7 +20,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
     <div class="page">
 
       <!-- saudação -->
-      <div style="margin-bottom:18px">
+      <div class="dash-saudacao" style="margin-bottom:18px">
         <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em">{{ saudacao }}, {{ nomeUsuario }} 👋</div>
         <div class="muted" style="font-size:14px">{{ dataLabel }} · Aqui está o resumo do seu dia.</div>
       </div>
@@ -128,12 +128,12 @@ import { ExportService, Formato, Periodo } from '../export.service';
       </div>
 
       <!-- Meta do mês -->
-      <div class="card card-pad" style="margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <div class="col" style="gap:2px;min-width:160px">
+      <div class="card card-pad" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="col" style="gap:2px;min-width:min(160px, 100%)">
           <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)">Meta do mês</div>
           <div style="font-size:17px;font-weight:800">{{ data.money(meta.vendido) }} <span class="muted" style="font-size:13px;font-weight:500">/ {{ data.money(meta.meta) }}</span></div>
         </div>
-        <div class="col" style="flex:1;gap:6px;min-width:160px">
+        <div class="col" style="flex:1 1 200px;gap:6px;min-width:min(160px, 100%)">
           <div class="progress" style="height:6px">
             <span [style.width.%]="meta.pct" [style.background]="meta.bateu ? 'var(--st-confirmado)' : 'var(--accent)'"></span>
           </div>
@@ -228,11 +228,11 @@ import { ExportService, Formato, Periodo } from '../export.service';
           </div>
           <div>
             @for (a of proximos; track a.id; let i = $index) {
-              <div class="row"
+              <div class="row prox-row"
                 [style.padding]="'13px 18px'" [style.gap.px]="13"
                 [style.borderBottom]="i < proximos.length - 1 ? '1px solid var(--border)' : 'none'"
                 style="cursor:pointer" (click)="onOpen.emit(a)">
-                <div class="mono" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">{{ a.ini }}</div>
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">{{ a.ini }}</div>
                 <div [style.width.px]="3" style="align-self:stretch;border-radius:99px" [style.background]="data.srv(a.srv).cor"></div>
                 <app-avatar [nome]="data.cli(a.cli).nome" [cor]="data.prof(a.prof).cor" [size]="36"></app-avatar>
                 <div class="col" style="line-height:1.3;min-width:0;flex:1">
@@ -240,7 +240,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                   <div class="muted" style="font-size:13px">{{ data.srv(a.srv).nome }} · {{ data.prof(a.prof).apelido }}</div>
                 </div>
                 @if (a.sinal) {
-                  <span class="tag tag-novo" title="Sinal pago">
+                  <span class="tag tag-novo tn-hide-mobile" title="Sinal pago">
                     <app-icon name="check" [size]="11"></app-icon> Sinal
                   </span>
                 }

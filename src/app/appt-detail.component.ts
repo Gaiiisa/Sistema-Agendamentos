@@ -8,6 +8,11 @@ import { StatusPillComponent } from './shared/status-pill.component';
 import { ModalComponent } from './shared/modal.component';
 import { DataService, Appt } from './data.service';
 
+interface Sugestao { data: string; hora: string; label: string; }
+
+const DOW_ABR = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+const DOW_LABEL = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
 @Component({
   selector: 'app-appt-detail',
   standalone: true,
@@ -23,7 +28,7 @@ import { DataService, Appt } from './data.service';
         <app-status-pill [status]="a.status"></app-status-pill>
       </div>
       <div class="divider"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:14px">
         <ng-container *ngTemplateOutlet="detailRow; context: { icon: 'scissors', label: 'Serviço', value: s.nome }"></ng-container>
         <ng-container *ngTemplateOutlet="detailRow; context: { icon: 'user', label: 'Profissional', value: p.nome }"></ng-container>
         <ng-container *ngTemplateOutlet="detailRow; context: { icon: 'clock', label: 'Horário', value: a.ini + '–' + data.fromMin(data.toMin(a.ini) + dur) + ' (' + dur + 'min)' }"></ng-container>
@@ -122,11 +127,6 @@ import { DataService, Appt } from './data.service';
       </div>
     </ng-template>`,
 })
-interface Sugestao { data: string; hora: string; label: string; }
-
-const DOW_ABR = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
-const DOW_LABEL = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
 export class ApptDetailComponent {
   @Input() a!: Appt;
   @Output() close = new EventEmitter<void>();

@@ -28,7 +28,7 @@ import { ExportService } from '../export.service';
   </div>
 
   <!-- stat-grid -->
-  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+  <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));margin-bottom:16px">
 
     <div class="stat" style="flex-direction:row;align-items:center;gap:14px">
       <div class="stat-ico" style="background:var(--accent-soft);width:44px;height:44px">
