@@ -7,6 +7,7 @@ import { StatusPillComponent } from '../shared/status-pill.component';
 import { MenuComponent } from '../shared/menu.component';
 import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService } from '../data.service';
+import { PIPES } from '../shared/pipes';
 
 const TABS = [
   { id: 'todos', label: 'Todos' },
@@ -17,7 +18,7 @@ const TABS = [
 @Component({
   selector: 'app-agendamentos',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, SelectComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, SelectComponent, ...PIPES],
   template: `
 <div class="page">
 
@@ -60,7 +61,7 @@ const TABS = [
           <app-icon name="money" [size]="20" style="color:var(--st-pendente)"></app-icon>
         </div>
         <div class="col">
-          <div class="stat-val tnum" style="font-size:24px">{{ data.money(custoFaltas) }}</div>
+          <div class="stat-val tnum" style="font-size:24px">{{ custoFaltas | brl }}</div>
           <div class="stat-label">Receita perdida c/ faltas</div>
         </div>
       </div>
@@ -151,8 +152,8 @@ const TABS = [
                 </span>
               </td>
               <td class="muted" data-label="Profissional">{{ data.prof(r.prof).apelido }}</td>
-              <td class="tnum" data-label="Data / Hora">{{ data.fmtData(r.data) }} · {{ r.hora }}</td>
-              <td class="tnum" data-label="Valor" style="font-weight:600">{{ data.money(r.valor) }}</td>
+              <td class="tnum" data-label="Data / Hora">{{ r.data | dataBR:'curta' }} · {{ r.hora }}</td>
+              <td class="tnum" data-label="Valor" style="font-weight:600">{{ r.valor | brl }}</td>
               <td data-label="Status"><app-status-pill [status]="r.status"></app-status-pill></td>
               <td class="card-actions">
                 <app-menu [items]="[

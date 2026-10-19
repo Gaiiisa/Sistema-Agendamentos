@@ -4,9 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from '../shared/avatar.component';
 import { SelectComponent, SelectOption } from '../shared/select.component';
-import { DataService } from '../data.service';
+import { DataService, UsuarioAdmin, PermCatalogoItem } from '../data.service';
+import { ToastService } from '../toast.service';
+import { AuthService, NIVEL_LABEL, Nivel } from '../auth.service';
+import { CampoErroComponent } from '../shared/campo-erro.component';
+import { MascaraDirective } from '../shared/mascara.directive';
+import { PIPES } from '../shared/pipes';
+import { V, validar, temErros, Erros } from '../shared/validacao';
 
-type Tab = 'conta' | 'estabelecimento' | 'horarios' | 'agenda' | 'pagamentos' | 'notificacoes' | 'plano' | 'integracoes';
+type Tab = 'conta' | 'estabelecimento' | 'horarios' | 'agenda' | 'pagamentos' | 'notificacoes' | 'plano' | 'integracoes' | 'usuarios';
 
 interface TabDef { id: Tab; label: string; icon: string; }
 
@@ -17,14 +23,14 @@ interface DiaFuncionamento {
 @Component({
   selector: 'app-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, SelectComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, SelectComponent, CampoErroComponent, MascaraDirective, ...PIPES],
   template: `
     <div class="page cfg-page">
 
       <!-- Cabeçalho mobile (abas em scroll) -->
       <div class="cfg-tabs-mobile">
-        @for (t of TABS; track t.id) {
-          <button class="cfg-tab-m" [class.on]="tab === t.id" (click)="tab = t.id">
+        @for (t of tabsVisiveis; track t.id) {
+          <button class="cfg-tab-m" [class.on]="tab === t.id" (click)="irTab(t.id)">
             <app-icon [name]="t.icon" [size]="14"></app-icon>
             {{ t.label }}
           </button>
@@ -35,8 +41,8 @@ interface DiaFuncionamento {
 
         <!-- ── Sidebar de abas (desktop) ── -->
         <nav class="cfg-nav">
-          @for (t of TABS; track t.id) {
-            <button class="cfg-nav-item" [class.on]="tab === t.id" (click)="tab = t.id">
+          @for (t of tabsVisiveis; track t.id) {
+            <button class="cfg-nav-item" [class.on]="tab === t.id" (click)="irTab(t.id)">
               <span class="cfg-nav-ico">
                 <app-icon [name]="t.icon" [size]="15"></app-icon>
               </span>
@@ -79,22 +85,25 @@ interface DiaFuncionamento {
                 <div class="cfg-card-body cfg-form">
                   <div class="grid-2">
                     <div class="field">
-                      <label>Nome completo</label>
-                      <input class="input" [(ngModel)]="conta.nome">
+                      <label>Nome completo<span class="req">*</span></label>
+                      <input class="input" [class.invalid]="errosConta['nome']" [(ngModel)]="conta.nome" maxlength="100">
+                      <app-campo-erro [msg]="errosConta['nome']"></app-campo-erro>
                     </div>
                     <div class="field">
                       <label>Papel</label>
-                      <app-select [(ngModel)]="conta.papel" [options]="PAPEL_OPTS"></app-select>
+                      <input class="input" [value]="auth.isGestor ? nivelLabel(auth.usuario!.nivel) + ' (acesso total)' : conta.papel" readonly title="Definido pelo administrador">
+
                     </div>
                   </div>
                   <div class="grid-2">
                     <div class="field">
-                      <label>E-mail</label>
-                      <input class="input" type="email" [(ngModel)]="conta.email">
+                      <label>E-mail ou usuário (login)<span class="req">*</span></label>
+                      <input class="input" [class.invalid]="errosConta['email']" type="email" [(ngModel)]="conta.email" maxlength="255">
+                      <app-campo-erro [msg]="errosConta['email']"></app-campo-erro>
                     </div>
                     <div class="field">
                       <label>WhatsApp</label>
-                      <input class="input" type="tel" [(ngModel)]="conta.wpp">
+                      <input class="input" type="tel" [ngModel]="conta.wpp" readonly (click)="whatsappEmBreve()" style="cursor:pointer" title="Em desenvolvimento">
                     </div>
                   </div>
                 </div>
@@ -105,26 +114,30 @@ interface DiaFuncionamento {
                 <div class="cfg-card-body cfg-form">
                   <div class="field">
                     <label>Senha atual</label>
-                    <input class="input" type="password" placeholder="••••••••">
+                    <input class="input" [class.invalid]="errosSenha['atual']" type="password" placeholder="••••••••" [(ngModel)]="senhaAtual" autocomplete="current-password">
+                    <app-campo-erro [msg]="errosSenha['atual']"></app-campo-erro>
                   </div>
                   <div class="grid-2">
                     <div class="field">
                       <label>Nova senha</label>
-                      <input class="input" type="password" placeholder="••••••••">
+                      <input class="input" [class.invalid]="errosSenha['nova']" type="password" placeholder="••••••••" [(ngModel)]="senhaNova" autocomplete="new-password" maxlength="72">
+                      <app-campo-erro [msg]="errosSenha['nova']"></app-campo-erro>
                     </div>
                     <div class="field">
                       <label>Confirmar nova senha</label>
-                      <input class="input" type="password" placeholder="••••••••">
+                      <input class="input" [class.invalid]="errosSenha['confirma']" type="password" placeholder="••••••••" [(ngModel)]="senhaConfirma" autocomplete="new-password" maxlength="72">
+                      <app-campo-erro [msg]="errosSenha['confirma']"></app-campo-erro>
                     </div>
                   </div>
+                  <div class="cfg-hint">Mínimo de 6 caracteres, com letras e números.</div>
                   <div>
-                    <button class="btn btn-primary btn-sm" (click)="save('conta')">Salvar senha</button>
+                    <button class="btn btn-primary btn-sm" (click)="salvarSenha()">Salvar senha</button>
                   </div>
                 </div>
               </div>
 
               <div class="cfg-save-bar">
-                <button class="btn btn-primary" (click)="save('conta')">Salvar alterações</button>
+                <button class="btn btn-primary" (click)="salvarConta()">Salvar alterações</button>
               </div>
             </section>
           }
@@ -153,42 +166,50 @@ interface DiaFuncionamento {
                 <div class="cfg-card-body cfg-form">
                   <div class="grid-2">
                     <div class="field">
-                      <label>Nome do estabelecimento</label>
-                      <input class="input" [(ngModel)]="estab.nome">
+                      <label>Nome do estabelecimento<span class="req">*</span></label>
+                      <input class="input" [class.invalid]="errosEstab['nome']" [(ngModel)]="estab.nome" maxlength="100">
+                      <app-campo-erro [msg]="errosEstab['nome']"></app-campo-erro>
                     </div>
                     <div class="field">
-                      <label>Tipo de negócio</label>
-                      <app-select [(ngModel)]="estab.tipo" [options]="TIPO_ESTAB_OPTS"></app-select>
+                      <label>Tipo de negócio<span class="req">*</span></label>
+                      <app-select [class.invalid]="errosEstab['tipo']" [(ngModel)]="estab.tipo" [options]="TIPO_ESTAB_OPTS"></app-select>
+                      <app-campo-erro [msg]="errosEstab['tipo']"></app-campo-erro>
                     </div>
                   </div>
                   <div class="grid-2">
                     <div class="field">
                       <label>CNPJ / CPF</label>
-                      <input class="input" [(ngModel)]="estab.doc" placeholder="00.000.000/0001-00">
+                      <input class="input" [class.invalid]="errosEstab['doc']" [(ngModel)]="estab.doc" mascara="documento" placeholder="00.000.000/0001-00">
+                      <app-campo-erro [msg]="errosEstab['doc']"></app-campo-erro>
                     </div>
                     <div class="field">
-                      <label>Telefone / WhatsApp</label>
-                      <input class="input" type="tel" [(ngModel)]="estab.tel">
+                      <label>Telefone / WhatsApp<span class="req">*</span></label>
+                      <input class="input" [class.invalid]="errosEstab['tel']" type="tel" [(ngModel)]="estab.tel" mascara="telefone" placeholder="(11) 3456-7890">
+                      <app-campo-erro [msg]="errosEstab['tel']"></app-campo-erro>
                     </div>
                   </div>
                   <div class="field">
                     <label>Endereço</label>
-                    <input class="input" [(ngModel)]="estab.end" placeholder="Rua, número, bairro">
+                    <input class="input" [class.invalid]="errosEstab['end']" [(ngModel)]="estab.end" placeholder="Rua, número, bairro" maxlength="255">
+                    <app-campo-erro [msg]="errosEstab['end']"></app-campo-erro>
                   </div>
                   <div class="grid-2">
                     <div class="field">
                       <label>Cidade</label>
-                      <input class="input" [(ngModel)]="estab.cidade">
+                      <input class="input" [class.invalid]="errosEstab['cidade']" [(ngModel)]="estab.cidade" maxlength="80">
+                      <app-campo-erro [msg]="errosEstab['cidade']"></app-campo-erro>
                     </div>
                     <div class="field">
                       <label>CEP</label>
-                      <input class="input" [(ngModel)]="estab.cep" placeholder="00000-000">
+                      <input class="input" [class.invalid]="errosEstab['cep']" [(ngModel)]="estab.cep" mascara="cep" placeholder="00000-000">
+                      <app-campo-erro [msg]="errosEstab['cep']"></app-campo-erro>
                     </div>
                   </div>
                   <div class="field">
                     <label>Descrição (aparece no link de agendamento)</label>
-                    <textarea class="input" [(ngModel)]="estab.desc" rows="3"
+                    <textarea class="input" [class.invalid]="errosEstab['desc']" [(ngModel)]="estab.desc" rows="3" maxlength="500"
                       placeholder="Fale um pouco sobre o seu espaço…"></textarea>
+                    <app-campo-erro [msg]="errosEstab['desc']"></app-campo-erro>
                   </div>
                 </div>
               </div>
@@ -200,24 +221,27 @@ interface DiaFuncionamento {
                     <label>Instagram</label>
                     <div class="cfg-prefix-wrap">
                       <span class="cfg-prefix">instagram.com/</span>
-                      <input class="input cfg-prefix-input" [(ngModel)]="estab.instagram" placeholder="navalhaecia">
+                      <input class="input cfg-prefix-input" [class.invalid]="errosEstab['instagram']" [(ngModel)]="estab.instagram" placeholder="navalhaecia" maxlength="30">
                     </div>
+                    <app-campo-erro [msg]="errosEstab['instagram']"></app-campo-erro>
                   </div>
                   <div class="grid-2">
                     <div class="field">
                       <label>Google Meu Negócio</label>
-                      <input class="input" [(ngModel)]="estab.google" placeholder="Link do perfil">
+                      <input class="input" [class.invalid]="errosEstab['google']" [(ngModel)]="estab.google" placeholder="https://g.page/..." maxlength="255">
+                      <app-campo-erro [msg]="errosEstab['google']"></app-campo-erro>
                     </div>
                     <div class="field">
                       <label>Site / Link de bio</label>
-                      <input class="input" [(ngModel)]="estab.site" placeholder="https://...">
+                      <input class="input" [class.invalid]="errosEstab['site']" [(ngModel)]="estab.site" placeholder="https://..." maxlength="255">
+                      <app-campo-erro [msg]="errosEstab['site']"></app-campo-erro>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="cfg-save-bar">
-                <button class="btn btn-primary" (click)="save('estab')">Salvar alterações</button>
+                <button class="btn btn-primary" [disabled]="!podeEditarConfig" [title]="podeEditarConfig ? '' : 'Sem permissão para editar as configurações'" (click)="save('estab')">Salvar alterações</button>
               </div>
             </section>
           }
@@ -240,10 +264,11 @@ interface DiaFuncionamento {
                         <span class="cfg-dia-label">{{ d.dia }}</span>
                       </div>
                       @if (d.aberto) {
-                        <div class="cfg-dia-horas">
-                          <input class="input cfg-time-input" type="time" [(ngModel)]="d.inicio">
+                        <div class="cfg-dia-horas" style="flex-wrap:wrap">
+                          <input class="input cfg-time-input" [class.invalid]="errosHorarios['dia' + d.diaSemana]" type="time" [(ngModel)]="d.inicio">
                           <span class="cfg-dia-sep">até</span>
-                          <input class="input cfg-time-input" type="time" [(ngModel)]="d.fim">
+                          <input class="input cfg-time-input" [class.invalid]="errosHorarios['dia' + d.diaSemana]" type="time" [(ngModel)]="d.fim">
+                          <app-campo-erro style="flex-basis:100%;text-align:right" [msg]="errosHorarios['dia' + d.diaSemana]"></app-campo-erro>
                         </div>
                       } @else {
                         <span class="cfg-fechado-label">Fechado</span>
@@ -267,16 +292,18 @@ interface DiaFuncionamento {
                   </div>
                   @if (pausaAtiva) {
                     <div class="row" style="gap:10px;align-items:center;flex-wrap:wrap">
-                      <input class="input cfg-time-input" type="time" [(ngModel)]="pausaInicio">
+                      <input class="input cfg-time-input" [class.invalid]="errosHorarios['pausa']" type="time" [(ngModel)]="pausaInicio">
                       <span class="muted">até</span>
-                      <input class="input cfg-time-input" type="time" [(ngModel)]="pausaFim">
+                      <input class="input cfg-time-input" [class.invalid]="errosHorarios['pausa']" type="time" [(ngModel)]="pausaFim">
                     </div>
+                    <app-campo-erro [msg]="errosHorarios['pausa']"></app-campo-erro>
                   }
+                  <app-campo-erro [msg]="errosHorarios['geral']"></app-campo-erro>
                 </div>
               </div>
 
               <div class="cfg-save-bar">
-                <button class="btn btn-primary" (click)="save('horarios')">Salvar alterações</button>
+                <button class="btn btn-primary" [disabled]="!podeEditarConfig" [title]="podeEditarConfig ? '' : 'Sem permissão para editar as configurações'" (click)="save('horarios')">Salvar alterações</button>
               </div>
             </section>
           }
@@ -316,7 +343,8 @@ interface DiaFuncionamento {
                     </div>
                     <div class="field">
                       <label>Limite de agendamentos por dia</label>
-                      <input class="input" type="number" [(ngModel)]="agenda.maxDia" min="1" max="99">
+                      <input class="input" [class.invalid]="errosAgenda['maxDia']" type="number" [(ngModel)]="agenda.maxDia" min="1" max="99" step="1">
+                      <app-campo-erro [msg]="errosAgenda['maxDia']"></app-campo-erro>
                     </div>
                   </div>
                 </div>
@@ -330,7 +358,7 @@ interface DiaFuncionamento {
                       <div style="font-weight:600;font-size:13.5px">Confirmação automática pelo WhatsApp</div>
                       <div class="cfg-hint">Envia mensagem ao confirmar novo horário</div>
                     </div>
-                    <button class="cfg-toggle" [class.on]="agenda.confirmacaoAuto" (click)="agenda.confirmacaoAuto = !agenda.confirmacaoAuto">
+                    <button class="cfg-toggle" [class.on]="agenda.confirmacaoAuto" (click)="whatsappEmBreve()">
                       <span class="cfg-toggle-knob"></span>
                     </button>
                   </div>
@@ -339,7 +367,7 @@ interface DiaFuncionamento {
                       <div style="font-weight:600;font-size:13.5px">Lembrete na véspera</div>
                       <div class="cfg-hint">Envia lembrete 24 h antes do horário</div>
                     </div>
-                    <button class="cfg-toggle" [class.on]="agenda.lembrete" (click)="agenda.lembrete = !agenda.lembrete">
+                    <button class="cfg-toggle" [class.on]="agenda.lembrete" (click)="whatsappEmBreve()">
                       <span class="cfg-toggle-knob"></span>
                     </button>
                   </div>
@@ -348,7 +376,7 @@ interface DiaFuncionamento {
                       <div style="font-weight:600;font-size:13.5px">Lembrete 2 horas antes</div>
                       <div class="cfg-hint">Envia segundo lembrete próximo ao horário</div>
                     </div>
-                    <button class="cfg-toggle" [class.on]="agenda.lembrete2h" (click)="agenda.lembrete2h = !agenda.lembrete2h">
+                    <button class="cfg-toggle" [class.on]="agenda.lembrete2h" (click)="whatsappEmBreve()">
                       <span class="cfg-toggle-knob"></span>
                     </button>
                   </div>
@@ -366,16 +394,17 @@ interface DiaFuncionamento {
                     <div class="field">
                       <label>% de sinal exigido (serviços marcados)</label>
                       <div class="cfg-input-addon">
-                        <input class="input" type="number" [(ngModel)]="agenda.sinalPct" min="0" max="100">
+                        <input class="input" [class.invalid]="errosAgenda['sinalPct']" type="number" [(ngModel)]="agenda.sinalPct" min="0" max="100" step="1">
                         <span class="cfg-addon">%</span>
                       </div>
+                      <app-campo-erro [msg]="errosAgenda['sinalPct']"></app-campo-erro>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="cfg-save-bar">
-                <button class="btn btn-primary" (click)="save('agenda')">Salvar alterações</button>
+                <button class="btn btn-primary" [disabled]="!podeEditarConfig" [title]="podeEditarConfig ? '' : 'Sem permissão para editar as configurações'" (click)="save('agenda')">Salvar alterações</button>
               </div>
             </section>
           }
@@ -405,6 +434,7 @@ interface DiaFuncionamento {
                       </button>
                     </div>
                   }
+                  <app-campo-erro [msg]="errosPag['metodos']"></app-campo-erro>
                 </div>
               </div>
 
@@ -417,13 +447,15 @@ interface DiaFuncionamento {
                       <app-select [(ngModel)]="pagPix.tipo" [options]="PIX_TIPO_OPTS"></app-select>
                     </div>
                     <div class="field">
-                      <label>Chave Pix</label>
-                      <input class="input" [(ngModel)]="pagPix.chave" placeholder="Informe a chave">
+                      <label>Chave Pix@if (pixAtivo) {<span class="req">*</span>}</label>
+                      <input class="input" [class.invalid]="errosPag['chave']" [(ngModel)]="pagPix.chave" placeholder="Informe a chave" maxlength="77">
+                      <app-campo-erro [msg]="errosPag['chave']"></app-campo-erro>
                     </div>
                   </div>
                   <div class="field">
-                    <label>Nome exibido no Pix</label>
-                    <input class="input" [(ngModel)]="pagPix.nome">
+                    <label>Nome exibido no Pix@if (pixAtivo) {<span class="req">*</span>}</label>
+                    <input class="input" [class.invalid]="errosPag['nome']" [(ngModel)]="pagPix.nome" maxlength="25">
+                    <app-campo-erro [msg]="errosPag['nome']"></app-campo-erro>
                   </div>
                 </div>
               </div>
@@ -444,16 +476,17 @@ interface DiaFuncionamento {
                     <div class="field">
                       <label>Taxa média do cartão (%)</label>
                       <div class="cfg-input-addon">
-                        <input class="input" type="number" [(ngModel)]="pagCard.taxa" step="0.1" min="0" max="10">
+                        <input class="input" [class.invalid]="errosPag['taxa']" type="number" [(ngModel)]="pagCard.taxa" step="0.1" min="0" max="10">
                         <span class="cfg-addon">%</span>
                       </div>
+                      <app-campo-erro [msg]="errosPag['taxa']"></app-campo-erro>
                     </div>
                   }
                 </div>
               </div>
 
               <div class="cfg-save-bar">
-                <button class="btn btn-primary" (click)="save('pagamentos')">Salvar alterações</button>
+                <button class="btn btn-primary" [disabled]="!podeEditarConfig" [title]="podeEditarConfig ? '' : 'Sem permissão para editar as configurações'" (click)="save('pagamentos')">Salvar alterações</button>
               </div>
             </section>
           }
@@ -516,7 +549,7 @@ interface DiaFuncionamento {
               </div>
 
               <div class="cfg-save-bar">
-                <button class="btn btn-primary" (click)="save('notif')">Salvar alterações</button>
+                <button class="btn btn-primary" [disabled]="!podeEditarConfig" [title]="podeEditarConfig ? '' : 'Sem permissão para editar as configurações'" (click)="save('notif')">Salvar alterações</button>
               </div>
             </section>
           }
@@ -665,11 +698,219 @@ interface DiaFuncionamento {
             </section>
           }
 
+          <!-- ════════════ USUÁRIOS E PERMISSÕES (master e CEO) ════════════ -->
+          @if (tab === 'usuarios' && auth.isGestor) {
+            <section class="cfg-section">
+              <h2 class="cfg-h2">Usuários e Permissões</h2>
+              <p class="cfg-sub">
+                @if (auth.isMaster) { Como master, você cria, edita e exclui qualquer conta, inclusive as de CEO. }
+                @else { Como CEO, você vê e gerencia apenas as contas que você criou. }
+                Contas de nível Usuário só acessam o que for marcado nas permissões.
+              </p>
+
+              <div class="cfg-card" style="margin-top:24px">
+                <div class="cfg-card-body">
+                  <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+                    <input class="input" style="flex:1;min-width:180px" [(ngModel)]="buscaUsuario" placeholder="Buscar por nome, e-mail ou perfil…">
+                    <button class="btn btn-primary" (click)="novaConta()">
+                      <app-icon name="plus" [size]="15" [stroke]="2.4"></app-icon> Nova conta
+                    </button>
+                  </div>
+                  @if (carregandoUsuarios) {
+                    <div class="cfg-hint">Carregando contas…</div>
+                  } @else {
+                    <div style="overflow-x:auto">
+                      <table class="cfg-utable">
+                        <thead><tr>
+                          <th>Nome</th><th>Nível</th><th>E-mail</th><th>Perfil</th><th>Status</th>
+                          @if (auth.isMaster) { <th>Criado por</th> }
+                          <th>Cadastro</th><th>Último acesso</th>
+                        </tr></thead>
+                        <tbody>
+                          @for (u of usuariosFiltrados; track u.id) {
+                            <tr [class.sel]="usuarioSel?.id === u.id" [style.opacity]="u.gerenciavel ? 1 : 0.6" (click)="selecionarUsuario(u)">
+                              <td>
+                                <span style="font-weight:600">{{ u.nome }}</span>
+                                @if (u.id === auth.usuario?.id) { <span class="cfg-hint" style="margin-left:6px">(você)</span> }
+                              </td>
+                              <td>
+                                @if (u.nivel !== 'usuario') { <span class="cfg-badge-adm" style="margin-left:0">{{ nivelLabel(u.nivel) }}</span> }
+                                @else { {{ nivelLabel(u.nivel) }} }
+                              </td>
+                              <td>{{ u.email }}</td>
+                              <td>{{ u.papel }}</td>
+                              <td><span [style.color]="u.ativo ? 'var(--accent-text)' : 'var(--st-faltou)'">{{ u.ativo ? 'Ativo' : 'Inativo' }}</span></td>
+                              @if (auth.isMaster) { <td>{{ u.criadoPor || '—' }}</td> }
+                              <td class="tnum">{{ u.criadoEm | dataBR:'datahora' }}</td>
+                              <td class="tnum">{{ u.ultimoAcesso | dataBR:'datahora' }}</td>
+                            </tr>
+                          }
+                          @if (!usuariosFiltrados.length) {
+                            <tr><td [attr.colspan]="auth.isMaster ? 8 : 7" class="cfg-hint" style="text-align:center;padding:16px">Nenhuma conta encontrada.</td></tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              @if (usuarioSel || criandoConta) {
+                <div class="cfg-card" style="margin-top:20px">
+                  <div class="cfg-card-head" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    @if (criandoConta) { <span>Nova conta</span> }
+                    @else { <span>Conta de <strong>{{ usuarioSel!.nome }}</strong></span> }
+                    @if (!criandoConta && permsAlteradas) { <span class="cfg-badge-dirty">alterações não salvas</span> }
+                  </div>
+                  <div class="cfg-card-body">
+                    @if (carregandoPerms) {
+                      <div class="cfg-hint">Carregando permissões…</div>
+                    } @else {
+                      <div class="cfg-form" style="margin-bottom:18px">
+                        <div class="grid-2">
+                          <div class="field">
+                            <label>Nome<span class="req">*</span></label>
+                            <input class="input" [class.invalid]="errosUsuario['nome']" [(ngModel)]="formConta.nome" placeholder="Ex.: Ana Recepção" maxlength="100">
+                            <app-campo-erro [msg]="errosUsuario['nome']"></app-campo-erro>
+                          </div>
+                          <div class="field">
+                            <label>E-mail ou usuário (login)<span class="req">*</span></label>
+                            <input class="input" [class.invalid]="errosUsuario['email']" [(ngModel)]="formConta.email" placeholder="ana@navalhaecia.com" autocomplete="off" maxlength="255">
+                            <app-campo-erro [msg]="errosUsuario['email']"></app-campo-erro>
+                          </div>
+                        </div>
+                        <div class="grid-2">
+                          <!-- CEO só cria contas de nível Usuário: sem escolha, o campo não aparece -->
+                          @if (nivelOpts.length > 1) {
+                            <div class="field">
+                              <label>Nível de acesso</label>
+                              <app-select [(ngModel)]="formConta.nivel" [options]="nivelOpts"></app-select>
+                            </div>
+                          }
+                          <div class="field">
+                            <label>Perfil (cargo)</label>
+                            <app-select [(ngModel)]="formConta.papel" [options]="papelOpts"></app-select>
+                          </div>
+                        </div>
+                        @if (criandoConta) {
+                          <div class="field">
+                            <label>Senha inicial<span class="req">*</span></label>
+                            <input class="input" [class.invalid]="errosUsuario['senha']" type="password" [(ngModel)]="formConta.senha" placeholder="mín. 6 caracteres, letras e números" autocomplete="new-password" maxlength="72">
+                            <app-campo-erro [msg]="errosUsuario['senha']"></app-campo-erro>
+                          </div>
+                        }
+                      </div>
+
+                      <div class="cfg-toggle-row" style="margin-bottom:6px">
+                        <div>
+                          <div style="font-weight:600;font-size:13.5px">Conta ativa</div>
+                          <div class="cfg-hint">Contas inativas não conseguem fazer login (a sessão aberta cai na hora)</div>
+                        </div>
+                        <button class="cfg-toggle" [class.on]="ativoSel" (click)="ativoSel = !ativoSel">
+                          <span class="cfg-toggle-knob"></span>
+                        </button>
+                      </div>
+
+                      @if (formConta.nivel !== 'usuario') {
+                        <p class="cfg-hint" style="margin:16px 0 4px">
+                          Nível CEO tem acesso total a todos os módulos e gerencia as contas da empresa. Não há permissões para marcar.
+                        </p>
+                      } @else {
+                      <div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px;flex-wrap:wrap">
+                        <div style="font-weight:600;font-size:13.5px;flex:1">Permissões</div>
+                        <button class="btn btn-ghost btn-sm" (click)="marcarTodas()">Marcar tudo</button>
+                        <button class="btn btn-ghost btn-sm" (click)="limparPerms()">Limpar</button>
+                      </div>
+                      <div style="overflow-x:auto">
+                        <table class="cfg-ptable">
+                          <thead><tr>
+                            <th style="text-align:left">Módulo</th>
+                            @for (a of acoesOrdem; track a) {
+                              @if (algumModuloTem(a)) { <th>{{ acoesLabels[a] || a }}</th> }
+                            }
+                          </tr></thead>
+                          <tbody>
+                            @for (m of catalogo; track m.modulo) {
+                              <tr>
+                                <td style="text-align:left;font-weight:600">{{ m.label }}</td>
+                                @for (a of acoesOrdem; track a) {
+                                  @if (algumModuloTem(a)) {
+                                    <td>
+                                      @if (m.acoes.includes(a)) {
+                                        <input type="checkbox" [checked]="temPerm(m.modulo, a)" (change)="togglePerm(m.modulo, a)">
+                                      } @else { <span class="cfg-hint">—</span> }
+                                    </td>
+                                  }
+                                }
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                      }
+
+                      <div class="cfg-save-bar" style="gap:10px">
+                        @if (criandoConta) {
+                          <button class="btn btn-ghost" [disabled]="salvandoPerms" (click)="fecharConta()">Cancelar</button>
+                          <button class="btn btn-primary" [disabled]="salvandoPerms" (click)="criarConta()">
+                            {{ salvandoPerms ? 'Criando…' : 'Criar conta' }}
+                          </button>
+                        } @else {
+                          <button class="btn btn-ghost" [disabled]="!permsAlteradas || salvandoPerms" (click)="cancelarPerms()">Cancelar</button>
+                          <button class="btn btn-primary" [disabled]="!permsAlteradas || salvandoPerms" (click)="salvarPerms()">
+                            {{ salvandoPerms ? 'Salvando…' : 'Salvar alterações' }}
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                @if (usuarioSel && !criandoConta && !carregandoPerms) {
+                  <div class="cfg-card">
+                    <div class="cfg-card-head">Redefinir senha</div>
+                    <div class="cfg-card-body">
+                      <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <input class="input" style="flex:1;min-width:180px" type="password" [(ngModel)]="novaSenhaSel" placeholder="Nova senha (mín. 6 caracteres, letras e números)" autocomplete="new-password" maxlength="72">
+                        <button class="btn btn-ghost" [disabled]="salvandoSenha" (click)="redefinirSenha()">{{ salvandoSenha ? 'Salvando…' : 'Redefinir senha' }}</button>
+                      </div>
+                      <div class="cfg-hint">Passe a nova senha para a pessoa; ela pode trocá-la depois em Minha conta.</div>
+                    </div>
+                  </div>
+                  <div class="cfg-card">
+                    <div class="cfg-card-head">Excluir conta</div>
+                    <div class="cfg-card-body" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                      <div class="cfg-hint" style="flex:1;min-width:220px;margin:0">
+                        Remove a conta de {{ usuarioSel.nome }} de vez. Se ela já operou o caixa, o sistema pede para desativar em vez de excluir.
+                      </div>
+                      <button class="btn btn-ghost" style="color:var(--st-faltou)" [disabled]="excluindo" (click)="excluirConta()">{{ excluindo ? 'Excluindo…' : 'Excluir conta' }}</button>
+                    </div>
+                  </div>
+                }
+              } @else {
+                <p class="cfg-hint" style="margin-top:16px">Selecione uma conta acima para editar, ou clique em "Nova conta".</p>
+              }
+            </section>
+          }
+
         </div>
       </div>
     </div>
   `,
   styles: [`
+    /* ── Tabelas de Usuários e Permissões ── */
+    .cfg-utable, .cfg-ptable { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .cfg-utable th, .cfg-ptable th { text-align: center; font-weight: 600; color: var(--text-2); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .cfg-utable th:first-child, .cfg-utable td:first-child { text-align: left; }
+    .cfg-utable td { padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .cfg-utable tbody tr { cursor: pointer; }
+    .cfg-utable tbody tr:hover { background: var(--bg-2); }
+    .cfg-utable tbody tr.sel { background: var(--accent-soft); }
+    .cfg-ptable td { text-align: center; padding: 9px 10px; border-bottom: 1px solid var(--border); }
+    .cfg-ptable input[type=checkbox] { width: 17px; height: 17px; cursor: pointer; accent-color: var(--accent); }
+    .cfg-badge-adm { margin-left: 8px; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: var(--accent-soft); color: var(--accent-text); }
+    .cfg-badge-dirty { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--st-pendente-bg); color: var(--st-pendente); }
+  `, `
     /* ── Layout ── */
     .cfg-page { padding-bottom: 48px; }
 
@@ -1011,10 +1252,15 @@ export class ConfigComponent implements OnInit {
   @Output() notify = new EventEmitter<string>();
   @Output() logout = new EventEmitter<void>();
 
+  // Papéis alinhados ao enum do banco (dono, admin, gerente, profissional, recepcao)
+  // via os rótulos que o backend expõe em PAPEL_LABEL. Antes havia "Atendente"
+  // (inexistente no schema) e faltavam Profissional/Recepção.
   readonly PAPEL_OPTS: SelectOption[] = [
     { value: 'Dono / Admin', label: 'Dono / Admin' },
+    { value: 'Admin',        label: 'Admin' },
     { value: 'Gerente',      label: 'Gerente' },
-    { value: 'Atendente',    label: 'Atendente' },
+    { value: 'Profissional', label: 'Profissional' },
+    { value: 'Recepção',     label: 'Recepção' },
   ];
   readonly TIPO_ESTAB_OPTS: SelectOption[] = [
     { value: 'Barbearia',          label: 'Barbearia' },
@@ -1068,15 +1314,156 @@ export class ConfigComponent implements OnInit {
     { id: 'notificacoes',   label: 'Notificações',     icon: 'bell' },
     { id: 'plano',          label: 'Plano',            icon: 'gift' },
     { id: 'integracoes',    label: 'Integrações',      icon: 'link' },
+    { id: 'usuarios',       label: 'Usuários e Permissões', icon: 'team' },
   ];
+
+  /** "Minha conta" é de todos; as abas do estabelecimento exigem config:ver;
+   *  Usuários e Permissões é exclusiva dos níveis master e CEO. */
+  get tabsVisiveis(): TabDef[] {
+    return this.TABS.filter(t => {
+      if (t.id === 'conta') return true;
+      if (t.id === 'usuarios') return this.auth.isGestor;
+      return this.auth.can('config', 'ver');
+    });
+  }
+  get podeEditarConfig(): boolean { return this.auth.can('config', 'editar'); }
+
+  // ---------- Validação (por seção: erros aparecem após a 1ª tentativa de salvar) ----------
+  private enviadas = new Set<string>();
+  private enviar(secao: string, erros: () => Erros): boolean {
+    this.enviadas.add(secao);
+    const e = erros();
+    if (temErros(e)) { this.toast.error('Corrija os campos destacados.'); return false; }
+    return true;
+  }
+
+  get errosConta(): Erros {
+    if (!this.enviadas.has('conta')) return {};
+    const c = this.conta;
+    return validar({
+      nome: [V.obrigatorio(c.nome, 'Informe seu nome.'), V.tamanho(c.nome, 3, 100)],
+      email: [V.obrigatorio(c.email, 'Informe seu e-mail.'),
+        String(c.email ?? '').includes('@') ? V.email(c.email) : V.login(c.email)],
+    });
+  }
+
+  get errosSenha(): Erros {
+    if (!this.enviadas.has('senha')) return {};
+    return validar({
+      atual: [V.obrigatorio(this.senhaAtual, 'Informe sua senha atual.')],
+      nova: [V.obrigatorio(this.senhaNova, 'Informe a nova senha.'), V.senha(this.senhaNova),
+        V.se(!!this.senhaNova && this.senhaNova === this.senhaAtual, 'A nova senha deve ser diferente da atual.')],
+      confirma: [V.obrigatorio(this.senhaConfirma, 'Confirme a nova senha.'),
+        V.se(!!this.senhaConfirma && this.senhaConfirma !== this.senhaNova, 'A confirmação não corresponde à nova senha.')],
+    });
+  }
+
+  get errosEstab(): Erros {
+    if (!this.enviadas.has('estab')) return {};
+    const e = this.estab;
+    const insta = String(e.instagram ?? '').trim().replace(/^@/, '');
+    return validar({
+      nome: [V.obrigatorio(e.nome, 'Informe o nome do estabelecimento.'), V.tamanho(e.nome, 2, 100)],
+      tipo: [V.obrigatorio(e.tipo)],
+      doc: [V.cpfCnpj(e.doc)],
+      tel: [V.obrigatorio(e.tel, 'Informe o telefone de contato.'), V.telefone(e.tel)],
+      end: [V.tamanho(e.end, 0, 255)],
+      cidade: [V.tamanho(e.cidade, 0, 80)],
+      cep: [V.cep(e.cep)],
+      desc: [V.tamanho(e.desc, 0, 500)],
+      instagram: [V.se(!!insta && !/^[A-Za-z0-9._]{1,30}$/.test(insta), 'Use só o @ do perfil (letras, números, ponto e _).')],
+      google: [V.url(e.google)],
+      site: [V.url(e.site)],
+    });
+  }
+
+  get errosHorarios(): Erros {
+    if (!this.enviadas.has('horarios')) return {};
+    const campos: Record<string, (string | null)[]> = {};
+    for (const d of this.diasFuncionamento) {
+      if (!d.aberto) continue;
+      campos['dia' + d.diaSemana] = [
+        V.obrigatorio(d.inicio, 'Informe a abertura.'), V.hora(d.inicio),
+        V.obrigatorio(d.fim, 'Informe o fechamento.'), V.hora(d.fim),
+        V.horaDepois(d.fim, d.inicio, 'O fechamento deve ser depois da abertura.'),
+      ];
+    }
+    const abertos = this.diasFuncionamento.filter(d => d.aberto);
+    if (this.pausaAtiva) {
+      const foraDoExpediente = abertos.some(d => !V.hora(d.inicio) && !V.hora(d.fim) && !V.hora(this.pausaInicio) && !V.hora(this.pausaFim)
+        && (this.pausaInicio < d.inicio || this.pausaFim > d.fim));
+      campos['pausa'] = [
+        V.obrigatorio(this.pausaInicio, 'Informe o início da pausa.'), V.hora(this.pausaInicio),
+        V.obrigatorio(this.pausaFim, 'Informe o fim da pausa.'), V.hora(this.pausaFim),
+        V.horaDepois(this.pausaFim, this.pausaInicio, 'O fim da pausa deve ser depois do início.'),
+        V.se(foraDoExpediente, 'A pausa precisa ficar dentro do horário de funcionamento de todos os dias abertos.'),
+      ];
+    }
+    campos['geral'] = [V.se(!abertos.length, 'Deixe ao menos um dia aberto.')];
+    return validar(campos);
+  }
+
+  get errosAgenda(): Erros {
+    if (!this.enviadas.has('agenda')) return {};
+    return validar({
+      maxDia: [V.obrigatorio(this.agenda.maxDia), V.numero(this.agenda.maxDia, { min: 1, max: 99, inteiro: true })],
+      sinalPct: [V.obrigatorio(this.agenda.sinalPct), V.numero(this.agenda.sinalPct, { min: 0, max: 100, inteiro: true })],
+    });
+  }
+
+  get pixAtivo(): boolean { return !!this.pagamentos.find(p => p.id === 'pix')?.ativo; }
+
+  get errosPag(): Erros {
+    if (!this.enviadas.has('pagamentos')) return {};
+    const chave = String(this.pagPix.chave ?? '').trim();
+    let regraChave: string | null = null;
+    switch (this.pagPix.tipo) {
+      case 'CPF/CNPJ': regraChave = V.cpfCnpj(chave); break;
+      case 'Telefone': regraChave = V.telefone(chave); break;
+      case 'E-mail': regraChave = V.email(chave); break;
+      case 'Chave aleatória':
+        regraChave = !chave || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(chave)
+          ? null : 'Chave aleatória inválida (formato 0000aaaa-00aa-00aa-00aa-000000aaaaaa).';
+        break;
+    }
+    return validar({
+      metodos: [V.se(!this.pagamentos.some(p => p.ativo), 'Mantenha ao menos uma forma de pagamento ativa.')],
+      chave: [this.pixAtivo ? V.obrigatorio(chave, 'Informe a chave Pix (o Pix está ativo).') : null, regraChave],
+      nome: [this.pixAtivo ? V.obrigatorio(this.pagPix.nome, 'Informe o nome exibido no Pix.') : null,
+        V.tamanho(this.pagPix.nome, 3, 25)],
+      taxa: [this.pagCard.repassaTaxa ? V.obrigatorio(this.pagCard.taxa) : null,
+        this.pagCard.repassaTaxa ? V.numero(this.pagCard.taxa, { min: 0, max: 10 }) : null],
+    });
+  }
+
+  /** Nova conta / edição de conta (Usuários e Permissões). */
+  usuarioEnviado = false;
+  get errosUsuario(): Erros {
+    if (!this.usuarioEnviado) return {};
+    const f = this.formConta;
+    const login = f.email.trim().toLowerCase();
+    const loginDup = !!login && this.usuariosLista.some(u => u.id !== this.usuarioSel?.id && u.email.toLowerCase() === login);
+    return validar({
+      nome: [V.obrigatorio(f.nome, 'Informe o nome.'), V.tamanho(f.nome, 3, 100)],
+      email: [V.obrigatorio(f.email, 'Informe o e-mail ou usuário de login.'),
+        f.email.includes('@') ? V.email(f.email) : V.login(f.email),
+        V.se(loginDup, 'Já existe uma conta com esse login.')],
+      senha: [this.criandoConta ? V.obrigatorio(f.senha, 'Defina a senha inicial.') : null,
+        this.criandoConta ? V.senha(f.senha) : null],
+    });
+  }
 
   // ── Conta ──
   conta = {
     nome: this.data.usuario.nome,
     papel: this.data.usuario.papel,
-    email: 'carlos.menezes@navalhaecia.com.br',
+    email: this.data.usuario.email,
     wpp: '(11) 98800-5544',
   };
+  // Campos de segurança (senha atual serve tanto p/ trocar o e-mail quanto a senha).
+  senhaAtual = '';
+  senhaNova = '';
+  senhaConfirma = '';
 
   // ── Estabelecimento ──
   estab = {
@@ -1172,7 +1559,238 @@ export class ConfigComponent implements OnInit {
 
   webhook = { url: '' };
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private toast: ToastService, public auth: AuthService) {}
+
+  // ---------- Estado da tela "Usuários e Permissões" (master e CEO) ----------
+  usuariosLista: UsuarioAdmin[] = [];
+  catalogo: PermCatalogoItem[] = [];
+  acoesLabels: Record<string, string> = {};
+  buscaUsuario = '';
+  usuarioSel: UsuarioAdmin | null = null;
+  permsSel = new Set<string>();          // permissões em edição
+  private permsOriginal = new Set<string>();
+  ativoSel = true;
+  private ativoOriginal = true;
+  carregandoUsuarios = false;
+  carregandoPerms = false;
+  salvandoPerms = false;
+  criandoConta = false;                    // formulário de "Nova conta" aberto
+  papelOpts: SelectOption[] = [];
+  nivelOpts: SelectOption[] = [];
+  formConta = { nome: '', email: '', papel: 'profissional', nivel: 'usuario', senha: '' };
+  private formOriginal = { nome: '', email: '', papel: '', nivel: '' };
+  novaSenhaSel = '';
+  salvandoSenha = false;
+  excluindo = false;
+
+  nivelLabel(n: string): string { return NIVEL_LABEL[n as Nivel] || n; }
+
+  get usuariosFiltrados(): UsuarioAdmin[] {
+    const q = this.buscaUsuario.trim().toLowerCase();
+    if (!q) return this.usuariosLista;
+    return this.usuariosLista.filter(u =>
+      u.nome.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.papel.toLowerCase().includes(q));
+  }
+
+  /** Troca de aba; ao entrar em "Usuários" dispara o carregamento. */
+  irTab(id: Tab) {
+    if (id === 'usuarios') { this.abrirUsuarios(); return; }
+    this.tab = id;
+  }
+
+  /** Carrega contas + catálogo ao abrir a aba (uma vez). Só para master e CEO. */
+  async abrirUsuarios(forcar = false) {
+    this.tab = 'usuarios';
+    if (!this.auth.isGestor) return;
+    if (!forcar && this.catalogo.length && this.usuariosLista.length) return;
+    this.carregandoUsuarios = true;
+    try {
+      const [cat, lista] = await Promise.all([this.data.catalogoPermissoes(), this.data.listarUsuarios()]);
+      this.catalogo = cat.catalogo; this.acoesLabels = cat.acoes;
+      this.usuariosLista = lista.usuarios;
+      this.papelOpts = lista.papeis;
+      this.nivelOpts = lista.niveis;
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível carregar os usuários.');
+    } finally {
+      this.carregandoUsuarios = false;
+    }
+  }
+
+  /** Abre o formulário de nova conta (sem permissões marcadas). */
+  novaConta() {
+    this.usuarioSel = null;
+    this.criandoConta = true;
+    this.formConta = { nome: '', email: '', papel: 'recepcao', nivel: 'usuario', senha: '' };
+    this.permsSel = new Set(); this.permsOriginal = new Set();
+    this.ativoSel = this.ativoOriginal = true;
+    this.usuarioEnviado = false;
+  }
+
+  fecharConta() {
+    this.criandoConta = false;
+    this.usuarioSel = null;
+    this.usuarioEnviado = false;
+  }
+
+  async criarConta() {
+    if (this.salvandoPerms) return;
+    const f = this.formConta;
+    this.usuarioEnviado = true;
+    if (temErros(this.errosUsuario)) { this.toast.error('Corrija os campos destacados.'); return; }
+    this.salvandoPerms = true;
+    try {
+      const u = await this.data.criarUsuario({
+        nome: f.nome.trim(), email: f.email.trim(), senha: f.senha, papel: f.papel, nivel: f.nivel,
+        permissoes: f.nivel === 'usuario' ? [...this.permsSel] : [],
+      });
+      if (!this.ativoSel) await this.data.atualizarUsuario(u.id, { ativo: false });
+      this.toast.show(`Conta de ${u.nome} criada.`);
+      this.criandoConta = false;
+      await this.abrirUsuarios(true);
+      const nova = this.usuariosLista.find(x => x.id === u.id);
+      if (nova) await this.selecionarUsuario(nova);
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível criar a conta.');
+    } finally {
+      this.salvandoPerms = false;
+    }
+  }
+
+  /** Seleciona uma conta e carrega seus dados e permissões atuais. */
+  async selecionarUsuario(u: UsuarioAdmin) {
+    if (u.id === this.auth.usuario?.id) { this.toast.show('Sua própria conta é editada em Minha conta.'); return; }
+    if (!u.gerenciavel) { this.toast.show('Você não pode alterar esta conta.'); return; }
+    this.criandoConta = false;
+    this.usuarioSel = u;
+    this.usuarioEnviado = false;
+    this.novaSenhaSel = '';
+    this.formConta = { nome: u.nome, email: u.email, papel: u.papelCod, nivel: u.nivel, senha: '' };
+    this.formOriginal = { nome: u.nome, email: u.email, papel: u.papelCod, nivel: u.nivel };
+    this.carregandoPerms = true;
+    this.permsSel = new Set(); this.permsOriginal = new Set();
+    try {
+      const perms = await this.data.permissoesDoUsuario(u.id);
+      this.permsSel = new Set(perms);
+      this.permsOriginal = new Set(perms);
+      this.ativoSel = u.ativo; this.ativoOriginal = u.ativo;
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível carregar as permissões.');
+      this.usuarioSel = null;
+    } finally {
+      this.carregandoPerms = false;
+    }
+  }
+
+  readonly acoesOrdem = ['ver', 'criar', 'editar', 'excluir', 'exportar'];
+  /** Só exibe a coluna de uma ação se algum módulo do catálogo a utiliza. */
+  algumModuloTem(acao: string): boolean { return this.catalogo.some(m => m.acoes.includes(acao)); }
+
+  temPerm(modulo: string, acao: string): boolean { return this.permsSel.has(`${modulo}:${acao}`); }
+
+  togglePerm(modulo: string, acao: string) {
+    const key = `${modulo}:${acao}`;
+    if (this.permsSel.has(key)) {
+      this.permsSel.delete(key);
+      // desmarcar "ver" remove as demais ações do módulo (não faz sentido criar sem ver)
+      if (acao === 'ver') {
+        const mod = this.catalogo.find(m => m.modulo === modulo);
+        mod?.acoes.forEach(a => this.permsSel.delete(`${modulo}:${a}`));
+      }
+    } else {
+      this.permsSel.add(key);
+      if (acao !== 'ver') this.permsSel.add(`${modulo}:ver`);   // qualquer ação implica poder ver
+    }
+  }
+
+  marcarTodas() {
+    this.permsSel = new Set(this.catalogo.flatMap(m => m.acoes.map(a => `${m.modulo}:${a}`)));
+  }
+  limparPerms() { this.permsSel = new Set(); }
+
+  private get dadosAlterados(): boolean {
+    const f = this.formConta, o = this.formOriginal;
+    return f.nome.trim() !== o.nome || f.email.trim() !== o.email || f.papel !== o.papel || f.nivel !== o.nivel;
+  }
+
+  get permsAlteradas(): boolean {
+    if (this.dadosAlterados) return true;
+    if (this.ativoSel !== this.ativoOriginal) return true;
+    if (this.permsSel.size !== this.permsOriginal.size) return true;
+    for (const p of this.permsSel) if (!this.permsOriginal.has(p)) return true;
+    return false;
+  }
+
+  /** Grava dados da conta (se mudaram) + permissões + status. */
+  async salvarPerms() {
+    if (!this.usuarioSel || !this.permsAlteradas || this.salvandoPerms) return;
+    this.usuarioEnviado = true;
+    if (temErros(this.errosUsuario)) { this.toast.error('Corrija os campos destacados.'); return; }
+    this.salvandoPerms = true;
+    const id = this.usuarioSel.id;
+    try {
+      if (this.dadosAlterados) {
+        const f = this.formConta;
+        const u = await this.data.atualizarUsuario(id, { nome: f.nome.trim(), email: f.email.trim(), papel: f.papel, nivel: f.nivel });
+        this.formOriginal = { nome: u.nome, email: u.email, papel: u.papelCod, nivel: u.nivel };
+        const alvo = this.usuariosLista.find(x => x.id === id);
+        if (alvo) Object.assign(alvo, u);
+      }
+      // CEO tem acesso total: permissões granulares só valem para o nível 'usuario'
+      if (this.formConta.nivel !== 'usuario') this.permsSel = new Set();
+      await this.data.salvarPermissoesUsuario(id, [...this.permsSel], this.ativoSel);
+      this.permsOriginal = new Set(this.permsSel);
+      this.ativoOriginal = this.ativoSel;
+      const alvo = this.usuariosLista.find(u => u.id === id);
+      if (alvo) alvo.ativo = this.ativoSel;
+      this.toast.show('Conta atualizada.');
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível salvar as alterações.');
+    } finally {
+      this.salvandoPerms = false;
+    }
+  }
+
+  cancelarPerms() {
+    this.permsSel = new Set(this.permsOriginal);
+    this.ativoSel = this.ativoOriginal;
+    this.formConta = { ...this.formOriginal, senha: '' };
+  }
+
+  async redefinirSenha() {
+    if (!this.usuarioSel || this.salvandoSenha) return;
+    const erroSenha = V.obrigatorio(this.novaSenhaSel, 'Informe a nova senha.') || V.senha(this.novaSenhaSel);
+    if (erroSenha) { this.toast.error(erroSenha); return; }
+    this.salvandoSenha = true;
+    try {
+      await this.data.redefinirSenhaUsuario(this.usuarioSel.id, this.novaSenhaSel);
+      this.novaSenhaSel = '';
+      this.toast.show(`Senha de ${this.usuarioSel.nome} redefinida.`);
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível redefinir a senha.');
+    } finally {
+      this.salvandoSenha = false;
+    }
+  }
+
+  /** Exclui a conta selecionada (com confirmação). */
+  async excluirConta() {
+    const u = this.usuarioSel;
+    if (!u || this.excluindo) return;
+    if (!confirm(`Excluir a conta de ${u.nome} (${u.email})? Esta ação não pode ser desfeita.`)) return;
+    this.excluindo = true;
+    try {
+      await this.data.excluirUsuario(u.id);
+      this.usuariosLista = this.usuariosLista.filter(x => x.id !== u.id);
+      this.usuarioSel = null;
+      this.toast.show(`Conta de ${u.nome} excluída.`);
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível excluir a conta.');
+    } finally {
+      this.excluindo = false;
+    }
+  }
+
 
   round = Math.round;
 
@@ -1192,6 +1810,23 @@ export class ConfigComponent implements OnInit {
     if (e.site) this.estab.site = e.site;
     this.conta.nome = this.data.usuario.nome;
     this.conta.papel = this.data.usuario.papel;
+    this.conta.email = this.data.usuario.email;
+    // Políticas de agenda persistidas no estabelecimento (antecedência/cancelamento/sinal).
+    if (e.antecedencia_min_agendamento_horas != null) this.agenda.antecedencia = String(e.antecedencia_min_agendamento_horas);
+    if (e.antecedencia_min_cancelamento_horas != null) this.agenda.cancelamentoPrazo = String(e.antecedencia_min_cancelamento_horas);
+    if (e.sinal_valor != null) this.agenda.sinalPct = Number(e.sinal_valor);
+    // Pagamentos (métodos aceitos, chave Pix, taxa de cartão).
+    const setPag = (id: string, v: boolean) => { const p = this.pagamentos.find(x => x.id === id); if (p) p.ativo = v; };
+    if (e.aceita_pix != null) setPag('pix', !!e.aceita_pix);
+    if (e.aceita_debito != null) setPag('debito', !!e.aceita_debito);
+    if (e.aceita_credito != null) setPag('credito', !!e.aceita_credito);
+    if (e.aceita_dinheiro != null) setPag('dinheiro', !!e.aceita_dinheiro);
+    if (e.aceita_fiado != null) setPag('fiado', !!e.aceita_fiado);
+    if (e.pix_tipo != null) this.pagPix.tipo = e.pix_tipo;
+    if (e.pix_chave != null) this.pagPix.chave = e.pix_chave;
+    if (e.pix_nome != null) this.pagPix.nome = e.pix_nome;
+    if (e.repassa_taxa_cartao != null) this.pagCard.repassaTaxa = !!e.repassa_taxa_cartao;
+    if (e.taxa_cartao_pct != null) this.pagCard.taxa = Number(e.taxa_cartao_pct);
 
     if (this.data.expediente?.length) {
       const ordem = [1, 2, 3, 4, 5, 6, 0];
@@ -1206,6 +1841,11 @@ export class ConfigComponent implements OnInit {
   }
 
   save(section: string) {
+    const erros: Record<string, () => Erros> = {
+      estab: () => this.errosEstab, horarios: () => this.errosHorarios,
+      agenda: () => this.errosAgenda, pagamentos: () => this.errosPag,
+    };
+    if (erros[section] && !this.enviar(section, erros[section])) return;
     if (section === 'estab') {
       this.data.updateEstabelecimento({
         nome: this.estab.nome, tipo: this.estab.tipo, doc: this.estab.doc, tel: this.estab.tel,
@@ -1219,7 +1859,59 @@ export class ConfigComponent implements OnInit {
         pausaFim: this.pausaAtiva && d.aberto ? this.pausaFim : null,
       }));
       this.data.updateHorarios(dias);
+    } else if (section === 'agenda') {
+      this.data.updatePoliticasAgenda({
+        antecedenciaAgendamento: Number(this.agenda.antecedencia) || 0,
+        antecedenciaCancelamento: Number(this.agenda.cancelamentoPrazo) || 0,
+        sinalPct: Number(this.agenda.sinalPct) || 0,
+      });
+    } else if (section === 'pagamentos') {
+      const ativo = (id: string) => this.pagamentos.find(p => p.id === id)?.ativo ?? false;
+      this.data.updatePagamentos({
+        aceitaPix: ativo('pix'), aceitaDebito: ativo('debito'), aceitaCredito: ativo('credito'),
+        aceitaDinheiro: ativo('dinheiro'), aceitaFiado: ativo('fiado'),
+        pixTipo: this.pagPix.tipo, pixChave: this.pagPix.chave, pixNome: this.pagPix.nome,
+        repassaTaxa: this.pagCard.repassaTaxa, taxaPct: Number(this.pagCard.taxa) || 0,
+      });
     }
     this.notify.emit('Alterações salvas com sucesso!');
+  }
+
+  /** Salva nome e e-mail da conta. Trocar o e-mail exige a senha atual (campo Segurança). */
+  async salvarConta() {
+    if (!this.enviar('conta', () => this.errosConta)) return;
+    const nome = this.conta.nome.trim();
+    const email = this.conta.email.trim();
+    const emailMudou = email.toLowerCase() !== (this.data.usuario.email || '').toLowerCase();
+    if (emailMudou && !this.senhaAtual) {
+      this.toast.error('Para alterar o e-mail, confirme sua senha atual (seção Segurança).');
+      return;
+    }
+    try {
+      await this.data.updateConta({ nome, email }, emailMudou ? this.senhaAtual : undefined);
+      this.conta.papel = this.data.usuario.papel;
+      if (emailMudou) this.senhaAtual = '';
+      this.toast.show('Dados da conta salvos.');
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível salvar a conta.');
+    }
+  }
+
+  /** Troca a senha: valida confirmação e tamanho mínimo; o backend verifica a senha atual. */
+  async salvarSenha() {
+    if (!this.enviar('senha', () => this.errosSenha)) return;
+    try {
+      await this.data.alterarSenha(this.senhaAtual, this.senhaNova);
+      this.senhaAtual = this.senhaNova = this.senhaConfirma = '';
+      this.enviadas.delete('senha');
+      this.toast.show('Senha alterada com sucesso.');
+    } catch (e: any) {
+      this.toast.error(e?.error?.error || 'Não foi possível alterar a senha.');
+    }
+  }
+
+  /** Integração com WhatsApp ainda não implementada (recurso futuro). */
+  whatsappEmBreve() {
+    this.toast.show('Integração com WhatsApp em desenvolvimento.');
   }
 }

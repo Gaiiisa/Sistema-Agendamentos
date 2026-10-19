@@ -7,11 +7,17 @@ import { AvatarComponent } from '../shared/avatar.component';
 import { TagComponent } from '../shared/tag.component';
 import { ModalComponent } from '../shared/modal.component';
 import { DataService } from '../data.service';
+import { ToastService } from '../toast.service';
+import { CampoErroComponent } from '../shared/campo-erro.component';
+import { MascaraDirective } from '../shared/mascara.directive';
+import { PIPES } from '../shared/pipes';
+import { V, validar, temErros, Erros } from '../shared/validacao';
+import { soDigitos, dataBR } from '../shared/formatacao';
 
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, TagComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, TagComponent, ModalComponent, CampoErroComponent, MascaraDirective, ...PIPES],
   template: `
 <div class="page">
 
@@ -89,8 +95,8 @@ import { DataService } from '../data.service';
                 </span>
               </td>
               <td class="tnum" data-label="Visitas">{{ c.visitas }}</td>
-              <td class="tnum" data-label="Ticket médio">{{ data.money(c.ticket) }}</td>
-              <td class="tnum" data-label="Total gasto" style="font-weight:600">{{ data.money(c.total) }}</td>
+              <td class="tnum" data-label="Ticket médio">{{ c.ticket | brl }}</td>
+              <td class="tnum" data-label="Total gasto" style="font-weight:600">{{ c.total | brl }}</td>
               <td data-label="Tags">
                 <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
                   @for (t of c.tags; track t) {
@@ -160,12 +166,12 @@ import { DataService } from '../data.service';
           <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px">
             <!-- Metric: Total gasto -->
             <div class="card" style="padding:12px 14px">
-              <div class="stat-val tnum" style="font-size:21px">{{ data.money(c.total) }}</div>
+              <div class="stat-val tnum" style="font-size:21px">{{ c.total | brl }}</div>
               <div class="stat-label" style="font-size:12px">Total gasto</div>
             </div>
             <!-- Metric: Ticket médio -->
             <div class="card" style="padding:12px 14px">
-              <div class="stat-val tnum" style="font-size:21px">{{ data.money(c.ticket) }}</div>
+              <div class="stat-val tnum" style="font-size:21px">{{ c.ticket | brl }}</div>
               <div class="stat-label" style="font-size:12px">Ticket médio</div>
             </div>
             <!-- Metric: Visitas -->
@@ -234,7 +240,7 @@ import { DataService } from '../data.service';
               </div>
               <div class="col" style="line-height:1.3">
                 <span class="muted" style="font-size:12px">Nascimento</span>
-                <span style="font-weight:600; font-size:13.5px">{{ fmtNasc(c.nasc) }}</span>
+                <span style="font-weight:600; font-size:13.5px">{{ c.nasc | dataBR }}</span>
               </div>
             </div>
 
@@ -296,7 +302,7 @@ import { DataService } from '../data.service';
                       <span style="font-weight:600; font-size:13.5px">{{ data.srv(h.srv).nome }}</span>
                       <span class="muted" style="font-size:12.5px">{{ data.prof(h.prof).apelido }} · {{ fmtHistData(h.data) }}</span>
                     </div>
-                    <span class="tnum" style="font-weight:600; font-size:13.5px">{{ data.money(h.valor) }}</span>
+                    <span class="tnum" style="font-weight:600; font-size:13.5px">{{ h.valor | brl }}</span>
                   </div>
                 }
               </div>
@@ -314,25 +320,29 @@ import { DataService } from '../data.service';
   <app-modal title="Novo cliente" (close)="novoModal = false">
     <div style="display:flex;flex-direction:column;gap:16px">
       <div class="field">
-        <label>Nome completo *</label>
-        <input class="input" [(ngModel)]="draft.nome" placeholder="Ex: João Silva" autofocus>
+        <label>Nome completo<span class="req">*</span></label>
+        <input class="input" [class.invalid]="erros['nome']" [(ngModel)]="draft.nome" placeholder="Ex: João Silva" maxlength="100" autofocus>
+        <app-campo-erro [msg]="erros['nome']"></app-campo-erro>
       </div>
       <div class="field">
-        <label>WhatsApp</label>
-        <input class="input" [(ngModel)]="draft.wpp" placeholder="(11) 99999-0000">
+        <label>WhatsApp<span class="req">*</span></label>
+        <input class="input" [class.invalid]="erros['wpp']" [(ngModel)]="draft.wpp" mascara="telefone" placeholder="(11) 99999-0000">
+        <app-campo-erro [msg]="erros['wpp']"></app-campo-erro>
       </div>
       <div class="field">
         <label>E-mail</label>
-        <input class="input" [(ngModel)]="draft.email" placeholder="joao@email.com">
+        <input class="input" [class.invalid]="erros['email']" type="email" [(ngModel)]="draft.email" placeholder="joao@email.com" maxlength="255">
+        <app-campo-erro [msg]="erros['email']"></app-campo-erro>
       </div>
       <div class="field">
         <label>Data de nascimento</label>
-        <input class="input" type="date" [(ngModel)]="draft.nasc">
+        <input class="input" [class.invalid]="erros['nasc']" type="date" [(ngModel)]="draft.nasc" [max]="hojeISO">
+        <app-campo-erro [msg]="erros['nasc']"></app-campo-erro>
       </div>
     </div>
     <div modalFoot>
       <button class="btn btn-ghost" (click)="novoModal = false">Cancelar</button>
-      <button class="btn btn-primary" [disabled]="!draft.nome.trim()" (click)="salvarCliente()">
+      <button class="btn btn-primary" (click)="salvarCliente()">
         <app-icon name="check" [size]="15"></app-icon>
         Cadastrar
       </button>
@@ -351,20 +361,44 @@ export class ClientesComponent {
   novoModal = false;
   draft = { nome: '', wpp: '', email: '', nasc: '' };
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private toast: ToastService) {}
+
+  readonly hojeISO = new Date().toISOString().slice(0, 10);
 
   openNovo() {
     this.draft = { nome: '', wpp: '', email: '', nasc: '' };
+    this.enviado = false;
     this.novoModal = true;
   }
 
+  /** Erros aparecem após a 1ª tentativa de cadastrar e se atualizam enquanto o usuário corrige. */
+  enviado = false;
+
+  get erros(): Erros {
+    if (!this.enviado) return {};
+    const d = this.draft;
+    const dig = soDigitos(d.wpp);
+    const wppDup = dig.length >= 10 && this.data.clientes.some(c => soDigitos(c.wpp) === dig);
+    const email = d.email.trim().toLowerCase();
+    const emailDup = !!email && this.data.clientes.some(c => (c.email || '').trim().toLowerCase() === email);
+    return validar({
+      nome: [V.obrigatorio(d.nome), V.tamanho(d.nome, 3, 100),
+        V.se(!!d.nome.trim() && !/\s/.test(d.nome.trim()), 'Informe nome e sobrenome.')],
+      wpp: [V.obrigatorio(d.wpp, 'Informe o WhatsApp do cliente.'), V.telefone(d.wpp),
+        V.se(wppDup, 'Já existe um cliente com esse WhatsApp.')],
+      email: [V.email(d.email), V.se(emailDup, 'Já existe um cliente com esse e-mail.')],
+      nasc: [V.nascimento(d.nasc)],
+    });
+  }
+
   salvarCliente() {
-    if (!this.draft.nome.trim()) return;
+    this.enviado = true;
+    if (temErros(this.erros)) { this.toast.error('Corrija os campos destacados.'); return; }
     this.data.addCliente({
       nome: this.draft.nome.trim(),
       wpp: this.draft.wpp.trim(),
       email: this.draft.email.trim(),
-      nasc: this.draft.nasc || '2000-01-01',
+      nasc: this.draft.nasc || '',
       tags: ['novo'],
       visitas: 0, ticket: 0, total: 0,
       ultima: new Date().toISOString().slice(0, 10),
@@ -403,14 +437,8 @@ export class ClientesComponent {
     return list;
   }
 
-  /** '1990-06-12' → '12/06/1990' */
-  fmtNasc(s: string): string {
-    return s.split('-').reverse().join('/');
-  }
-
-  /** '2026-06-02' → '02/06' (day/month only, matching React slice(0,2) after reverse) */
+  /** '2026-06-02' → '02/06' */
   fmtHistData(s: string): string {
-    const parts = s.split('-').reverse(); // ['02','06','2026']
-    return parts.slice(0, 2).join('/');   // '02/06'
+    return dataBR(s, 'curta');
   }
 }

@@ -67,11 +67,27 @@ Write-Host '== [6/6] Restaurando o banco a partir do dump =='
 $dumpFwd = $Dump -replace '\\', '/'
 & $mysql -u root -proot --default-character-set=utf8mb4 -e "SOURCE $dumpFwd"
 
+# O dump é anterior a algumas migrações: aplica todas, em ordem (são idempotentes).
+Write-Host '== Aplicando migrações =='
+$migracoes = @(
+  'migracao-2026-06-29-auth.sql', 'migracao-2026-06-29-completude.sql',
+  'migracao-imagem-produto.sql', 'migracao-categorias-servico.sql',
+  'migracao-2026-07-13-pagamentos.sql', 'migracao-2026-07-13-permissoes.sql',
+  'migracao-2026-10-19-niveis.sql', 'migracao-2026-10-19-criado-por.sql',
+  'migracao-2026-10-19-modelo-rascunho.sql'
+)
+foreach ($f in $migracoes) {
+  Write-Host "   $f"
+  $fwd = (Join-Path $PSScriptRoot $f) -replace '\\', '/'
+  & $mysql -u root -proot --default-character-set=utf8mb4 agendamentos -e "SOURCE $fwd"
+}
+
 Write-Host ''
 Write-Host '======================================================'
 Write-Host ' Pronto! Banco "agendamentos" restaurado (identico).'
 Write-Host ' Logins:  admin / admin'
 Write-Host '          carlos@navalhaecia.com / Navalha@2026'
+Write-Host ' Conta master (desenvolvedor): crie com  node api\criar-master.mjs'
 Write-Host '======================================================'
 Write-Host ' Apos reiniciar o PC, suba o MySQL de novo com:'
 Write-Host "   Start-Process `"$mysqld`" -ArgumentList `"--datadir=$DataDir`" -WindowStyle Hidden"

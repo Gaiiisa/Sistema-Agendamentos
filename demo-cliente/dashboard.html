@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dashboard · Navalha & Cia — Lâmina</title>
+  <script>(function(){try{var t=localStorage.getItem('lamina-demo-theme');document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <nav class="sidebar">
+    <div class="tn-brand">
+      <div class="tn-logo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--topbar-text)"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+      </div>
+      <span class="tn-brand-name">Navalha</span>
+    </div>
+
+    <div class="tn-groups">
+      <a href="dashboard.html" class="tn-nav-item active" data-route="dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+        <span class="tn-nav-label">Dashboard</span>
+      </a>
+      <a href="agenda.html" class="tn-nav-item" data-route="agenda">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+        <span class="tn-nav-label">Agenda</span>
+        <span class="tn-badge">15</span>
+      </a>
+      <a href="clientes.html" class="tn-nav-item" data-route="clientes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tn-nav-label">Clientes</span>
+      </a>
+      <a href="servicos.html" class="tn-nav-item" data-route="servicos">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        <span class="tn-nav-label">Serviços</span>
+      </a>
+      <a href="equipe.html" class="tn-nav-item" data-route="equipe">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tn-nav-label">Equipe</span>
+      </a>
+      <a href="financeiro.html" class="tn-nav-item" data-route="financeiro">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span class="tn-nav-label">Financeiro</span>
+      </a>
+      <a href="comissoes.html" class="tn-nav-item" data-route="comissoes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+        <span class="tn-nav-label">Comissões</span>
+      </a>
+      <a href="estoque.html" class="tn-nav-item" data-route="estoque">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+        <span class="tn-nav-label">Estoque</span>
+      </a>
+      <a href="fidelidade.html" class="tn-nav-item" data-route="fidelidade">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        <span class="tn-nav-label">Fidelidade</span>
+      </a>
+      <a href="central.html" class="tn-nav-item" data-route="central">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span class="tn-nav-label">Central</span>
+      </a>
+    </div>
+
+    <div class="tn-end">
+      <button class="tn-icon-btn tn-hide-mobile tn-hide-compact" title="Buscar" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"></path></svg>
+      </button>
+      <button class="tn-icon-btn" title="Alternar tema" type="button" data-theme-toggle>
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path></svg>
+      </button>
+      <a href="config.html" class="tn-icon-btn tn-hide-mobile" title="Configurações" data-route="config">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </a>
+      <button class="tn-icon-btn" title="Notificações" type="button" style="position:relative" data-open-modal="notifDrawer">
+        <span class="tn-dot"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </button>
+      <button class="tn-user" title="Carlos Menezes" type="button">
+        <div class="avatar" style="width:28px;height:28px;font-size:11px;background:#0e9f6e">CM</div>
+      </button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-spacer"></div>
+      <div class="tb-page">
+        <span class="tb-title">Dashboard</span>
+        <span class="tb-sub">Visão geral do dia</span>
+      </div>
+      <div class="tb-actions"></div>
+    </div>
+
+    <div class="content">
+      <div class="page">
+
+        <!-- saudação -->
+        <div class="dash-saudacao" style="margin-bottom:18px">
+          <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em">Bom dia, Carlos 👋</div>
+          <div class="muted" style="font-size:14px">Terça-feira, 9 de junho · Aqui está o resumo do seu dia.</div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="stat-grid" style="margin-bottom:16px">
+
+          <!-- Faturamento hoje -->
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Faturamento hoje</div>
+              <div class="stat-ico" style="background:var(--accent-soft)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">R$ 410</div>
+            <div class="col" style="gap:6px">
+              <div class="row" style="justify-content:space-between">
+                <div class="stat-meta">de R$ 850 previstos</div>
+                <svg width="64" height="22" viewBox="0 0 64 22" style="display:block;overflow:visible">
+                  <polyline points="2,11.80 12,9.86 22,5.87 32,2 42,20 52,12.71 62,15.73" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="progress"><span style="width:48%"></span></div>
+            </div>
+          </div>
+
+          <!-- Agendamentos hoje -->
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Agendamentos hoje</div>
+              <div class="stat-ico" style="background:var(--accent-soft)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">15</div>
+            <div class="col" style="gap:6px">
+              <div class="row" style="gap:4px;height:4px">
+                <div style="flex:6;background:var(--st-confirmado);border-radius:99px;height:4px;min-width:2px"></div>
+                <div style="flex:5;background:var(--accent);border-radius:99px;height:4px;min-width:2px"></div>
+                <div style="flex:3;background:var(--st-pendente);border-radius:99px;height:4px;min-width:2px"></div>
+              </div>
+              <div class="stat-meta">
+                <span style="color:var(--st-confirmado);font-weight:600">6 feitos</span>
+                &nbsp;·&nbsp;
+                <span style="color:var(--accent);font-weight:600">5 a fazer</span>
+                &nbsp;·&nbsp;
+                <span style="color:var(--st-pendente);font-weight:600">3 pend.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ocupação -->
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Taxa de ocupação</div>
+              <div class="stat-ico" style="background:var(--st-atendimento-bg)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-atendimento)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path></svg>
+              </div>
+            </div>
+            <div class="row" style="gap:14px;align-items:center">
+              <div class="stat-val tnum">72%</div>
+              <svg width="48" height="48" viewBox="0 0 48 48" style="display:block">
+                <circle cx="24" cy="24" r="19" fill="none" stroke="var(--surface-3)" stroke-width="4.8"/>
+                <circle cx="24" cy="24" r="19" fill="none" stroke="var(--st-atendimento)" stroke-width="4.8" stroke-linecap="round" stroke-dasharray="119.38" stroke-dashoffset="33.43" transform="rotate(-90)" transform-origin="24 24"/>
+              </svg>
+            </div>
+            <div class="stat-meta">da agenda preenchida hoje</div>
+          </div>
+
+          <!-- Ticket médio hoje -->
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Ticket médio hoje</div>
+              <div class="stat-ico" style="background:var(--accent-soft)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">R$ 56</div>
+            <div class="stat-meta">
+              <span class="trend-down">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;margin-right:3px"><path d="M23 18l-9.5-9.5-5 5L1 6M17 18h6v-6"></path></svg>
+                -8%
+              </span>
+              vs. ticket do mês
+            </div>
+          </div>
+
+        </div>
+
+        <!-- atalhos rápidos -->
+        <div class="row" style="gap:10px;margin-bottom:18px;flex-wrap:wrap">
+          <a href="agenda.html" class="btn btn-primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+            Novo agendamento
+          </a>
+          <a href="clientes.html" class="btn btn-ghost">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+            Novo cliente
+          </a>
+          <button class="btn btn-ghost" type="button" data-toast="Funcionalidade disponível em breve">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            Abrir caixa
+          </button>
+          <a href="agenda.html" class="btn btn-ghost">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+            Ver agenda
+          </a>
+        </div>
+
+        <!-- Meta do mês -->
+        <div class="card card-pad" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div class="col" style="gap:2px;min-width:min(160px, 100%)">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)">Meta do mês</div>
+            <div style="font-size:17px;font-weight:800">R$ 5.860 <span class="muted" style="font-size:13px;font-weight:500">/ R$ 28.000</span></div>
+          </div>
+          <div class="col" style="flex:1 1 200px;gap:6px;min-width:min(160px, 100%)">
+            <div class="progress" style="height:6px">
+              <span style="width:21%;background:var(--accent)"></span>
+            </div>
+            <div class="stat-meta">21% atingido · projeção R$ 19.533</div>
+          </div>
+          <span class="pill pill-pendente">
+            <span class="pdot"></span>
+            Abaixo da meta
+          </span>
+        </div>
+
+        <!-- Faturamento · últimos 7 dias -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+            <div class="card-title">Faturamento · últimos 7 dias</div>
+            <span class="muted" style="margin-left:auto;font-size:12.5px">média R$ 908/dia</span>
+          </div>
+          <div style="padding:14px 18px 8px">
+            <div style="position:relative;width:100%;height:140px">
+              <div style="position:absolute;top:4px;bottom:18px;left:28px;right:2px">
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:block;overflow:visible">
+                  <line x1="0" x2="100" y1="0" y2="0" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+                  <line x1="0" x2="100" y1="50" y2="50" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+                  <line x1="0" x2="100" y1="100" y2="100" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+                  <polygon points="0,100 0,54.43 16.67,43.67 33.33,21.52 50,0 66.67,100 83.33,59.49 100,76.27 100,100" fill="var(--accent)" opacity="0.10"/>
+                  <polyline points="0,54.43 16.67,43.67 33.33,21.52 50,0 66.67,100 83.33,59.49 100,76.27" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div style="position:absolute;top:0;bottom:18px;left:0;width:26px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start">
+                <span style="font-size:10px;color:var(--text-3)">2k</span>
+                <span style="font-size:10px;color:var(--text-3)">0</span>
+              </div>
+              <div style="position:absolute;bottom:0;left:28px;right:2px;height:18px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:10px;color:var(--text-3)">Qua 3</span><span style="font-size:10px;color:var(--text-3)">Qui 4</span><span style="font-size:10px;color:var(--text-3)">Sex 5</span><span style="font-size:10px;color:var(--text-3)">Sáb 6</span><span style="font-size:10px;color:var(--text-3)">Dom 7</span><span style="font-size:10px;color:var(--text-3)">Seg 8</span><span style="font-size:10px;color:var(--text-3)">Ter 9</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- grid ocupação / desempenho -->
+        <div class="grid-2" style="margin-bottom:16px;align-items:stretch">
+
+          <!-- Ocupação por horário -->
+          <div class="card">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+              <div class="card-title">Ocupação por horário</div>
+              <span class="pill pill-pendente" style="margin-left:auto;font-size:11px">12:00 disponível</span>
+            </div>
+            <div style="padding:14px 18px;display:flex;flex-direction:column;gap:7px">
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">09:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:75%;background:var(--accent);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">75%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">10:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:50%;background:var(--accent);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">50%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">11:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:75%;background:var(--accent);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">75%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">12:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:0%;background:var(--surface-3);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">0%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">13:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:25%;background:var(--st-pendente);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">25%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">14:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:50%;background:var(--accent);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">50%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">15:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:50%;background:var(--accent);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">50%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">16:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:25%;background:var(--st-pendente);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">25%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">17:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:25%;background:var(--st-pendente);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">25%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">18:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:0%;background:var(--surface-3);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">0%</span>
+              </div>
+              <div class="row" style="gap:10px">
+                <span class="mono muted" style="font-size:11.5px;width:38px">19:00</span>
+                <div class="progress" style="flex:1;height:10px;border-radius:4px">
+                  <span style="width:0%;background:var(--surface-3);border-radius:4px"></span>
+                </div>
+                <span class="tnum muted" style="font-size:11px;width:30px;text-align:right">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Desempenho por profissional hoje -->
+          <div class="card">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <div class="card-title">Desempenho hoje</div>
+              <span class="muted" style="margin-left:auto;font-size:12.5px">concluídos</span>
+            </div>
+            <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+              <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#0e9f6e">RM</div>
+              <div class="col" style="flex:1;gap:5px;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">Rafa</span>
+                <div class="progress"><span style="width:100%;background:#0e9f6e"></span></div>
+              </div>
+              <div class="col" style="align-items:flex-end;gap:2px">
+                <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 195</span>
+                <span class="muted tnum" style="font-size:12px">3 atend.</span>
+              </div>
+            </div>
+            <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+              <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#9333ea">LF</div>
+              <div class="col" style="flex:1;gap:5px;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">Lucas</span>
+                <div class="progress"><span style="width:31%;background:#9333ea"></span></div>
+              </div>
+              <div class="col" style="align-items:flex-end;gap:2px">
+                <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 60</span>
+                <span class="muted tnum" style="font-size:12px">1 atend.</span>
+              </div>
+            </div>
+            <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+              <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#2563eb">DS</div>
+              <div class="col" style="flex:1;gap:5px;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">Diego</span>
+                <div class="progress"><span style="width:28%;background:#2563eb"></span></div>
+              </div>
+              <div class="col" style="align-items:flex-end;gap:2px">
+                <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 55</span>
+                <span class="muted tnum" style="font-size:12px">1 atend.</span>
+              </div>
+            </div>
+            <div class="row" style="gap:12px;padding:12px 18px">
+              <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#ea580c">BA</div>
+              <div class="col" style="flex:1;gap:5px;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">Bruno</span>
+                <div class="progress"><span style="width:21%;background:#ea580c"></span></div>
+              </div>
+              <div class="col" style="align-items:flex-end;gap:2px">
+                <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 40</span>
+                <span class="muted tnum" style="font-size:12px">1 atend.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- grid principal -->
+        <div class="grid-dash" style="margin-bottom:32px">
+
+          <!-- próximos atendimentos -->
+          <div class="card">
+            <div class="card-head">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+              <div class="card-title">Próximos atendimentos</div>
+              <a href="agenda.html" class="link">Ver agenda →</a>
+            </div>
+            <div>
+              <div class="row prox-row" style="padding:13px 18px;gap:13px;border-bottom:1px solid var(--border);cursor:pointer" data-open-modal="modalDetalheAgendamento">
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">11:00</div>
+                <div style="width:3px;align-self:stretch;border-radius:99px;background:#0e9f6e"></div>
+                <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">EM</div>
+                <div class="col" style="line-height:1.3;min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:14.5px">Eduardo Martins</div>
+                  <div class="muted" style="font-size:13px">Corte + Barba · Rafa</div>
+                </div>
+                <span class="pill pill-atendimento"><span class="pdot"></span>Em atendimento</span>
+              </div>
+              <div class="row prox-row" style="padding:13px 18px;gap:13px;border-bottom:1px solid var(--border);cursor:pointer" data-open-modal="modalDetalheAgendamento">
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">11:00</div>
+                <div style="width:3px;align-self:stretch;border-radius:99px;background:#9333ea"></div>
+                <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9333ea">LS</div>
+                <div class="col" style="line-height:1.3;min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:14.5px">Leonardo Souza</div>
+                  <div class="muted" style="font-size:13px">Barba Completa · Lucas</div>
+                </div>
+                <span class="pill pill-pendente"><span class="pdot"></span>Pendente</span>
+              </div>
+              <div class="row prox-row" style="padding:13px 18px;gap:13px;border-bottom:1px solid var(--border);cursor:pointer" data-open-modal="modalDetalheAgendamento">
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">13:00</div>
+                <div style="width:3px;align-self:stretch;border-radius:99px;background:#2563eb"></div>
+                <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">VB</div>
+                <div class="col" style="line-height:1.3;min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:14.5px">Vinícius Barros</div>
+                  <div class="muted" style="font-size:13px">Degradê (Fade) · Diego</div>
+                </div>
+                <span class="pill pill-confirmado"><span class="pdot"></span>Confirmado</span>
+              </div>
+              <div class="row prox-row" style="padding:13px 18px;gap:13px;border-bottom:1px solid var(--border)">
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">14:00</div>
+                <div style="width:3px;align-self:stretch;border-radius:99px;background:#9333ea"></div>
+                <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">LS</div>
+                <div class="col" style="line-height:1.3;min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:14.5px">Leonardo Souza</div>
+                  <div class="muted" style="font-size:13px">Barba Completa · Rafa</div>
+                </div>
+                <span class="pill pill-confirmado"><span class="pdot"></span>Confirmado</span>
+              </div>
+              <div class="row prox-row" style="padding:13px 18px;gap:13px;border-bottom:1px solid var(--border)">
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">14:30</div>
+                <div style="width:3px;align-self:stretch;border-radius:99px;background:#0e9f6e"></div>
+                <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9333ea">GR</div>
+                <div class="col" style="line-height:1.3;min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:14.5px">Gustavo Rocha</div>
+                  <div class="muted" style="font-size:13px">Corte + Barba (combo) · Lucas</div>
+                </div>
+                <span class="pill pill-pendente"><span class="pdot"></span>Pendente</span>
+              </div>
+              <div class="row prox-row" style="padding:13px 18px;gap:13px">
+                <div class="mono prox-hora" style="font-size:14px;font-weight:600;width:46px;color:var(--text-2)">15:00</div>
+                <div style="width:3px;align-self:stretch;border-radius:99px;background:#0e9f6e"></div>
+                <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#ea580c">RT</div>
+                <div class="col" style="line-height:1.3;min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:14.5px">Rodrigo Teixeira</div>
+                  <div class="muted" style="font-size:13px">Corte Masculino · Bruno</div>
+                </div>
+                <span class="pill pill-confirmado"><span class="pdot"></span>Confirmado</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- coluna lateral -->
+          <div class="col" style="gap:16px">
+
+            <!-- alertas -->
+            <div class="card card-pad">
+              <div class="row" style="margin-bottom:6px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-pendente)"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+                <div class="card-title" style="font-size:15px">Alertas</div>
+              </div>
+              <div class="alert-item">
+                <div class="alert-ico" style="background:var(--st-pendente-bg)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-pendente)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                </div>
+                <div class="col" style="line-height:1.3;flex:1">
+                  <div style="font-weight:600;font-size:13.5px">3 clientes não confirmaram</div>
+                  <div class="muted" style="font-size:12.5px">Enviar lembrete via WhatsApp</div>
+                </div>
+                <button class="link" type="button" style="font-size:13px" data-toast="Lembretes enviados via WhatsApp">Lembrar</button>
+              </div>
+              <div class="alert-item">
+                <div class="alert-ico" style="background:var(--st-faltou-bg)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-faltou)"><path d="M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                </div>
+                <div class="col" style="line-height:1.3;flex:1">
+                  <div style="font-weight:600;font-size:13.5px">3 produtos em estoque baixo</div>
+                  <div class="muted" style="font-size:12.5px">Pomada Modeladora, Lâmina de Barbear (cx)</div>
+                </div>
+                <a href="estoque.html" class="link" style="font-size:13px">Repor</a>
+              </div>
+              <div class="alert-item">
+                <div class="alert-ico" style="background:var(--st-faltou-bg)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-faltou)"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+                <div class="col" style="line-height:1.3;flex:1">
+                  <div style="font-weight:600;font-size:13.5px">1 título vencido</div>
+                  <div class="muted" style="font-size:12.5px">R$ 20 a receber</div>
+                </div>
+                <a href="financeiro.html" class="link" style="font-size:13px">Cobrar</a>
+              </div>
+              <div class="alert-item">
+                <div class="alert-ico" style="background:var(--accent-soft)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+                </div>
+                <div class="col" style="line-height:1.3;flex:1">
+                  <div style="font-weight:600;font-size:13.5px">Comissões a pagar</div>
+                  <div class="muted" style="font-size:12.5px">R$ 775 · fechamento sexta</div>
+                </div>
+                <a href="comissoes.html" class="link" style="font-size:13px">Ver</a>
+              </div>
+            </div>
+
+            <!-- aniversariantes -->
+            <div class="card card-pad">
+              <div class="row" style="margin-bottom:10px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-atendimento)"><path d="M2 21h20M3 21v-8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M12 6V3M8 6V4M16 6V4"></path></svg>
+                <div class="card-title" style="font-size:15px">Aniversariantes do mês</div>
+              </div>
+              <div class="col" style="gap:11px">
+                <div class="row" style="gap:11px">
+                  <div class="avatar" style="width:32px;height:32px;font-size:12px;background:#9333ea">TN</div>
+                  <div class="col" style="line-height:1.25;flex:1">
+                    <div style="font-weight:600;font-size:13.5px">Thiago Nascimento</div>
+                    <div class="muted" style="font-size:12.5px">Dia 14</div>
+                  </div>
+                  <button class="btn btn-subtle btn-sm" type="button" data-toast="Mensagem de felicitação enviada">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                    Felicitar
+                  </button>
+                </div>
+                <div class="row" style="gap:11px">
+                  <div class="avatar" style="width:32px;height:32px;font-size:12px;background:#9333ea">VB</div>
+                  <div class="col" style="line-height:1.25;flex:1">
+                    <div style="font-weight:600;font-size:13.5px">Vinícius Barros</div>
+                    <div class="muted" style="font-size:12.5px">Dia 22</div>
+                  </div>
+                  <button class="btn btn-subtle btn-sm" type="button" data-toast="Mensagem de felicitação enviada">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                    Felicitar
+                  </button>
+                </div>
+                <div class="row" style="gap:11px">
+                  <div class="avatar" style="width:32px;height:32px;font-size:12px;background:#9333ea">MR</div>
+                  <div class="col" style="line-height:1.25;flex:1">
+                    <div style="font-weight:600;font-size:13.5px">Matheus Ribeiro</div>
+                    <div class="muted" style="font-size:12.5px">Dia 27</div>
+                  </div>
+                  <button class="btn btn-subtle btn-sm" type="button" data-toast="Mensagem de felicitação enviada">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                    Felicitar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <!-- Seção: Análises & Relatórios                              -->
+        <!-- ══════════════════════════════════════════════════════════ -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+            <span style="font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2)">Análises &amp; Relatórios</span>
+          </div>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+
+        <!-- Header relatórios -->
+        <div class="row" style="margin-bottom:16px;gap:10px;flex-wrap:wrap">
+          <div class="col" style="line-height:1.3">
+            <div style="font-weight:700;font-size:16px">Visão geral · Junho · 1–9</div>
+            <div class="muted" style="font-size:13px">Indicadores-chave de eficiência do negócio.</div>
+          </div>
+          <div class="seg" style="margin-left:auto">
+            <button type="button" data-tab-group="dash-periodo" data-tab="semana">Semana</button>
+            <button type="button" class="on" data-tab-group="dash-periodo" data-tab="mes">Mês</button>
+            <button type="button" data-tab-group="dash-periodo" data-tab="ano">Ano</button>
+          </div>
+          <div class="menu-root">
+            <button class="btn btn-ghost btn-sm" type="button" data-menu-toggle>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+              Exportar
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;color:var(--text-3)"><path d="M6 9l6 6 6-6"></path></svg>
+            </button>
+            <div class="menu-panel" data-menu-panel hidden>
+              <div class="muted" style="padding:6px 10px 4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px">Relatório gerencial · Junho · 1–9</div>
+              <button class="menu-item" type="button" data-toast="Relatório gerencial exportado (24 linhas) — relatorio-gerencial.pdf">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                Exportar em PDF
+              </button>
+              <button class="menu-item" type="button" data-toast="Relatório gerencial exportado (24 linhas) — relatorio-gerencial.xlsx">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                Exportar em XLSX
+              </button>
+              <button class="menu-item" type="button" data-toast="Relatório gerencial exportado (24 linhas) — relatorio-gerencial.csv">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                Exportar em CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPIs relatórios (5) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px">
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Faturamento</div>
+              <div class="stat-ico" style="background:var(--accent-soft)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">R$ 5.860</div>
+            <div class="stat-meta">
+              <span class="trend-up">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px;margin-right:3px"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"></path></svg>
+                +14%</span>
+              vs. período anterior
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Ticket médio</div>
+              <div class="stat-ico" style="background:var(--st-atendimento-bg)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-atendimento)"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">R$ 61</div>
+            <div class="stat-meta">96 atendimentos</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Taxa de ocupação</div>
+              <div class="stat-ico" style="background:var(--accent-soft)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">72%</div>
+            <div class="col" style="gap:6px">
+              <div class="progress"><span style="width:72%"></span></div>
+              <div class="stat-meta">horas vendidas / disponíveis</div>
+            </div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Taxa de no-show</div>
+              <div class="stat-ico" style="background:var(--st-faltou-bg)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-faltou)"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">6,2%</div>
+            <div class="stat-meta">6 faltas · R$ 320 perdidos</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Taxa de retorno</div>
+              <div class="stat-ico" style="background:var(--st-confirmado-bg)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-confirmado)"><path d="M3 3v5h5M3.05 13A9 9 0 1 0 6 5.3L3 8M12 7v5l4 2"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">88%</div>
+            <div class="col" style="gap:6px">
+              <div class="progress">
+                <span style="width:88%;background:var(--st-confirmado)"></span>
+              </div>
+              <div class="stat-meta">84 recorrentes de 96</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Evolução do faturamento semanal -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+            <div class="card-title">Evolução do faturamento · últimas 8 semanas</div>
+            <div class="row" style="margin-left:auto;gap:14px;font-size:12.5px">
+              <span class="row" style="gap:5px">
+                <span style="width:10px;height:3px;border-radius:2px;background:var(--accent);display:inline-block"></span> Realizado
+              </span>
+              <span class="row" style="gap:5px">
+                <span style="width:10px;height:2px;border-top:2px dashed var(--text-3);display:inline-block"></span> Meta
+              </span>
+            </div>
+          </div>
+          <div style="padding:14px 18px 8px">
+            <div style="position:relative;width:100%;height:150px">
+              <div style="position:absolute;top:4px;bottom:18px;left:28px;right:2px">
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="display:block;overflow:visible">
+                  <line x1="0" x2="100" y1="0" y2="0" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+                  <line x1="0" x2="100" y1="50" y2="50" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+                  <line x1="0" x2="100" y1="100" y2="100" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke"/>
+                  <polyline points="0,14.68 100,14.68" fill="none" stroke="var(--text-3)" stroke-width="1.2" stroke-dasharray="3 2.5" vector-effect="non-scaling-stroke"/>
+                  <polygon points="0,100 0,28.33 14.29,20.65 28.57,12.63 42.86,15.02 57.14,8.87 71.43,5.97 85.71,12.63 100,0 100,100" fill="var(--accent)" opacity="0.10"/>
+                  <polyline points="0,28.33 14.29,20.65 28.57,12.63 42.86,15.02 57.14,8.87 71.43,5.97 85.71,12.63 100,0" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div style="position:absolute;top:0;bottom:18px;left:0;width:26px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start">
+                <span style="font-size:10px;color:var(--text-3)">6k</span>
+                <span style="font-size:10px;color:var(--text-3)">4k</span>
+              </div>
+              <div style="position:absolute;bottom:0;left:28px;right:2px;height:18px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:10px;color:var(--text-3)">S1</span><span style="font-size:10px;color:var(--text-3)">S2</span><span style="font-size:10px;color:var(--text-3)">S3</span><span style="font-size:10px;color:var(--text-3)">S4</span><span style="font-size:10px;color:var(--text-3)">S5</span><span style="font-size:10px;color:var(--text-3)">S6</span><span style="font-size:10px;color:var(--text-3)">S7</span><span style="font-size:10px;color:var(--text-3)">S8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa de calor + Forma de pagamento -->
+        <div class="grid-2" style="align-items:stretch;margin-bottom:16px">
+
+          <div class="card">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+              <div class="card-title">Mapa de calor · horários de pico</div>
+              <span class="muted" style="margin-left:auto;font-size:12px">atendimentos médios</span>
+            </div>
+            <div style="padding:16px 18px">
+              <div class="hm-wrap" style="grid-template-columns:44px repeat(6, 1fr)">
+                <div></div>
+                <div class="hm-col-label">Seg</div><div class="hm-col-label">Ter</div><div class="hm-col-label">Qua</div>
+                <div class="hm-col-label">Qui</div><div class="hm-col-label">Sex</div><div class="hm-col-label">Sáb</div>
+
+                <div class="hm-row-label">9h</div>
+                <div class="hm-cell lv-1" title="1 atend."></div><div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-2" title="2 atend."></div>
+                <div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-4" title="4 atend."></div>
+
+                <div class="hm-row-label">11h</div>
+                <div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-3" title="3 atend."></div>
+                <div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-4" title="4 atend."></div><div class="hm-cell lv-5" title="5 atend."></div>
+
+                <div class="hm-row-label">13h</div>
+                <div class="hm-cell lv-1" title="1 atend."></div><div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-2" title="2 atend."></div>
+                <div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-4" title="4 atend."></div>
+
+                <div class="hm-row-label">15h</div>
+                <div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-3" title="3 atend."></div>
+                <div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-4" title="4 atend."></div><div class="hm-cell lv-5" title="5 atend."></div>
+
+                <div class="hm-row-label">17h</div>
+                <div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-4" title="4 atend."></div><div class="hm-cell lv-4" title="4 atend."></div>
+                <div class="hm-cell lv-4" title="4 atend."></div><div class="hm-cell lv-5" title="5 atend."></div><div class="hm-cell lv-5" title="5 atend."></div>
+
+                <div class="hm-row-label">19h</div>
+                <div class="hm-cell lv-2" title="2 atend."></div><div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-3" title="3 atend."></div>
+                <div class="hm-cell lv-3" title="3 atend."></div><div class="hm-cell lv-4" title="4 atend."></div><div class="hm-cell lv-5" title="5 atend."></div>
+              </div>
+              <div class="row" style="margin-top:12px;gap:8px;justify-content:flex-end">
+                <span class="muted" style="font-size:11px">Menos</span>
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--surface-3)"></div>
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--accent-soft)"></div>
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--accent-soft-2)"></div>
+                <div style="width:14px;height:14px;border-radius:3px;background:color-mix(in srgb, var(--accent) 28%, transparent)"></div>
+                <div style="width:14px;height:14px;border-radius:3px;background:color-mix(in srgb, var(--accent) 52%, transparent)"></div>
+                <div style="width:14px;height:14px;border-radius:3px;background:color-mix(in srgb, var(--accent) 78%, transparent)"></div>
+                <span class="muted" style="font-size:11px">Mais</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;flex-direction:column">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+              <div class="card-title">Forma de pagamento</div>
+              <span class="muted" style="margin-left:auto;font-size:12.5px">no período</span>
+            </div>
+            <div style="padding:18px;display:flex;gap:20px;align-items:center;flex:1;flex-wrap:wrap">
+              <svg width="110" height="110" viewBox="0 0 110 110" style="display:block">
+                <circle cx="55" cy="55" r="46.4" fill="none" stroke="var(--st-atendimento)" stroke-width="13.2" stroke-dasharray="131.32 291.47" stroke-dashoffset="0" transform="rotate(-90)" transform-origin="55 55"/>
+                <circle cx="55" cy="55" r="46.4" fill="none" stroke="var(--violet)" stroke-width="13.2" stroke-dasharray="101.96 291.47" stroke-dashoffset="-131.32" transform="rotate(-90)" transform-origin="55 55"/>
+                <circle cx="55" cy="55" r="46.4" fill="none" stroke="var(--accent)" stroke-width="13.2" stroke-dasharray="58.22 291.47" stroke-dashoffset="-233.24" transform="rotate(-90)" transform-origin="55 55"/>
+              </svg>
+              <div class="col" style="flex:1;gap:12px;min-width:120px">
+                <div class="col" style="gap:6px">
+                  <div class="row" style="gap:9px">
+                    <span style="width:9px;height:9px;border-radius:3px;background:var(--st-atendimento);flex-shrink:0"></span>
+                    <span style="font-weight:600;font-size:13px;flex:1">Pix</span>
+                    <span class="tnum muted" style="font-size:12px">45%</span>
+                    <span class="tnum" style="font-weight:700;font-size:13px">R$ 2.640</span>
+                  </div>
+                  <div class="progress"><span style="width:45%;background:var(--st-atendimento)"></span></div>
+                </div>
+                <div class="col" style="gap:6px">
+                  <div class="row" style="gap:9px">
+                    <span style="width:9px;height:9px;border-radius:3px;background:var(--violet);flex-shrink:0"></span>
+                    <span style="font-weight:600;font-size:13px;flex:1">Cartão</span>
+                    <span class="tnum muted" style="font-size:12px">35%</span>
+                    <span class="tnum" style="font-weight:700;font-size:13px">R$ 2.050</span>
+                  </div>
+                  <div class="progress"><span style="width:35%;background:var(--violet)"></span></div>
+                </div>
+                <div class="col" style="gap:6px">
+                  <div class="row" style="gap:9px">
+                    <span style="width:9px;height:9px;border-radius:3px;background:var(--accent);flex-shrink:0"></span>
+                    <span style="font-weight:600;font-size:13px;flex:1">Dinheiro</span>
+                    <span class="tnum muted" style="font-size:12px">20%</span>
+                    <span class="tnum" style="font-weight:700;font-size:13px">R$ 1.170</span>
+                  </div>
+                  <div class="progress"><span style="width:20%;background:var(--accent)"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Ranking de serviços + Metas da equipe -->
+        <div class="grid-2" style="align-items:stretch;margin-bottom:16px">
+
+          <div class="card" style="display:flex;flex-direction:column">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              <div class="card-title">Ranking de serviços</div>
+              <span class="muted" style="margin-left:auto;font-size:12.5px">por receita</span>
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:14px;flex:1;justify-content:space-evenly">
+              <div class="col" style="gap:6px">
+                <div class="row" style="gap:9px">
+                  <span class="tnum muted" style="font-size:11px;font-weight:700;width:16px">#1</span>
+                  <span style="width:8px;height:8px;border-radius:3px;background:#0e9f6e;flex-shrink:0"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">Corte + Barba (combo)</span>
+                  <span class="muted tnum" style="font-size:12.5px">31×</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 2.170</span>
+                </div>
+                <div class="progress"><span style="width:100%;background:#0e9f6e"></span></div>
+              </div>
+              <div class="col" style="gap:6px">
+                <div class="row" style="gap:9px">
+                  <span class="tnum muted" style="font-size:11px;font-weight:700;width:16px">#2</span>
+                  <span style="width:8px;height:8px;border-radius:3px;background:#0e9f6e;flex-shrink:0"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">Corte Masculino</span>
+                  <span class="muted tnum" style="font-size:12.5px">24×</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 1.080</span>
+                </div>
+                <div class="progress"><span style="width:50%;background:#0e9f6e"></span></div>
+              </div>
+              <div class="col" style="gap:6px">
+                <div class="row" style="gap:9px">
+                  <span class="tnum muted" style="font-size:11px;font-weight:700;width:16px">#3</span>
+                  <span style="width:8px;height:8px;border-radius:3px;background:#2563eb;flex-shrink:0"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">Degradê (Fade)</span>
+                  <span class="muted tnum" style="font-size:12.5px">18×</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 990</span>
+                </div>
+                <div class="progress"><span style="width:46%;background:#2563eb"></span></div>
+              </div>
+              <div class="col" style="gap:6px">
+                <div class="row" style="gap:9px">
+                  <span class="tnum muted" style="font-size:11px;font-weight:700;width:16px">#4</span>
+                  <span style="width:8px;height:8px;border-radius:3px;background:#9333ea;flex-shrink:0"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">Barba Completa</span>
+                  <span class="muted tnum" style="font-size:12.5px">12×</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 420</span>
+                </div>
+                <div class="progress"><span style="width:19%;background:#9333ea"></span></div>
+              </div>
+              <div class="col" style="gap:6px">
+                <div class="row" style="gap:9px">
+                  <span class="tnum muted" style="font-size:11px;font-weight:700;width:16px">#5</span>
+                  <span style="width:8px;height:8px;border-radius:3px;background:#9333ea;flex-shrink:0"></span>
+                  <span style="font-weight:600;font-size:13.5px;flex:1">Pigmentação de Barba</span>
+                  <span class="muted tnum" style="font-size:12.5px">7×</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">R$ 420</span>
+                </div>
+                <div class="progress"><span style="width:19%;background:#9333ea"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;flex-direction:column">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path></svg>
+              <div class="card-title">Metas da equipe</div>
+              <span class="muted" style="margin-left:auto;font-size:12.5px">vendido / meta</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:space-evenly">
+              <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+                <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#9333ea">LF</div>
+                <div class="col" style="flex:1;gap:5px;min-width:0">
+                  <div class="row" style="gap:6px">
+                    <span style="font-weight:600;font-size:13.5px;flex:1">Lucas</span>
+                    <span class="tnum" style="font-size:12.5px;font-weight:700;color:var(--st-confirmado)">92%</span>
+                  </div>
+                  <div class="progress"><span style="width:92%;background:var(--st-confirmado)"></span></div>
+                  <div class="stat-meta">R$ 5.980 de R$ 6.500</div>
+                </div>
+              </div>
+              <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+                <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#2563eb">DS</div>
+                <div class="col" style="flex:1;gap:5px;min-width:0">
+                  <div class="row" style="gap:6px">
+                    <span style="font-weight:600;font-size:13.5px;flex:1">Diego</span>
+                    <span class="tnum" style="font-size:12.5px;font-weight:700;color:var(--st-confirmado)">88%</span>
+                  </div>
+                  <div class="progress"><span style="width:88%;background:var(--st-confirmado)"></span></div>
+                  <div class="stat-meta">R$ 6.140 de R$ 7.000</div>
+                </div>
+              </div>
+              <div class="row" style="gap:12px;padding:12px 18px;border-bottom:1px solid var(--border)">
+                <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#0e9f6e">RM</div>
+                <div class="col" style="flex:1;gap:5px;min-width:0">
+                  <div class="row" style="gap:6px">
+                    <span style="font-weight:600;font-size:13.5px;flex:1">Rafa</span>
+                    <span class="tnum" style="font-size:12.5px;font-weight:700;color:var(--st-confirmado)">81%</span>
+                  </div>
+                  <div class="progress"><span style="width:81%;background:var(--st-confirmado)"></span></div>
+                  <div class="stat-meta">R$ 7.320 de R$ 9.000</div>
+                </div>
+              </div>
+              <div class="row" style="gap:12px;padding:12px 18px">
+                <div class="avatar" style="width:34px;height:34px;font-size:13px;background:#ea580c">BA</div>
+                <div class="col" style="flex:1;gap:5px;min-width:0">
+                  <div class="row" style="gap:6px">
+                    <span style="font-weight:600;font-size:13.5px;flex:1">Bruno</span>
+                    <span class="tnum" style="font-size:12.5px;font-weight:700;color:var(--accent-text)">77%</span>
+                  </div>
+                  <div class="progress"><span style="width:77%;background:var(--accent)"></span></div>
+                  <div class="stat-meta">R$ 4.210 de R$ 5.500</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Mix de clientes + Clientes em risco -->
+        <div class="grid-2" style="align-items:stretch">
+
+          <div class="card card-pad">
+            <div class="row" style="margin-bottom:14px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <div class="card-title">Mix de clientes</div>
+            </div>
+            <div class="row" style="height:12px;border-radius:99px;overflow:hidden;margin-bottom:14px;gap:0">
+              <div style="flex:12;background:var(--st-atendimento)"></div>
+              <div style="flex:84;background:var(--accent)"></div>
+            </div>
+            <div class="row" style="gap:16px;margin-bottom:18px">
+              <div class="row" style="gap:8px;flex:1">
+                <span style="width:10px;height:10px;border-radius:3px;background:var(--st-atendimento);flex-shrink:0"></span>
+                <div class="col" style="line-height:1.2">
+                  <span class="tnum" style="font-weight:800;font-size:20px">12</span>
+                  <span class="muted" style="font-size:12px">novos</span>
+                </div>
+              </div>
+              <div class="row" style="gap:8px;flex:1">
+                <span style="width:10px;height:10px;border-radius:3px;background:var(--accent);flex-shrink:0"></span>
+                <div class="col" style="line-height:1.2">
+                  <span class="tnum" style="font-weight:800;font-size:20px">84</span>
+                  <span class="muted" style="font-size:12px">recorrentes</span>
+                </div>
+              </div>
+            </div>
+            <div class="divider" style="margin-bottom:14px"></div>
+            <div class="row" style="gap:8px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M3 3v5h5M3.05 13A9 9 0 1 0 6 5.3L3 8M12 7v5l4 2"></path></svg>
+              <span class="muted" style="font-size:13px;flex:1">Frequência média de retorno</span>
+              <span class="tnum" style="font-weight:700;font-size:14px">23 dias</span>
+            </div>
+            <div class="row" style="gap:8px;margin-top:10px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+              <span class="muted" style="font-size:13px;flex:1">Ticket médio do período</span>
+              <span class="tnum" style="font-weight:700;font-size:14px">R$ 61</span>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex;flex-direction:column">
+            <div class="card-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-faltou)"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+              <div class="card-title">Clientes em risco</div>
+              <span class="muted" style="margin-left:auto;font-size:12.5px">+60 dias sem visitar</span>
+            </div>
+            <div class="row" style="gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)">
+              <div class="avatar" style="width:38px;height:38px;font-size:14px;background:var(--st-faltou)">GR</div>
+              <div class="col" style="flex:1;line-height:1.3;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">Gustavo Rocha</span>
+                <span class="muted" style="font-size:12.5px">Há 112 dias sem visitar · 7 visitas</span>
+                <span class="muted" style="font-size:12px">Gasto total: R$ 350</span>
+              </div>
+              <button class="btn btn-whatsapp btn-sm" type="button" data-toast="Mensagem de reativação enviada para Gustavo Rocha">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                Reativar
+              </button>
+            </div>
+            <div class="row" style="gap:12px;padding:14px 18px">
+              <div class="avatar" style="width:38px;height:38px;font-size:14px;background:var(--st-faltou)">CF</div>
+              <div class="col" style="flex:1;line-height:1.3;min-width:0">
+                <span style="font-weight:600;font-size:13.5px">Caio Fernandes</span>
+                <span class="muted" style="font-size:12.5px">Há 96 dias sem visitar · 6 visitas</span>
+                <span class="muted" style="font-size:12px">Gasto total: R$ 330</span>
+              </div>
+              <button class="btn btn-whatsapp btn-sm" type="button" data-toast="Mensagem de reativação enviada para Caio Fernandes">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                Reativar
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bottom Tab Bar (mobile) ── -->
+  <div class="tn-bottom-bar">
+    <a href="dashboard.html" class="tn-tab active" data-route="dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+      <span>Início</span>
+    </a>
+    <a href="agenda.html" class="tn-tab" data-route="agenda">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+      <span>Agenda</span>
+    </a>
+    <a href="clientes.html" class="tn-tab" data-route="clientes">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Clientes</span>
+    </a>
+    <a href="financeiro.html" class="tn-tab" data-route="financeiro">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      <span>Financeiro</span>
+    </a>
+    <button class="tn-tab" type="button" data-open-modal="moreSheetRoot">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+      <span>Mais</span>
+    </button>
+  </div>
+
+  <!-- ── Sheet "Mais" (mobile) ── -->
+  <div id="moreSheetRoot" data-modal-root hidden>
+    <div class="tn-sheet-overlay" data-modal-backdrop></div>
+    <div class="tn-sheet">
+      <div class="tn-sheet-handle"></div>
+      <a href="servicos.html" class="tn-sheet-item" data-route="servicos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        Serviços
+      </a>
+      <a href="equipe.html" class="tn-sheet-item" data-route="equipe">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Equipe
+      </a>
+      <a href="comissoes.html" class="tn-sheet-item" data-route="comissoes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+        Comissões
+      </a>
+      <a href="estoque.html" class="tn-sheet-item" data-route="estoque">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+        Estoque
+      </a>
+      <a href="fidelidade.html" class="tn-sheet-item" data-route="fidelidade">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        Fidelidade
+      </a>
+      <a href="central.html" class="tn-sheet-item" data-route="central">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        Central
+      </a>
+      <a href="config.html" class="tn-sheet-item" data-route="config">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Configurações
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Drawer de notificações (idêntico em todas as páginas) ── -->
+  <div id="notifDrawer" data-modal-root hidden>
+    <div class="drawer-overlay" data-modal-backdrop></div>
+    <div class="drawer notif-drawer">
+      <div class="drawer-head">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="drawer-title">Notificações</span>
+          <span class="notif-count">5</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="icon-btn" title="Marcar todas como lidas" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          </button>
+          <button class="icon-btn" title="Fechar" type="button" data-close-modal>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="notif-list">
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Novo agendamento confirmado</div>
+            <div class="notif-desc">Ana Lima — Corte + Escova · hoje às 14h00</div>
+            <div class="notif-time">Há 5 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Pagamento recebido</div>
+            <div class="notif-desc">R$ 120,00 · Marcos Oliveira · Cartão de crédito</div>
+            <div class="notif-time">Há 18 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Lembrete: agendamento em 1h</div>
+            <div class="notif-desc">Fernanda Costa — Coloração · 15h30</div>
+            <div class="notif-time">Há 32 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--cliente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Novo cliente cadastrado</div>
+            <div class="notif-desc">Rafael Souza entrou pela primeira vez</div>
+            <div class="notif-time">Há 1 hora</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--estoque"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Estoque baixo</div>
+            <div class="notif-desc">Coloração Louro 8.1 — apenas 2 unidades restantes</div>
+            <div class="notif-time">Há 2 horas</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Agendamento cancelado</div>
+            <div class="notif-desc">Juliana Mendes — Manicure · amanhã 10h00</div>
+            <div class="notif-time">Há 3 horas</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Pagamento recebido</div>
+            <div class="notif-desc">R$ 85,00 · Carla Dias · Pix</div>
+            <div class="notif-time">Ontem 17h42</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Resumo do dia</div>
+            <div class="notif-desc">12 atendimentos realizados · R$ 1.340 faturados</div>
+            <div class="notif-time">Ontem 18h00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: detalhe do agendamento (reaproveitado pelas linhas clicáveis de "Próximos atendimentos") ── -->
+  <div id="modalDetalheAgendamento" data-modal-root hidden>
+    <div class="overlay" data-modal-backdrop>
+      <div class="modal">
+        <div class="modal-head">
+          <div class="modal-title">Agendamento</div>
+          <button class="icon-btn" style="margin-left:auto;width:32px;height:32px" type="button" data-close-modal>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row" style="gap:13px">
+            <div class="avatar" style="width:48px;height:48px;font-size:18px;background:#0e9f6e">EM</div>
+            <div class="col" style="flex:1;line-height:1.3">
+              <div style="font-weight:700;font-size:18px">Eduardo Martins</div>
+              <div class="mono muted" style="font-size:13px">(11) 98445-7766</div>
+            </div>
+            <span class="pill pill-atendimento"><span class="pdot"></span>Em atendimento</span>
+          </div>
+          <div class="divider"></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:14px">
+            <div class="row" style="gap:10px">
+              <div style="width:32px;height:32px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div class="col" style="line-height:1.3;min-width:0">
+                <span class="muted" style="font-size:12px">Serviço</span>
+                <span style="font-weight:600;font-size:14px">Corte + Barba (combo)</span>
+              </div>
+            </div>
+            <div class="row" style="gap:10px">
+              <div style="width:32px;height:32px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+              </div>
+              <div class="col" style="line-height:1.3;min-width:0">
+                <span class="muted" style="font-size:12px">Profissional</span>
+                <span style="font-weight:600;font-size:14px">Rafael Moura</span>
+              </div>
+            </div>
+            <div class="row" style="gap:10px">
+              <div style="width:32px;height:32px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+              </div>
+              <div class="col" style="line-height:1.3;min-width:0">
+                <span class="muted" style="font-size:12px">Horário</span>
+                <span style="font-weight:600;font-size:14px">11:00–11:50 (50min)</span>
+              </div>
+            </div>
+            <div class="row" style="gap:10px">
+              <div style="width:32px;height:32px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="col" style="line-height:1.3;min-width:0">
+                <span class="muted" style="font-size:12px">Valor</span>
+                <span style="font-weight:600;font-size:14px">R$ 70</span>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--surface-2);border-radius:var(--r-md);padding:12px;font-size:13.5px;color:var(--text-2)">
+            <strong>Obs.: </strong>Cliente prefere navalha na nuca e costuma chegar 5 minutos adiantado.
+          </div>
+        </div>
+        <div class="modal-foot">
+          <div>
+            <button class="btn btn-ghost" type="button" data-toast="Lembrete enviado via WhatsApp">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+              Lembrar
+            </button>
+            <button class="btn btn-primary" type="button" data-close-modal data-toast="Atendimento concluído">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              Concluir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast (mensagens de sucesso simuladas) ── -->
+  <div id="toastRoot" hidden></div>
+
+</div>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

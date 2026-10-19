@@ -11,11 +11,12 @@ import { HeatmapComponent } from '../shared/heatmap.component';
 import { DataService, Appt, Cliente } from '../data.service';
 import { AuthService } from '../auth.service';
 import { ExportService, Formato, Periodo } from '../export.service';
+import { PIPES } from '../shared/pipes';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, SparklineComponent, MiniRingComponent, AreaChartComponent, DonutComponent, HeatmapComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, SparklineComponent, MiniRingComponent, AreaChartComponent, DonutComponent, HeatmapComponent, ...PIPES],
   template: `
     <div class="page">
 
@@ -36,10 +37,10 @@ import { ExportService, Formato, Periodo } from '../export.service';
               <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(k.faturaRealizado) }}</div>
+          <div class="stat-val tnum">{{ k.faturaRealizado | brl }}</div>
           <div class="col" style="gap:6px">
             <div class="row" style="justify-content:space-between">
-              <div class="stat-meta">de {{ data.money(k.faturaPrevisto) }} previstos</div>
+              <div class="stat-meta">de {{ k.faturaPrevisto | brl }} previstos</div>
               <app-sparkline [pontos]="sparkline" cor="var(--accent)" [w]="64" [h]="22"></app-sparkline>
             </div>
             <div class="progress"><span [style.width.%]="round(k.faturaRealizado / k.faturaPrevisto * 100)"></span></div>
@@ -94,7 +95,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
               <app-icon name="coins" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(ticketHoje) }}</div>
+          <div class="stat-val tnum">{{ ticketHoje | brl }}</div>
           <div class="stat-meta">
             @if (ticketDelta !== 0) {
               <span [class.trend-up]="ticketDelta > 0" [class.trend-down]="ticketDelta < 0">
@@ -104,7 +105,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
               </span>
               vs. ticket do mês
             } @else {
-              ticket médio do mês: {{ data.money(data.financeiro.mes.ticketMedio) }}
+              ticket médio do mês: {{ data.financeiro.mes.ticketMedio | brl }}
             }
           </div>
         </div>
@@ -113,31 +114,39 @@ import { ExportService, Formato, Periodo } from '../export.service';
 
       <!-- atalhos rápidos -->
       <div class="row" style="gap:10px;margin-bottom:18px;flex-wrap:wrap">
-        <button class="btn btn-primary" (click)="onNew.emit()">
-          <app-icon name="plus" [size]="17"></app-icon> Novo agendamento
-        </button>
-        <button class="btn btn-ghost" (click)="onNav.emit('clientes')">
-          <app-icon name="user" [size]="16"></app-icon> Novo cliente
-        </button>
-        <button class="btn btn-ghost" (click)="onNav.emit('soon')">
-          <app-icon name="money" [size]="16"></app-icon> Abrir caixa
-        </button>
-        <button class="btn btn-ghost" (click)="onNav.emit('agenda')">
-          <app-icon name="calendar" [size]="16"></app-icon> Ver agenda
-        </button>
+        @if (auth.can('agenda', 'criar')) {
+          <button class="btn btn-primary" (click)="onNew.emit()">
+            <app-icon name="plus" [size]="17"></app-icon> Novo agendamento
+          </button>
+        }
+        @if (auth.can('clientes', 'criar')) {
+          <button class="btn btn-ghost" (click)="onNav.emit('clientes')">
+            <app-icon name="user" [size]="16"></app-icon> Novo cliente
+          </button>
+        }
+        @if (auth.can('financeiro', 'criar')) {
+          <button class="btn btn-ghost" (click)="onNav.emit('soon')">
+            <app-icon name="money" [size]="16"></app-icon> Abrir caixa
+          </button>
+        }
+        @if (auth.canView('agenda')) {
+          <button class="btn btn-ghost" (click)="onNav.emit('agenda')">
+            <app-icon name="calendar" [size]="16"></app-icon> Ver agenda
+          </button>
+        }
       </div>
 
       <!-- Meta do mês -->
       <div class="card card-pad" style="margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
         <div class="col" style="gap:2px;min-width:min(160px, 100%)">
           <div style="font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)">Meta do mês</div>
-          <div style="font-size:17px;font-weight:800">{{ data.money(meta.vendido) }} <span class="muted" style="font-size:13px;font-weight:500">/ {{ data.money(meta.meta) }}</span></div>
+          <div style="font-size:17px;font-weight:800">{{ meta.vendido | brl }} <span class="muted" style="font-size:13px;font-weight:500">/ {{ meta.meta | brl }}</span></div>
         </div>
         <div class="col" style="flex:1 1 200px;gap:6px;min-width:min(160px, 100%)">
           <div class="progress" style="height:6px">
             <span [style.width.%]="meta.pct" [style.background]="meta.bateu ? 'var(--st-confirmado)' : 'var(--accent)'"></span>
           </div>
-          <div class="stat-meta">{{ meta.pct }}% atingido · projeção {{ data.money(meta.projecao) }}</div>
+          <div class="stat-meta">{{ meta.pct }}% atingido · projeção {{ meta.projecao | brl }}</div>
         </div>
         <span [class]="meta.bateu ? 'pill pill-confirmado' : 'pill pill-pendente'">
           <span class="pdot"></span>
@@ -150,7 +159,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
         <div class="card-head">
           <app-icon name="chart" [size]="16" style="color:var(--text-2)"></app-icon>
           <div class="card-title">Faturamento · últimos 7 dias</div>
-          <span class="muted" style="margin-left:auto;font-size:12.5px">média {{ data.money(mediaFluxo) }}/dia</span>
+          <span class="muted" style="margin-left:auto;font-size:12.5px">média {{ mediaFluxo | brl }}/dia</span>
         </div>
         <div style="padding:14px 18px 8px">
           <app-area-chart
@@ -207,7 +216,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                 </div>
               </div>
               <div class="col" style="align-items:flex-end;gap:2px">
-                <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(d.receita) }}</span>
+                <span class="tnum" style="font-weight:700;font-size:13.5px">{{ d.receita | brl }}</span>
                 <span class="muted tnum" style="font-size:12px">{{ d.atend }} atend.</span>
               </div>
             </div>
@@ -286,7 +295,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                 </div>
                 <div class="col" style="line-height:1.3;flex:1">
                   <div style="font-weight:600;font-size:13.5px">{{ titulosVencidos }} título{{ titulosVencidos === 1 ? '' : 's' }} vencido{{ titulosVencidos === 1 ? '' : 's' }}</div>
-                  <div class="muted" style="font-size:12.5px">{{ data.money(valorVencido) }} a receber</div>
+                  <div class="muted" style="font-size:12.5px">{{ valorVencido | brl }} a receber</div>
                 </div>
                 <button class="link" style="font-size:13px">Cobrar</button>
               </div>
@@ -297,7 +306,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
               </div>
               <div class="col" style="line-height:1.3;flex:1">
                 <div style="font-weight:600;font-size:13.5px">Comissões a pagar</div>
-                <div class="muted" style="font-size:12.5px">{{ data.money(data.comissoesAPagar) }} · fechamento sexta</div>
+                <div class="muted" style="font-size:12.5px">{{ data.comissoesAPagar | brl }} · fechamento sexta</div>
               </div>
               <button class="link" style="font-size:13px">Ver</button>
             </div>
@@ -392,7 +401,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
               <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(r.faturamento) }}</div>
+          <div class="stat-val tnum">{{ r.faturamento | brl }}</div>
           <div class="stat-meta">
             <span [class.trend-up]="rDelta>=0" [class.trend-down]="rDelta<0">
               <app-icon [name]="rDelta>=0 ? 'trend' : 'trendD'" [size]="13"
@@ -409,7 +418,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
               <app-icon name="coins" [size]="17" style="color:var(--st-atendimento)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(r.ticketMedio) }}</div>
+          <div class="stat-val tnum">{{ r.ticketMedio | brl }}</div>
           <div class="stat-meta">{{ r.atendimentos }} atendimentos</div>
         </div>
 
@@ -435,7 +444,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
             </div>
           </div>
           <div class="stat-val tnum">{{ r.noShowTaxa }}%</div>
-          <div class="stat-meta">{{ r.noShowQtd }} faltas · {{ data.money(r.noShowCusto) }} perdidos</div>
+          <div class="stat-meta">{{ r.noShowQtd }} faltas · {{ r.noShowCusto | brl }} perdidos</div>
         </div>
 
         <div class="stat">
@@ -522,7 +531,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                           [style.background]="FORMA_COR[f.forma]" style="flex-shrink:0"></span>
                     <span style="font-weight:600;font-size:13px;flex:1">{{ f.forma }}</span>
                     <span class="tnum muted" style="font-size:12px">{{ f.pct }}%</span>
-                    <span class="tnum" style="font-weight:700;font-size:13px">{{ data.money(f.valor) }}</span>
+                    <span class="tnum" style="font-weight:700;font-size:13px">{{ f.valor | brl }}</span>
                   </div>
                   <div class="progress">
                     <span [style.width.%]="f.pct" [style.background]="FORMA_COR[f.forma]"></span>
@@ -553,7 +562,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                         [style.background]="data.srv(x.srv).cor" style="flex-shrink:0"></span>
                   <span style="font-weight:600;font-size:13.5px;flex:1">{{ data.srv(x.srv).nome }}</span>
                   <span class="muted tnum" style="font-size:12.5px">{{ x.qtd }}×</span>
-                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(x.receita) }}</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ x.receita | brl }}</span>
                 </div>
                 <div class="progress">
                   <span [style.width]="(x.receita / rankServicosMax * 100) + '%'"
@@ -588,7 +597,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                     </span>
                   </div>
                   <div class="stat-meta">
-                    {{ data.money(m.prof.vendido) }} de {{ data.money(m.prof.meta) }}
+                    {{ m.prof.vendido | brl }} de {{ m.prof.meta | brl }}
                   </div>
                 </div>
               </div>
@@ -637,7 +646,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
           <div class="row" style="gap:8px;margin-top:10px">
             <app-icon name="coins" [size]="15" style="color:var(--text-3)"></app-icon>
             <span class="muted" style="font-size:13px;flex:1">Ticket médio do período</span>
-            <span class="tnum" style="font-weight:700;font-size:14px">{{ data.money(r.ticketMedio) }}</span>
+            <span class="tnum" style="font-weight:700;font-size:14px">{{ r.ticketMedio | brl }}</span>
           </div>
         </div>
 
@@ -660,7 +669,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
                   Há {{ data.diasDesde(c.ultima) }} dias sem visitar ·
                   {{ c.visitas }} visita{{ c.visitas === 1 ? '' : 's' }}
                 </span>
-                <span class="muted" style="font-size:12px">Gasto total: {{ data.money(c.total) }}</span>
+                <span class="muted" style="font-size:12px">Gasto total: {{ c.total | brl }}</span>
               </div>
               <button class="btn btn-whatsapp btn-sm"
                       (click)="onNotify.emit('Mensagem de reativação enviada para ' + c.nome)">
@@ -676,7 +685,7 @@ import { ExportService, Formato, Periodo } from '../export.service';
   styles: [`
     .spinner-mini {
       display: inline-block; width: 13px; height: 13px; border-radius: 50%;
-      border: 2px solid rgba(0,0,0,0.15); border-top-color: var(--accent);
+      border: 2px solid var(--border-strong); border-top-color: var(--accent);
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -690,7 +699,7 @@ export class DashboardComponent {
 
   readonly FORMA_COR: any = {
     'Pix':      'var(--st-atendimento)',
-    'Cartão':   '#7c3aed',
+    'Cartão':   'var(--violet)',
     'Dinheiro': 'var(--accent)',
   };
 
@@ -702,7 +711,7 @@ export class DashboardComponent {
 
   constructor(
     public data: DataService,
-    private auth: AuthService,
+    public auth: AuthService,
     private exportSvc: ExportService,
     private host: ElementRef,
   ) {}
@@ -808,7 +817,8 @@ export class DashboardComponent {
       .slice(0, 6);
   }
   get aniversariantes(): Cliente[] {
-    return this.data.clientes.filter(c => c.nasc.split('-')[1] === '06').slice(0, 3);
+    const mesAtual = String(new Date().getMonth() + 1).padStart(2, '0');
+    return this.data.clientes.filter(c => c.nasc && c.nasc.split('-')[1] === mesAtual).slice(0, 3);
   }
   get naoConfirmados(): Appt[] {
     return this.data.hoje.filter(a => a.status === 'pendente');
@@ -823,7 +833,7 @@ export class DashboardComponent {
   private _rKey = '';
 
   get r(): any {
-    const key = `${this.periodo}|${this.data.agendamentos.length}|${this.data.lancamentos.length}`;
+    const key = `${this.periodo}|${this.data.revision}|${this.data.agendamentos.length}|${this.data.lancamentos.length}`;
     if (this._rCache && this._rKey === key) return this._rCache;
     this._rCache = this.buildRelatorio(this.periodo);
     this._rKey = key;

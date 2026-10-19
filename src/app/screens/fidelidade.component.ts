@@ -6,6 +6,10 @@ import { AvatarComponent } from '../shared/avatar.component';
 import { ModalComponent } from '../shared/modal.component';
 import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService, Campanha, Modelo } from '../data.service';
+import { ToastService } from '../toast.service';
+import { CampoErroComponent } from '../shared/campo-erro.component';
+import { PIPES } from '../shared/pipes';
+import { V, validar, temErros, Erros } from '../shared/validacao';
 
 interface GatilhoConfig {
   key: string; label: string; desc: string; modulo: string; disparo: string;
@@ -22,7 +26,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
 @Component({
   selector: 'app-fidelidade',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, ModalComponent, SelectComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, ModalComponent, SelectComponent, CampoErroComponent, ...PIPES],
   template: `
 <div class="page">
 
@@ -208,7 +212,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
             <app-avatar [nome]="c.nome" cor="var(--st-faltou)" [size]="32"></app-avatar>
             <div class="col" style="flex:1;line-height:1.3">
               <span style="font-weight:600;font-size:13.5px">{{ c.nome }}</span>
-              <span class="muted" style="font-size:12px">{{ data.diasDesde(c.ultima) }} dias sem visitar · {{ data.money(c.total) }} no total</span>
+              <span class="muted" style="font-size:12px">{{ data.diasDesde(c.ultima) }} dias sem visitar · {{ c.total | brl }} no total</span>
             </div>
             <button class="btn btn-whatsapp btn-sm" (click)="notify.emit('WhatsApp para ' + c.nome)">
               <app-icon name="whatsapp" [size]="14"></app-icon>
@@ -226,7 +230,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
             <app-avatar [nome]="c.nome" cor="#0e9f6e" [size]="30"></app-avatar>
             <span style="font-weight:600;font-size:13.5px;flex:1">{{ c.nome }}</span>
             <div class="col" style="align-items:flex-end;line-height:1.3">
-              <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(c.total) }}</span>
+              <span class="tnum" style="font-weight:700;font-size:13.5px">{{ c.total | brl }}</span>
               <span class="muted" style="font-size:11.5px">{{ c.visitas }} visitas</span>
             </div>
           </div>
@@ -425,8 +429,8 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
       <div class="row" style="gap:12px;flex-wrap:wrap">
         <div class="field" style="flex:2;min-width:180px">
           <label>Nome do modelo *</label>
-          <input class="input" [(ngModel)]="draftModelo.nome" placeholder="Ex: Lembrete de agendamento">
-          @if (modeloErros['nome']) { <span style="font-size:12px;color:var(--st-faltou)">{{ modeloErros['nome'] }}</span> }
+          <input class="input" [class.invalid]="modeloErros['nome']" [(ngModel)]="draftModelo.nome" placeholder="Ex: Lembrete de agendamento" maxlength="80">
+          <app-campo-erro [msg]="modeloErros['nome']"></app-campo-erro>
         </div>
         <div class="field" style="flex:1;min-width:120px">
           <label>Categoria</label>
@@ -437,7 +441,8 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
       <!-- Descrição -->
       <div class="field">
         <label>Descrição curta</label>
-        <input class="input" [(ngModel)]="draftModelo.desc" placeholder="Para que serve este modelo?">
+        <input class="input" [class.invalid]="modeloErros['desc']" [(ngModel)]="draftModelo.desc" placeholder="Para que serve este modelo?" maxlength="255">
+        <app-campo-erro [msg]="modeloErros['desc']"></app-campo-erro>
       </div>
 
       <!-- Gatilho -->
@@ -448,7 +453,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
         @if (gatilhoAtual) {
           <span style="font-size:12px;color:var(--text-3);margin-top:3px">{{ gatilhoAtual.desc }} · Disparo: {{ gatilhoAtual.disparo }}</span>
         }
-        @if (modeloErros['gatilho']) { <span style="font-size:12px;color:var(--st-faltou)">{{ modeloErros['gatilho'] }}</span> }
+        <app-campo-erro [msg]="modeloErros['gatilho']"></app-campo-erro>
       </div>
 
       <!-- Status -->
@@ -468,8 +473,11 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
       <!-- Conteúdo -->
       <div class="field">
         <label>Conteúdo da mensagem *</label>
-        <textarea class="input" [(ngModel)]="draftModelo.texto" style="min-height:110px;resize:vertical" placeholder="Digite a mensagem..."></textarea>
-        @if (modeloErros['texto']) { <span style="font-size:12px;color:var(--st-faltou)">{{ modeloErros['texto'] }}</span> }
+        <textarea class="input" [class.invalid]="modeloErros['texto']" [(ngModel)]="draftModelo.texto" maxlength="1000" style="min-height:110px;resize:vertical" placeholder="Digite a mensagem..."></textarea>
+        <span class="muted" style="font-size:11.5px;text-align:right" [style.color]="draftModelo.canal === 'sms' && (draftModelo.texto || '').length > 160 ? 'var(--st-faltou)' : null">
+          {{ (draftModelo.texto || '').length }}/{{ draftModelo.canal === 'sms' ? 160 : 1000 }}
+        </span>
+        <app-campo-erro [msg]="modeloErros['texto']"></app-campo-erro>
       </div>
 
       <!-- Variáveis clicáveis -->
@@ -515,15 +523,15 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
             </button>
           }
         </div>
-        @if (modeloErros['canal']) { <span style="font-size:12px;color:var(--st-faltou)">{{ modeloErros['canal'] }}</span> }
+        <app-campo-erro [msg]="modeloErros['canal']"></app-campo-erro>
       </div>
 
       <!-- Assunto (e-mail) -->
       @if (draftModelo.canal === 'email') {
         <div class="field">
           <label>Assunto do e-mail *</label>
-          <input class="input" [(ngModel)]="draftModelo.assunto" placeholder="Ex: Seu horário está confirmado!">
-          @if (modeloErros['assunto']) { <span style="font-size:12px;color:var(--st-faltou)">{{ modeloErros['assunto'] }}</span> }
+          <input class="input" [class.invalid]="modeloErros['assunto']" [(ngModel)]="draftModelo.assunto" placeholder="Ex: Seu horário está confirmado!" maxlength="120">
+          <app-campo-erro [msg]="modeloErros['assunto']"></app-campo-erro>
         </div>
       }
 
@@ -630,8 +638,9 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
 
       <!-- Nome -->
       <div class="field">
-        <label>Nome da campanha</label>
-        <input class="input" [(ngModel)]="draftCamp.nome" placeholder="Ex: Cliente sumido — volta aí">
+        <label>Nome da campanha<span class="req">*</span></label>
+        <input class="input" [class.invalid]="errosCamp['nome']" [(ngModel)]="draftCamp.nome" placeholder="Ex: Cliente sumido — volta aí" maxlength="80">
+        <app-campo-erro [msg]="errosCamp['nome']"></app-campo-erro>
       </div>
 
       <!-- Tipo -->
@@ -676,6 +685,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
             </button>
           }
         </div>
+        <app-campo-erro [msg]="errosCamp['alvo']"></app-campo-erro>
       </div>
 
       <!-- Status -->
@@ -692,6 +702,7 @@ const STATUS_CAMP: { [k: string]: { label: string; cls: string } } = {
             </button>
           }
         </div>
+        <app-campo-erro [msg]="errosCamp['status']"></app-campo-erro>
       </div>
 
     </div>
@@ -860,7 +871,7 @@ export class FidelidadeComponent {
   readonly statusCamp = (status: string) =>
     STATUS_CAMP[status] ?? { label: status, cls: '' };
 
-  constructor(public data: DataService) {
+  constructor(public data: DataService, private toast: ToastService) {
     this.tipo = data.fidelidade.tipo;
     this.meta = data.fidelidade.meta;
   }
@@ -897,9 +908,29 @@ export class FidelidadeComponent {
   fecharCampModal() {
     this.campModal = null;
     this.campSel = null;
+    this.campEnviado = false;
+  }
+
+  /** Erros da campanha: aparecem após a 1ª tentativa de salvar. */
+  campEnviado = false;
+
+  get errosCamp(): Erros {
+    if (!this.campEnviado) return {};
+    const d = this.draftCamp;
+    const nomeDup = !!d.nome?.trim() && this.data.campanhas.some(c =>
+      c.id !== this.campSel?.id && c.nome.trim().toLowerCase() === d.nome!.trim().toLowerCase());
+    const ativando = d.status === 'ativa' || d.status === 'agendada';
+    return validar({
+      nome: [V.obrigatorio(d.nome), V.tamanho(d.nome, 3, 80), V.se(nomeDup, 'Já existe uma campanha com esse nome.')],
+      alvo: [V.obrigatorio(d.alvo, 'Escolha o segmento de clientes.')],
+      status: [V.se(ativando && !(Number(d.publico) > 0), 'O segmento escolhido não tem clientes. Salve como rascunho.')],
+    });
   }
 
   salvarCampanha() {
+    this.campEnviado = true;
+    if (temErros(this.errosCamp)) { this.toast.error('Corrija os campos destacados.'); return; }
+    this.draftCamp.nome = this.draftCamp.nome!.trim();
     if (this.campModal === 'editar' && this.campSel) {
       this.data.updateCampanha(this.campSel.id, this.draftCamp);
     } else {
@@ -927,7 +958,7 @@ export class FidelidadeComponent {
       case 'sumido':      return this.emRisco.length;
       case 'vip':         return this.data.clientes.filter(c => c.tags.includes('vip')).length;
       case 'novo':        return this.data.clientes.filter(c => c.tags.includes('novo')).length;
-      case 'aniversario': return this.data.clientes.filter(c => +c.nasc.split('-')[1] === mesAtual).length;
+      case 'aniversario': return this.data.clientes.filter(c => +(c.nasc || '').split('-')[1] === mesAtual).length;
       case 'quase_la':    return this.quaseLa.length;
       default:            return 0;
     }
@@ -1005,15 +1036,26 @@ export class FidelidadeComponent {
   }
 
   validarModelo(): boolean {
-    const e: Record<string, string> = {};
-    if (!this.draftModelo.nome?.trim())  e['nome']    = 'Nome obrigatório.';
-    if (!this.draftModelo.gatilho)       e['gatilho'] = 'Gatilho obrigatório.';
-    if (!this.draftModelo.canal)         e['canal']   = 'Canal obrigatório.';
-    if (!this.draftModelo.texto?.trim()) e['texto']   = 'Conteúdo obrigatório.';
-    if (this.draftModelo.canal === 'email' && !this.draftModelo.assunto?.trim())
-      e['assunto'] = 'Assunto obrigatório para e-mail.';
-    this.modeloErros = e;
-    return Object.keys(e).length === 0;
+    const d = this.draftModelo;
+    const texto = d.texto ?? '';
+    // variáveis usadas no texto/assunto que o gatilho escolhido não fornece
+    const validas = new Set(this.variaveisDoGatilho.map(v => v.key));
+    const usadas = [...`${texto} ${d.assunto ?? ''}`.matchAll(/\{[a-z_]+\}/g)].map(m => m[0]);
+    const invalidas = d.gatilho ? [...new Set(usadas.filter(v => !validas.has(v)))] : [];
+    const nomeDup = !!d.nome?.trim() && this.data.modelos.some(m =>
+      m.id !== this.modeloSel?.id && m.nome.trim().toLowerCase() === d.nome!.trim().toLowerCase());
+    this.modeloErros = validar({
+      nome: [V.obrigatorio(d.nome, 'Nome obrigatório.'), V.tamanho(d.nome, 3, 80), V.se(nomeDup, 'Já existe um modelo com esse nome.')],
+      desc: [V.tamanho(d.desc, 0, 255)],
+      gatilho: [V.obrigatorio(d.gatilho, 'Gatilho obrigatório.')],
+      canal: [V.obrigatorio(d.canal, 'Canal obrigatório.')],
+      texto: [V.obrigatorio(d.texto, 'Conteúdo obrigatório.'), V.tamanho(texto, 10, 1000),
+        V.se(d.canal === 'sms' && texto.length > 160, `SMS aceita até 160 caracteres (atual: ${texto.length}).`),
+        V.se(invalidas.length > 0, `Variável não disponível para este gatilho: ${invalidas.join(', ')}.`)],
+      assunto: [d.canal === 'email' ? V.obrigatorio(d.assunto, 'Assunto obrigatório para e-mail.') : null,
+        d.canal === 'email' ? V.tamanho(d.assunto, 3, 120) : null],
+    });
+    return !temErros(this.modeloErros);
   }
 
   salvarModelo(status: string) {

@@ -1,0 +1,1464 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clientes · Navalha & Cia — Lâmina</title>
+  <script>(function(){try{var t=localStorage.getItem('lamina-demo-theme');document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <nav class="sidebar">
+      <div class="tn-brand">
+        <div class="tn-logo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--topbar-text)"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        </div>
+        <span class="tn-brand-name">Navalha</span>
+      </div>
+
+      <div class="tn-groups">
+        <a href="dashboard.html" class="tn-nav-item" data-route="dashboard">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+          <span class="tn-nav-label">Dashboard</span>
+        </a>
+        <a href="agenda.html" class="tn-nav-item" data-route="agenda">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+          <span class="tn-nav-label">Agenda</span>
+          <span class="tn-badge">15</span>
+        </a>
+        <a href="clientes.html" class="tn-nav-item active" data-route="clientes">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span class="tn-nav-label">Clientes</span>
+        </a>
+        <a href="servicos.html" class="tn-nav-item" data-route="servicos">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+          <span class="tn-nav-label">Serviços</span>
+        </a>
+        <a href="equipe.html" class="tn-nav-item" data-route="equipe">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span class="tn-nav-label">Equipe</span>
+        </a>
+        <a href="financeiro.html" class="tn-nav-item" data-route="financeiro">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <span class="tn-nav-label">Financeiro</span>
+        </a>
+        <a href="comissoes.html" class="tn-nav-item" data-route="comissoes">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+          <span class="tn-nav-label">Comissões</span>
+        </a>
+        <a href="estoque.html" class="tn-nav-item" data-route="estoque">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+          <span class="tn-nav-label">Estoque</span>
+        </a>
+        <a href="fidelidade.html" class="tn-nav-item" data-route="fidelidade">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+          <span class="tn-nav-label">Fidelidade</span>
+        </a>
+        <a href="central.html" class="tn-nav-item" data-route="central">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span class="tn-nav-label">Central</span>
+        </a>
+      </div>
+
+      <div class="tn-end">
+        <button class="tn-icon-btn tn-hide-mobile tn-hide-compact" title="Buscar" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"></path></svg>
+        </button>
+        <button class="tn-icon-btn" title="Alternar tema" type="button" data-theme-toggle>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path></svg>
+        </button>
+        <a href="config.html" class="tn-icon-btn tn-hide-mobile" title="Configurações" data-route="config">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </a>
+        <button class="tn-icon-btn" title="Notificações" type="button" style="position:relative" data-open-modal="notifDrawer">
+          <span class="tn-dot"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </button>
+        <button class="tn-user" title="Carlos Menezes" type="button">
+          <div class="avatar" style="width:28px;height:28px;font-size:11px;background:#0e9f6e">CM</div>
+        </button>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="tb-spacer"></div>
+        <div class="tb-page">
+          <span class="tb-title">Clientes</span>
+          <span class="tb-sub">CRM — onde está o dinheiro recorrente</span>
+        </div>
+        <div class="tb-actions">
+          <button class="btn btn-primary" type="button" data-open-modal="modalNovoCliente">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+            <span class="btn-text">Novo cliente</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page">
+
+          <!-- toolbar: busca + segmentação por tag -->
+          <div class="row" style="margin-bottom:16px; flex-wrap:wrap; gap:10px">
+            <div class="search-inp" style="flex:1;min-width:min(300px, 100%)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"></path></svg>
+              <input placeholder="Buscar por nome ou WhatsApp…" data-filter-table="tabelaClientes">
+            </div>
+
+            <div class="seg">
+              <button type="button" class="on" data-tab-group="clientes-filtro" data-tab="todos">Todos<span style="margin-left:6px; opacity:0.6">12</span></button>
+              <button type="button" data-tab-group="clientes-filtro" data-tab="vip">VIP<span style="margin-left:6px; opacity:0.6">3</span></button>
+              <button type="button" data-tab-group="clientes-filtro" data-tab="novo">Novos<span style="margin-left:6px; opacity:0.6">2</span></button>
+              <button type="button" data-tab-group="clientes-filtro" data-tab="sumido">Sumidos<span style="margin-left:6px; opacity:0.6">2</span></button>
+            </div>
+          </div>
+
+          <!-- banner sumidos -->
+          <div class="card card-pad sumidos-banner"
+               style="margin-bottom:16px; display:flex; align-items:center; gap:14px; border-left:3px solid var(--st-faltou)">
+            <div class="alert-ico" style="background:var(--st-faltou-bg)">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--st-faltou)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+            </div>
+            <div class="col" style="flex:1; min-width:0">
+              <div style="font-weight:600">2 clientes sumiram</div>
+              <div class="muted" style="font-size:13px">Não voltam há mais de 60 dias — bons candidatos a uma campanha de retorno.</div>
+            </div>
+            <div class="sumidos-actions">
+              <button class="btn btn-ghost btn-sm" type="button" data-tab-group="clientes-filtro" data-tab="sumido">Ver lista</button>
+              <button class="btn btn-whatsapp btn-sm" type="button" data-toast="Campanha de retorno disparada para os clientes sumidos">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                Campanha de retorno
+              </button>
+            </div>
+          </div>
+
+          <!-- tabela -->
+          <div class="card tbl-card-outer">
+            <div style="overflow-x:auto">
+              <table class="tbl tbl-card" id="tabelaClientes">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>WhatsApp</th>
+                    <th>Última visita</th>
+                    <th>Visitas</th>
+                    <th>Ticket médio</th>
+                    <th>Total gasto</th>
+                    <th>Tags</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <!-- painel: Todos (12) -->
+                <tbody data-tab-panel-group="clientes-filtro" data-tab-panel="todos">
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">TN</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Thiago Nascimento</span>
+                          <span class="muted" style="font-size:12.5px">thiago.nascimento@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99876-1122</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 7 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">28</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$68</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$1.904</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">MP</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Marcos Pereira</span>
+                          <span class="muted" style="font-size:12.5px">marcos.pereira@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98765-4433</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 12 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">12</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$55</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$660</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end"></div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">FC</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Felipe Cardoso</span>
+                          <span class="muted" style="font-size:12.5px">felipe.cardoso@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99123-7788</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 4 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">2</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$70</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$140</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-novo">Novo</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">AL</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">André Lima</span>
+                          <span class="muted" style="font-size:12.5px">andre.lima@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98234-5566</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 3 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">41</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$72</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$2.952</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9ca3af">GR</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Gustavo Rocha</span>
+                          <span class="muted" style="font-size:12.5px">gustavo.rocha@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99988-1234</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--st-faltou)">há 111 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">7</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$50</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$350</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-sumido">Sumido</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">RT</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Rodrigo Teixeira</span>
+                          <span class="muted" style="font-size:12.5px">rodrigo.teixeira@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98567-9900</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 10 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">15</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$45</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$675</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end"></div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">VB</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Vinícius Barros</span>
+                          <span class="muted" style="font-size:12.5px">vinicius.barros@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99334-2211</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 8 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">9</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$60</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$540</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end"></div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">EM</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Eduardo Martins</span>
+                          <span class="muted" style="font-size:12.5px">eduardo.martins@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98445-7766</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 5 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">53</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$65</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$3.445</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">PH</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Pedro Henrique</span>
+                          <span class="muted" style="font-size:12.5px">pedro.henrique@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99776-3322</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 2 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">1</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$45</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$45</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-novo">Novo</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9ca3af">CF</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Caio Fernandes</span>
+                          <span class="muted" style="font-size:12.5px">caio.fernandes@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98112-9988</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--st-faltou)">há 96 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">6</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$55</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$330</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-sumido">Sumido</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">LS</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Leonardo Souza</span>
+                          <span class="muted" style="font-size:12.5px">leonardo.souza@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99001-4455</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 15 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">19</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$58</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$1.102</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end"></div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">MR</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Matheus Ribeiro</span>
+                          <span class="muted" style="font-size:12.5px">matheus.ribeiro@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98990-7711</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 6 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">11</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$52</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$572</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end"></div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                </tbody>
+
+                <!-- painel: VIP (3) -->
+                <tbody data-tab-panel-group="clientes-filtro" data-tab-panel="vip" hidden>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">TN</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Thiago Nascimento</span>
+                          <span class="muted" style="font-size:12.5px">thiago.nascimento@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99876-1122</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 7 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">28</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$68</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$1.904</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">AL</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">André Lima</span>
+                          <span class="muted" style="font-size:12.5px">andre.lima@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98234-5566</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 3 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">41</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$72</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$2.952</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#0e9f6e">EM</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Eduardo Martins</span>
+                          <span class="muted" style="font-size:12.5px">eduardo.martins@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98445-7766</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 5 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">53</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$65</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$3.445</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+                <!-- painel: Novos (2) -->
+                <tbody data-tab-panel-group="clientes-filtro" data-tab-panel="novo" hidden>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">FC</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Felipe Cardoso</span>
+                          <span class="muted" style="font-size:12.5px">felipe.cardoso@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99123-7788</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 4 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">2</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$70</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$140</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-novo">Novo</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#2563eb">PH</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Pedro Henrique</span>
+                          <span class="muted" style="font-size:12.5px">pedro.henrique@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99776-3322</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--text)">há 2 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">1</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$45</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$45</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-novo">Novo</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Cliente atualizado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar cliente
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Enviar WhatsApp
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+                <!-- painel: Sumidos (2) -->
+                <tbody data-tab-panel-group="clientes-filtro" data-tab-panel="sumido" hidden>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9ca3af">GR</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Gustavo Rocha</span>
+                          <span class="muted" style="font-size:12.5px">gustavo.rocha@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 99988-1234</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--st-faltou)">há 111 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">7</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$50</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$350</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-sumido">Sumido</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Campanha de retorno
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="tbl-row-click">
+                    <td class="card-header" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:11px">
+                        <div class="avatar" style="width:36px;height:36px;font-size:14px;background:#9ca3af">CF</div>
+                        <div class="col" style="line-height:1.25">
+                          <span style="font-weight:600">Caio Fernandes</span>
+                          <span class="muted" style="font-size:12.5px">caio.fernandes@gmail.com</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="mono muted" data-label="WhatsApp" style="font-size:13px" data-open-modal="drawerFicha">(11) 98112-9988</td>
+                    <td data-label="Última visita" data-open-modal="drawerFicha"><span style="color:var(--st-faltou)">há 96 dias</span></td>
+                    <td class="tnum" data-label="Visitas" data-open-modal="drawerFicha">6</td>
+                    <td class="tnum" data-label="Ticket médio" data-open-modal="drawerFicha">R$55</td>
+                    <td class="tnum" data-label="Total gasto" style="font-weight:600" data-open-modal="drawerFicha">R$330</td>
+                    <td data-label="Tags" data-open-modal="drawerFicha">
+                      <div class="row" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+                        <span class="tag tag-sumido">Sumido</span>
+                      </div>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="drawerFicha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            Ver ficha
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Mensagem enviada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                            Campanha de retorno
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Cliente removido com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir cliente
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+
+          <!-- drawer: ficha do cliente (exemplo: André Lima) -->
+          <div id="drawerFicha" data-modal-root hidden>
+            <div class="drawer-overlay" data-modal-backdrop></div>
+            <div class="drawer">
+
+              <!-- drawer header -->
+              <div style="padding:20px 22px; border-bottom:1px solid var(--border); background:var(--surface)">
+                <div class="row" style="margin-bottom:14px">
+                  <div style="font-weight:700; font-size:13px; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em">
+                    Ficha do cliente
+                  </div>
+                  <button class="icon-btn" style="margin-left:auto; width:32px; height:32px" type="button" data-close-modal>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                  </button>
+                </div>
+
+                <div class="row" style="gap:14px">
+                  <div class="avatar" style="width:58px;height:58px;font-size:22px;background:#0e9f6e">AL</div>
+                  <div class="col" style="gap:5px; flex:1">
+                    <div style="font-size:20px; font-weight:800; letter-spacing:-0.02em">André Lima</div>
+                    <div class="row" style="gap:6px">
+                      <span class="tag tag-vip"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>VIP</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" style="gap:8px; margin-top:16px">
+                  <button class="btn btn-primary btn-sm" style="flex:1" type="button" data-toast="Agendamento iniciado para André Lima">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+                    Agendar
+                  </button>
+                  <button class="btn btn-whatsapp btn-sm" style="flex:1" type="button" data-toast="Mensagem enviada com sucesso">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                    WhatsApp
+                  </button>
+                  <button class="btn btn-ghost btn-sm btn-icon-only" type="button" data-toast="Cliente atualizado com sucesso">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- drawer body -->
+              <div style="flex:1; overflow-y:auto; padding:22px; display:flex; flex-direction:column; gap:18px">
+
+                <!-- métricas -->
+                <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px">
+                  <div class="card" style="padding:12px 14px">
+                    <div class="stat-val tnum" style="font-size:21px">R$2.952</div>
+                    <div class="stat-label" style="font-size:12px">Total gasto</div>
+                  </div>
+                  <div class="card" style="padding:12px 14px">
+                    <div class="stat-val tnum" style="font-size:21px">R$72</div>
+                    <div class="stat-label" style="font-size:12px">Ticket médio</div>
+                  </div>
+                  <div class="card" style="padding:12px 14px">
+                    <div class="stat-val tnum" style="font-size:21px">41</div>
+                    <div class="stat-label" style="font-size:12px">Visitas</div>
+                  </div>
+                  <div class="card" style="padding:12px 14px">
+                    <div class="stat-val tnum" style="font-size:21px">a cada 14d</div>
+                    <div class="stat-label" style="font-size:12px">Frequência</div>
+                  </div>
+                </div>
+
+                <!-- último atendimento -->
+                <div class="card card-pad" style="display:flex; align-items:center; gap:12px; padding:14px; border:none; background:var(--accent-soft)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5M3.05 13A9 9 0 1 0 6 5.3L3 8M12 7v5l4 2"></path></svg>
+                  <div class="col" style="line-height:1.3">
+                    <span style="font-weight:600; font-size:13.5px; color:var(--accent-text)">Última visita há 3 dias</span>
+                    <span style="font-size:12.5px; opacity:0.85; color:var(--accent-text)">Cliente ativo</span>
+                  </div>
+                </div>
+
+                <!-- contato -->
+                <div class="col" style="gap:10px">
+                  <div style="font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-3)">Contato</div>
+
+                  <div class="row" style="gap:11px; padding:4px 0">
+                    <div style="width:30px; height:30px; border-radius:8px; background:var(--surface-2); display:grid; place-items:center">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.5a8.5 8.5 0 1 1 3.5 3.2L3 21zM8.5 8.5c0 4 3 7 6.5 7M9 8.5c0 .8.4 1.5 1 2M15 15c-.8 0-1.5-.4-2-1"></path></svg>
+                    </div>
+                    <div class="col" style="line-height:1.3">
+                      <span class="muted" style="font-size:12px">WhatsApp</span>
+                      <span style="font-weight:600; font-size:13.5px">(11) 98234-5566</span>
+                    </div>
+                  </div>
+
+                  <div class="row" style="gap:11px; padding:4px 0">
+                    <div style="width:30px; height:30px; border-radius:8px; background:var(--surface-2); display:grid; place-items:center">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 7l-10 5L2 7"></path></svg>
+                    </div>
+                    <div class="col" style="line-height:1.3">
+                      <span class="muted" style="font-size:12px">E-mail</span>
+                      <span style="font-weight:600; font-size:13.5px">andre.lima@gmail.com</span>
+                    </div>
+                  </div>
+
+                  <div class="row" style="gap:11px; padding:4px 0">
+                    <div style="width:30px; height:30px; border-radius:8px; background:var(--surface-2); display:grid; place-items:center">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21h20M3 21v-8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M12 6V3M8 6V4M16 6V4"></path></svg>
+                    </div>
+                    <div class="col" style="line-height:1.3">
+                      <span class="muted" style="font-size:12px">Nascimento</span>
+                      <span style="font-weight:600; font-size:13.5px">12/06/1990</span>
+                    </div>
+                  </div>
+
+                  <div class="row" style="gap:11px; padding:4px 0">
+                    <div style="width:30px; height:30px; border-radius:8px; background:var(--surface-2); display:grid; place-items:center">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:var(--text-2)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                    </div>
+                    <div class="col" style="line-height:1.3">
+                      <span class="muted" style="font-size:12px">Profissional favorito</span>
+                      <span style="font-weight:600; font-size:13.5px">Rafael Moura</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- fidelidade -->
+                <div class="col" style="gap:10px">
+                  <div style="font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-3)">Fidelidade</div>
+                  <div class="card card-pad" style="display:flex; align-items:center; gap:12px; padding:14px">
+                    <div style="width:40px; height:40px; border-radius:10px; background:var(--accent-soft); display:grid; place-items:center">
+                      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+                    </div>
+                    <div class="col" style="flex:1; line-height:1.3">
+                      <span style="font-weight:700; font-size:15px">1 / 10 cortes</span>
+                      <span class="muted" style="font-size:12.5px">Faltam 9 para um corte grátis</span>
+                    </div>
+                    <div class="progress" style="width:70px">
+                      <span style="width:10%"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- observações -->
+                <div class="col" style="gap:10px">
+                  <div style="font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-3)">Observações</div>
+                  <div style="font-size:13.5px; color:var(--text-2); background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:12px; line-height:1.5">
+                    Prefere agendar sempre no fim da tarde. Gosta de conversar sobre futebol — bom papo pra fidelizar.
+                  </div>
+                </div>
+
+                <!-- histórico -->
+                <div class="col" style="gap:10px">
+                  <div style="font-size:12px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-3)">Histórico de atendimentos</div>
+                  <div class="col" style="gap:0">
+                    <div class="row" style="gap:11px; padding:11px 0; border-bottom:1px solid var(--border)">
+                      <div style="width:3px; align-self:stretch; border-radius:99px; background:#0e9f6e"></div>
+                      <div class="col" style="flex:1; line-height:1.3">
+                        <span style="font-weight:600; font-size:13.5px">Corte + Barba (combo)</span>
+                        <span class="muted" style="font-size:12.5px">Rafa · 06/06</span>
+                      </div>
+                      <span class="tnum" style="font-weight:600; font-size:13.5px">R$70</span>
+                    </div>
+                    <div class="row" style="gap:11px; padding:11px 0; border-bottom:1px solid var(--border)">
+                      <div style="width:3px; align-self:stretch; border-radius:99px; background:#2563eb"></div>
+                      <div class="col" style="flex:1; line-height:1.3">
+                        <span style="font-weight:600; font-size:13.5px">Degradê (Fade)</span>
+                        <span class="muted" style="font-size:12.5px">Rafa · 23/05</span>
+                      </div>
+                      <span class="tnum" style="font-weight:600; font-size:13.5px">R$55</span>
+                    </div>
+                    <div class="row" style="gap:11px; padding:11px 0; border-bottom:1px solid var(--border)">
+                      <div style="width:3px; align-self:stretch; border-radius:99px; background:#0e9f6e"></div>
+                      <div class="col" style="flex:1; line-height:1.3">
+                        <span style="font-weight:600; font-size:13.5px">Corte + Barba (combo)</span>
+                        <span class="muted" style="font-size:12.5px">Diego · 09/05</span>
+                      </div>
+                      <span class="tnum" style="font-weight:600; font-size:13.5px">R$70</span>
+                    </div>
+                    <div class="row" style="gap:11px; padding:11px 0; border-bottom:1px solid var(--border)">
+                      <div style="width:3px; align-self:stretch; border-radius:99px; background:#9333ea"></div>
+                      <div class="col" style="flex:1; line-height:1.3">
+                        <span style="font-weight:600; font-size:13.5px">Barba Completa</span>
+                        <span class="muted" style="font-size:12.5px">Rafa · 25/04</span>
+                      </div>
+                      <span class="tnum" style="font-weight:600; font-size:13.5px">R$35</span>
+                    </div>
+                    <div class="row" style="gap:11px; padding:11px 0">
+                      <div style="width:3px; align-self:stretch; border-radius:99px; background:#0e9f6e"></div>
+                      <div class="col" style="flex:1; line-height:1.3">
+                        <span style="font-weight:600; font-size:13.5px">Corte Masculino</span>
+                        <span class="muted" style="font-size:12.5px">Rafa · 11/04</span>
+                      </div>
+                      <span class="tnum" style="font-weight:600; font-size:13.5px">R$45</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- /drawer body -->
+            </div><!-- /drawer -->
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- modal: novo cliente -->
+    <div id="modalNovoCliente" data-modal-root hidden>
+      <div class="overlay" data-modal-backdrop>
+        <div class="modal">
+          <div class="modal-head">
+            <div class="modal-title">Novo cliente</div>
+            <button class="icon-btn" style="margin-left:auto;width:32px;height:32px" type="button" data-close-modal>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="field">
+              <label>Nome completo *</label>
+              <input class="input" placeholder="Ex: João Silva" autofocus>
+            </div>
+            <div class="field">
+              <label>WhatsApp</label>
+              <input class="input" placeholder="(11) 99999-0000">
+            </div>
+            <div class="field">
+              <label>E-mail</label>
+              <input class="input" placeholder="joao@email.com">
+            </div>
+            <div class="field">
+              <label>Data de nascimento</label>
+              <input class="input" type="date">
+            </div>
+            <div class="field">
+              <label>Observações</label>
+              <textarea class="input" rows="3" placeholder="Preferências, alergias, observações gerais…"></textarea>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <div>
+              <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+              <button class="btn btn-primary" type="button" data-close-modal data-toast="Cliente cadastrado com sucesso">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                Cadastrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Bottom Tab Bar (mobile) ── -->
+    <div class="tn-bottom-bar">
+      <a href="dashboard.html" class="tn-tab" data-route="dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+        <span>Início</span>
+      </a>
+      <a href="agenda.html" class="tn-tab" data-route="agenda">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+        <span>Agenda</span>
+      </a>
+      <a href="clientes.html" class="tn-tab active" data-route="clientes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>Clientes</span>
+      </a>
+      <a href="financeiro.html" class="tn-tab" data-route="financeiro">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span>Financeiro</span>
+      </a>
+      <button class="tn-tab" type="button" data-open-modal="moreSheetRoot">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        <span>Mais</span>
+      </button>
+    </div>
+
+    <!-- ── Sheet "Mais" (mobile) ── -->
+    <div id="moreSheetRoot" data-modal-root hidden>
+      <div class="tn-sheet-overlay" data-modal-backdrop></div>
+      <div class="tn-sheet">
+        <div class="tn-sheet-handle"></div>
+        <a href="servicos.html" class="tn-sheet-item" data-route="servicos">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+          Serviços
+        </a>
+        <a href="equipe.html" class="tn-sheet-item" data-route="equipe">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Equipe
+        </a>
+        <a href="comissoes.html" class="tn-sheet-item" data-route="comissoes">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+          Comissões
+        </a>
+        <a href="estoque.html" class="tn-sheet-item" data-route="estoque">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+          Estoque
+        </a>
+        <a href="fidelidade.html" class="tn-sheet-item" data-route="fidelidade">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+          Fidelidade
+        </a>
+        <a href="central.html" class="tn-sheet-item" data-route="central">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Central
+        </a>
+        <a href="config.html" class="tn-sheet-item" data-route="config">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Configurações
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Drawer de notificações (idêntico em todas as páginas) ── -->
+    <div id="notifDrawer" data-modal-root hidden>
+      <div class="drawer-overlay" data-modal-backdrop></div>
+      <div class="drawer notif-drawer">
+        <div class="drawer-head">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="drawer-title">Notificações</span>
+            <span class="notif-count">5</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <button class="icon-btn" title="Marcar todas como lidas" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            </button>
+            <button class="icon-btn" title="Fechar" type="button" data-close-modal>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+            </button>
+          </div>
+        </div>
+        <div class="notif-list">
+          <div class="notif-card unread">
+            <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Novo agendamento confirmado</div>
+              <div class="notif-desc">Ana Lima — Corte + Escova · hoje às 14h00</div>
+              <div class="notif-time">Há 5 minutos</div>
+            </div>
+            <span class="notif-dot"></span>
+          </div>
+          <div class="notif-card unread">
+            <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Pagamento recebido</div>
+              <div class="notif-desc">R$ 120,00 · Marcos Oliveira · Cartão de crédito</div>
+              <div class="notif-time">Há 18 minutos</div>
+            </div>
+            <span class="notif-dot"></span>
+          </div>
+          <div class="notif-card unread">
+            <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Lembrete: agendamento em 1h</div>
+              <div class="notif-desc">Fernanda Costa — Coloração · 15h30</div>
+              <div class="notif-time">Há 32 minutos</div>
+            </div>
+            <span class="notif-dot"></span>
+          </div>
+          <div class="notif-card unread">
+            <div class="notif-ico notif-ico--cliente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Novo cliente cadastrado</div>
+              <div class="notif-desc">Rafael Souza entrou pela primeira vez</div>
+              <div class="notif-time">Há 1 hora</div>
+            </div>
+            <span class="notif-dot"></span>
+          </div>
+          <div class="notif-card">
+            <div class="notif-ico notif-ico--estoque"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Estoque baixo</div>
+              <div class="notif-desc">Coloração Louro 8.1 — apenas 2 unidades restantes</div>
+              <div class="notif-time">Há 2 horas</div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Agendamento cancelado</div>
+              <div class="notif-desc">Juliana Mendes — Manicure · amanhã 10h00</div>
+              <div class="notif-time">Há 3 horas</div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Pagamento recebido</div>
+              <div class="notif-desc">R$ 85,00 · Carla Dias · Pix</div>
+              <div class="notif-time">Ontem 17h42</div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+            <div class="notif-body">
+              <div class="notif-title">Resumo do dia</div>
+              <div class="notif-desc">12 atendimentos realizados · R$ 1.340 faturados</div>
+              <div class="notif-time">Ontem 18h00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Toast (mensagens de sucesso simuladas) ── -->
+    <div id="toastRoot" hidden></div>
+
+  </div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

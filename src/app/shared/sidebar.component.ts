@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Ou
 import { IconComponent } from '../icon.component';
 import { AvatarComponent } from './avatar.component';
 import { DataService } from '../data.service';
+import { AuthService } from '../auth.service';
 
 interface NavItem { id: string; label: string; icon: string; badge?: string; }
 
@@ -10,7 +11,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
   standalone: true,
   imports: [IconComponent, AvatarComponent],
   template: `
-    <nav class="sidebar">
+    <nav class="sidebar" #nav [class.nav-fill]="preencheBarra">
 
       <div class="tn-brand">
         <div class="tn-logo">
@@ -24,12 +25,13 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
           [class.visible]="indicatorVisible"
           [style.left.px]="indicatorX"
           [style.width.px]="indicatorW"></div>
-        @for (item of ALL_NAV; track item.id; let i = $index) {
+        @for (item of allNavVisiveis; track item.id; let i = $index) {
           <button #btn class="tn-nav-item" [class.active]="active === item.id"
+            [title]="item.label"
             (click)="navigate(item.id)"
             (mouseenter)="hoverItem(i)">
             <app-icon [name]="item.icon" [size]="14"></app-icon>
-            {{ item.label }}
+            <span class="tn-nav-label">{{ item.label }}</span>
             @if (item.badge) {
               <span class="tn-badge">{{ item.badge }}</span>
             }
@@ -38,7 +40,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
       </div>
 
       <div class="tn-end">
-        <button class="tn-icon-btn tn-hide-mobile" title="Buscar">
+        <button class="tn-icon-btn tn-hide-mobile tn-hide-compact" title="Buscar">
           <app-icon name="search" [size]="16"></app-icon>
         </button>
         <button class="tn-icon-btn"
@@ -62,7 +64,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
 
     <!-- ── Bottom Tab Bar (mobile) ── -->
     <div class="tn-bottom-bar">
-      @for (item of BOTTOM_NAV; track item.id) {
+      @for (item of bottomNavVisiveis; track item.id) {
         <button class="tn-tab" [class.active]="active === item.id && !menuOpen"
           (click)="navigate(item.id); menuOpen = false">
           <app-icon [name]="item.icon" [size]="20"></app-icon>
@@ -84,7 +86,7 @@ interface NavItem { id: string; label: string; icon: string; badge?: string; }
       <div class="tn-sheet-overlay" (click)="menuOpen = false"></div>
       <div class="tn-sheet">
         <div class="tn-sheet-handle"></div>
-        @for (item of MORE_NAV; track item.id) {
+        @for (item of moreNavVisiveis; track item.id) {
           <button class="tn-sheet-item" [class.active]="active === item.id"
             (click)="navigate(item.id); menuOpen = false">
             <app-icon [name]="item.icon" [size]="20"
@@ -104,8 +106,11 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   @Output() nav = new EventEmitter<string>();
   @Output() onNotif = new EventEmitter<void>();
 
+  @ViewChild('nav') navEl!: ElementRef<HTMLElement>;
   @ViewChild('container') container!: ElementRef<HTMLElement>;
   @ViewChildren('btn') btns!: QueryList<ElementRef<HTMLElement>>;
+
+  private resizeRaf = 0;
 
   indicatorX = 0;
   indicatorW = 0;
@@ -145,19 +150,41 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
     { id: 'config',       label: 'Configurações', icon: 'settings' },
   ];
 
+  // ---- Filtro por permissão (RBAC) ----
+  // 'central' é a tela do módulo 'relatorios'. 'config' fica sempre acessível
+  // (contém "Minha conta" — self-service; as abas internas são gated no próprio config).
+  podeVer(id: string): boolean {
+    if (id === 'config') return true;
+    const modulo = id === 'central' ? 'relatorios' : id;
+    return this.auth.canView(modulo);
+  }
+  get allNavVisiveis(): NavItem[] { return this.ALL_NAV.filter(i => this.podeVer(i.id)); }
+
+  /** A partir de 8 telas liberadas, os botões crescem para preencher a barra e
+   *  escalam com a largura da tela. Com menos, ficam no tamanho natural, lado a lado. */
+  private readonly MIN_TELAS_PREENCHER = 8;
+  get preencheBarra(): boolean { return this.allNavVisiveis.length >= this.MIN_TELAS_PREENCHER; }
+  get bottomNavVisiveis(): NavItem[] { return this.BOTTOM_NAV.filter(i => this.podeVer(i.id)); }
+  get moreNavVisiveis(): NavItem[] { return this.MORE_NAV.filter(i => this.podeVer(i.id)); }
+
   get isMoreActive(): boolean {
-    return this.MORE_NAV.some(i => i.id === this.active);
+    return this.moreNavVisiveis.some(i => i.id === this.active);
   }
 
   get brandName(): string { return this.data.estabelecimento.nome.split(' ')[0]; }
 
-  constructor(public data: DataService) {
+  constructor(public data: DataService, public auth: AuthService) {
     const saved = localStorage.getItem('app-theme');
     this.theme = saved === 'light' ? 'light' : 'dark';
     this.applyTheme();
   }
 
-  ngAfterViewInit() { this.moveIndicator(); }
+  ngAfterViewInit() {
+    this.fit();
+    // Reajusta quando a fonte (Inter) termina de carregar — a largura dos
+    // rótulos muda e o ponto de colapso precisa ser recalculado.
+    (document as any).fonts?.ready?.then(() => this.fit());
+  }
 
   ngOnChanges(c: SimpleChanges) {
     if (c['active']) {
@@ -169,6 +196,39 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   @HostListener('window:resize')
   onResize() {
     if (window.innerWidth > 768) this.menuOpen = false;
+    // Debounce por frame para não medir layout a cada pixel do resize.
+    cancelAnimationFrame(this.resizeRaf);
+    this.resizeRaf = requestAnimationFrame(() => this.fit());
+  }
+
+  /**
+   * Colapso progressivo da barra: mede o overflow real dos itens e escolhe o
+   * modo mais rico que ainda cabe — 'full' (marca + rótulos + ícones extras),
+   * depois 'compact' (rótulos, sem marca-texto/ícones secundários) e por fim
+   * 'icons' (só ícones). Baseado em medição, é imune a fonte/zoom/idioma.
+   */
+  private fit() {
+    const nav = this.navEl?.nativeElement;
+    const groups = this.container?.nativeElement;
+    if (!nav || !groups) return;
+
+    // No mobile os itens ficam escondidos (bottom bar assume) — nada a medir.
+    if (getComputedStyle(groups).display === 'none') {
+      nav.classList.remove('nav-compact', 'nav-icons');
+      return;
+    }
+
+    const overflows = () => groups.scrollWidth > groups.clientWidth + 1;
+
+    nav.classList.remove('nav-compact', 'nav-icons');
+    if (overflows()) {
+      nav.classList.add('nav-compact');
+      if (overflows()) {
+        nav.classList.remove('nav-compact');
+        nav.classList.add('nav-icons');
+      }
+    }
+    this.moveIndicator();
   }
 
   navigate(id: string) { this.nav.emit(id); }
@@ -185,17 +245,15 @@ export class SidebarComponent implements OnChanges, AfterViewInit {
   }
 
   resetIndicator() {
-    const idx = this.ALL_NAV.findIndex(i => i.id === this.active);
+    // Índice na lista VISÍVEL (filtrada por permissão) — é ela que gera os botões.
+    const idx = this.allNavVisiveis.findIndex(i => i.id === this.active);
     const btns = this.btns?.toArray();
     if (idx >= 0 && btns?.[idx]) this.placeIndicatorOn(btns[idx].nativeElement);
+    else this.indicatorVisible = false;   // rota atual fora da barra (ex.: config)
   }
 
   private moveIndicator() {
-    setTimeout(() => {
-      const idx = this.ALL_NAV.findIndex(i => i.id === this.active);
-      const btns = this.btns?.toArray();
-      if (idx >= 0 && btns?.[idx]) this.placeIndicatorOn(btns[idx].nativeElement);
-    });
+    setTimeout(() => this.resetIndicator());
   }
 
   private placeIndicatorOn(el: HTMLElement) {

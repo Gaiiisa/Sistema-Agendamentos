@@ -1,9 +1,10 @@
 /* App shell — navegação + modal de novo agendamento */
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { DataService, Appt } from './data.service';
 import { AuthService } from './auth.service';
+import { ToastService } from './toast.service';
 import { IconComponent } from './icon.component';
 import { SidebarComponent } from './shared/sidebar.component';
 import { TopbarComponent } from './shared/topbar.component';
@@ -58,13 +59,20 @@ const TITLES: { [k: string]: [string, string] } = {
       <app-login (success)="onLogin()"></app-login>
     } @else {
     <div class="app">
-      <app-sidebar [active]="route" (nav)="route = $event" (onNotif)="showNotif = true"></app-sidebar>
+      <app-sidebar [active]="route" (nav)="navegar($event)" (onNotif)="showNotif = true"></app-sidebar>
       <div class="main">
         <app-topbar [title]="title" [sub]="sub" [newLabel]="newLabel" (onNew)="handleNew()"></app-topbar>
         <div class="content">
+          @if (data.apiOffline) {
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;margin-bottom:16px;border-radius:var(--r-md);background:var(--st-faltou-bg);border:1px solid var(--st-faltou);color:var(--st-faltou);font-weight:600;font-size:13.5px">
+              <app-icon name="alert" [size]="17" [stroke]="2.5"></app-icon>
+              <span>Sem conexão com o servidor — exibindo dados de exemplo. Alterações não serão salvas.</span>
+            </div>
+          }
+          @if (podeVerRota(route)) {
           @switch (route) {
             @case ('dashboard') {
-              <app-dashboard (onNew)="showNew = true" (onNav)="route = $event" (onOpen)="openAppt = $event"></app-dashboard>
+              <app-dashboard (onNew)="showNew = true" (onNav)="navegar($event)" (onOpen)="openAppt = $event"></app-dashboard>
             }
             @case ('agenda') {
               <app-agenda [appts]="appts" [initialProfFilter]="pendingProfFilter" (onOpen)="openAppt = $event" (onNew)="showNew = true" (onOpenCliente)="goCliente($event)"></app-agenda>
@@ -84,6 +92,13 @@ const TITLES: { [k: string]: [string, string] } = {
               <app-coming-soon [title]="TITLES[route] ? TITLES[route][0] : 'Em breve'"></app-coming-soon>
             }
           }
+          } @else {
+            <div style="max-width:440px;margin:48px auto;text-align:center;color:var(--text-2)">
+              <app-icon name="alert" [size]="34" [stroke]="1.6" style="color:var(--st-faltou)"></app-icon>
+              <div style="font-weight:700;font-size:16px;margin:12px 0 4px;color:var(--text-1)">Acesso restrito</div>
+              <div style="font-size:13.5px">Você não tem permissão para ver este módulo. Fale com o administrador.</div>
+            </div>
+          }
         </div>
       </div>
 
@@ -99,7 +114,7 @@ const TITLES: { [k: string]: [string, string] } = {
       @if (toast) {
         <div [ngStyle]="toastStyle">
           <div style="width:20px;height:20px;border-radius:99px;background:rgba(255,255,255,0.18);display:grid;place-items:center">
-            <app-icon name="check" [size]="13" [stroke]="3" style="color:#fff"></app-icon>
+            <app-icon [name]="toastType === 'error' ? 'alert' : 'check'" [size]="13" [stroke]="3" style="color:#fff"></app-icon>
           </div>
           {{ toast }}
         </div>
@@ -107,7 +122,7 @@ const TITLES: { [k: string]: [string, string] } = {
     </div>
     }`,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   readonly TITLES = TITLES;
 
   @ViewChild('servicosRef') servicosRef?: any;
@@ -118,12 +133,13 @@ export class AppComponent {
 
   get loggedIn() { return this.auth.authenticated; }
   route = 'dashboard';
-  appts: Appt[] = this.data.hoje.map(a => ({ ...a }));
+  get appts(): Appt[] { return this.data.hoje; }
   showNew = false;
   showNotif = false;
   openAppt: Appt | null = null;
   clienteId: string | null = null;
   toast: string | null = null;
+  toastType: 'ok' | 'error' = 'ok';
   pendingProfFilter: string | null = null;
 
   private toastTimer: any = null;
@@ -137,7 +153,11 @@ export class AppComponent {
     fidelidade:    'Nova campanha',
   };
 
-  get newLabel() { return this.NEW_LABELS[this.route] || ''; }
+  /** Botão "Novo …" do topo só aparece para quem pode criar no módulo atual. */
+  get newLabel() {
+    const label = this.NEW_LABELS[this.route];
+    return label && this.auth.can(this.route, 'criar') ? label : '';
+  }
 
   handleNew() {
     switch (this.route) {
@@ -153,24 +173,57 @@ export class AppComponent {
 
   get toastStyle() {
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+    const isError = this.toastType === 'error';
     return {
       position: 'fixed',
       bottom: isMobile ? 'calc(76px + env(safe-area-inset-bottom, 0px))' : '24px',
       left: '50%', transform: 'translateX(-50%)',
       maxWidth: 'min(92vw, 480px)',
-      background: 'var(--accent)', color: 'var(--on-accent)', padding: '11px 18px', border: 'none',
+      background: isError ? 'var(--st-faltou)' : 'var(--accent)',
+      color: '#fff', padding: '11px 18px', border: 'none',
       borderRadius: 'var(--r-md)', boxShadow: 'var(--sh-pop)', zIndex: '200',
       display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600', fontSize: '14px',
       animation: 'pop .2s ease',
     };
   }
 
-  constructor(public data: DataService, private auth: AuthService) {}
+  constructor(public data: DataService, public auth: AuthService, toast: ToastService) {
+    // Falhas de gravação e outros avisos vindos de serviços sem UI própria (BUG-01).
+    toast.messages$.subscribe(m => this.notify(m.msg, m.type));
+  }
+
+  ngOnInit() {
+    // No boot (F5 com sessão restaurada), aponta para a primeira rota permitida.
+    if (this.loggedIn) this.route = this.rotaInicial();
+  }
+
+  /** Módulos que o usuário pode navegar, na ordem do menu. */
+  private readonly ROTAS_MODULO = ['dashboard', 'agenda', 'clientes', 'servicos', 'equipe', 'financeiro', 'comissoes', 'estoque', 'fidelidade', 'central'];
+
+  /** Pode ver a rota? 'central' = módulo 'relatorios'; 'config'/'soon' são livres (self-service / placeholder). */
+  podeVerRota(r: string): boolean {
+    if (r === 'config' || r === 'soon') return true;
+    const modulo = r === 'central' ? 'relatorios' : r;
+    if (!this.ROTAS_MODULO.includes(r)) return true;   // rotas fora do catálogo não são gated
+    return this.auth.canView(modulo);
+  }
+
+  /** Primeira rota permitida (dashboard se puder; senão o primeiro módulo liberado; senão config). */
+  private rotaInicial(): string {
+    if (this.podeVerRota('dashboard')) return 'dashboard';
+    const primeira = this.ROTAS_MODULO.find(r => this.podeVerRota(r));
+    return primeira || 'config';
+  }
+
+  /** Navegação central com verificação de permissão (guard de rota). */
+  navegar(r: string) {
+    if (!this.podeVerRota(r)) { this.notify('Você não tem permissão para acessar este módulo.', 'error'); return; }
+    this.route = r;
+  }
 
   /** Pós-login: dados já foram carregados pela tela de login; sincroniza a timeline. */
   onLogin() {
-    this.appts = this.data.hoje.map(a => ({ ...a }));
-    this.route = 'dashboard';
+    this.route = this.rotaInicial();
   }
 
   /** Encerra a sessão e volta para a tela de login. */
@@ -184,16 +237,19 @@ export class AppComponent {
   get title() { return (TITLES[this.route] || ['', ''])[0]; }
   get sub() { return (TITLES[this.route] || ['', ''])[1]; }
 
-  notify(msg: string) {
+  notify(msg: string, type: 'ok' | 'error' = 'ok') {
     this.toast = msg;
+    this.toastType = type;
     if (this.toastTimer) clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => (this.toast = null), 2600);
+    this.toastTimer = setTimeout(() => (this.toast = null), type === 'error' ? 4000 : 2600);
   }
 
   addAppt(d: Partial<Appt>) {
-    const id = 'a' + (this.appts.length + 100);
-    this.appts = [...this.appts, { id, ...d } as Appt];
-    this.data.persistAppt({ id, ...d });
+    // ID único (não baseado em length, que colidiria após remoções — BUG-10).
+    const id = 'an' + Date.now();
+    const appt = { id, status: 'pendente', sinal: false, ...d } as Appt;
+    // O serviço atualiza as listas compartilhadas e persiste o agendamento.
+    this.data.persistAppt(appt);
     this.showNew = false;
     this.notify('Agendamento criado para ' + this.data.cli(d.cli!).nome);
     if (this.route !== 'agenda') this.route = 'agenda';

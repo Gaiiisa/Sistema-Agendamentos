@@ -48,6 +48,17 @@ CREATE TABLE estabelecimentos (
   exige_sinal_padrao BOOLEAN NOT NULL DEFAULT FALSE,
   sinal_tipo  ENUM('valor', 'percentual') NOT NULL DEFAULT 'percentual',
   sinal_valor NUMERIC(10,2) NOT NULL DEFAULT 0,        -- R$ ou % conforme sinal_tipo
+  -- pagamentos (tela Configurações › Pagamentos)
+  aceita_pix      BOOLEAN NOT NULL DEFAULT TRUE,
+  aceita_debito   BOOLEAN NOT NULL DEFAULT TRUE,
+  aceita_credito  BOOLEAN NOT NULL DEFAULT TRUE,
+  aceita_dinheiro BOOLEAN NOT NULL DEFAULT TRUE,
+  aceita_fiado    BOOLEAN NOT NULL DEFAULT FALSE,
+  pix_tipo    VARCHAR(20),                             -- CPF/CNPJ, E-mail, Telefone, Aleatória
+  pix_chave   VARCHAR(255),
+  pix_nome    VARCHAR(255),
+  repassa_taxa_cartao BOOLEAN NOT NULL DEFAULT FALSE,
+  taxa_cartao_pct     NUMERIC(5,2) NOT NULL DEFAULT 0,
   criado_em   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -137,14 +148,30 @@ CREATE TABLE usuarios (
   email              VARCHAR(255) NOT NULL,
   senha_hash         TEXT NOT NULL,                       -- bcrypt (nunca senha em texto puro)
   papel              ENUM('dono', 'admin', 'gerente', 'profissional', 'recepcao') NOT NULL DEFAULT 'profissional',
+  -- nível de acesso: master (desenvolvedor, único) > ceo (dono) > usuario (permissões granulares)
+  nivel              ENUM('master', 'ceo', 'usuario') NOT NULL DEFAULT 'usuario',
+  criado_por         CHAR(36) NULL,                        -- quem criou a conta (CEO só vê as que criou)
   ativo              BOOLEAN NOT NULL DEFAULT TRUE,        -- status: inativo/bloqueado não loga
   cor                VARCHAR(7),
   profissional_id    CHAR(36),
   criado_em          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   atualizado_em      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  ultimo_acesso      DATETIME NULL,                        -- último login bem-sucedido
   UNIQUE (estabelecimento_id, email),                  -- email único por estabelecimento (multi-tenant)
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE,
-  FOREIGN KEY (profissional_id) REFERENCES profissionais(id) ON DELETE SET NULL
+  FOREIGN KEY (profissional_id) REFERENCES profissionais(id) ON DELETE SET NULL,
+  CONSTRAINT fk_usuarios_criado_por FOREIGN KEY (criado_por) REFERENCES usuarios(id) ON DELETE SET NULL
+);
+
+-- Permissões granulares por (usuário, módulo, ação). Presença da linha = concedida.
+-- Contas de nível master/ceo ignoram esta tabela (têm acesso total).
+CREATE TABLE usuario_permissoes (
+  usuario_id CHAR(36)    NOT NULL,
+  modulo     VARCHAR(40) NOT NULL,
+  acao       VARCHAR(30) NOT NULL,
+  criado_em  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, modulo, acao),
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
 -- ============================================================
@@ -517,7 +544,7 @@ CREATE TABLE modelos_mensagem (
   canal              ENUM('whatsapp', 'email', 'sms', 'app') NOT NULL DEFAULT 'whatsapp',
   assunto            VARCHAR(255),                           -- usado quando canal = email
   texto              TEXT NOT NULL,
-  status             ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
+  status             ENUM('ativo', 'inativo', 'rascunho') NOT NULL DEFAULT 'ativo',
   FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id) ON DELETE CASCADE
 );
 

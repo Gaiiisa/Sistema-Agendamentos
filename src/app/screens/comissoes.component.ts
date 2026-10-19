@@ -6,11 +6,12 @@ import { ModalComponent } from '../shared/modal.component';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
 import { ExportService } from '../export.service';
+import { PIPES } from '../shared/pipes';
 
 @Component({
   selector: 'app-comissoes',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, ModalComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, ModalComponent, ...PIPES],
   template: `
 <div class="page">
 
@@ -35,7 +36,7 @@ import { ExportService } from '../export.service';
         <app-icon name="coins" [size]="21" style="color:var(--accent)"></app-icon>
       </div>
       <div class="col">
-        <div class="stat-val tnum" style="font-size:23px">{{ data.money(totalComissao) }}</div>
+        <div class="stat-val tnum" style="font-size:23px">{{ totalComissao | brl }}</div>
         <div class="stat-label">Total em comissões</div>
       </div>
     </div>
@@ -45,7 +46,7 @@ import { ExportService } from '../export.service';
         <app-icon name="clock" [size]="21" style="color:var(--st-pendente)"></app-icon>
       </div>
       <div class="col">
-        <div class="stat-val tnum" style="font-size:23px">{{ data.money(aPagar) }}</div>
+        <div class="stat-val tnum" style="font-size:23px">{{ aPagar | brl }}</div>
         <div class="stat-label">A pagar</div>
       </div>
     </div>
@@ -55,7 +56,7 @@ import { ExportService } from '../export.service';
         <app-icon name="check" [size]="21" style="color:var(--st-atendimento)"></app-icon>
       </div>
       <div class="col">
-        <div class="stat-val tnum" style="font-size:23px">{{ data.money(pago) }}</div>
+        <div class="stat-val tnum" style="font-size:23px">{{ pago | brl }}</div>
         <div class="stat-label">Já pago</div>
       </div>
     </div>
@@ -85,11 +86,11 @@ import { ExportService } from '../export.service';
         <div class="row" style="gap:10px">
           <div class="col" style="flex:1;background:var(--surface-2);border-radius:var(--r-md);padding:10px 13px">
             <span class="muted" style="font-size:11.5px">Faturou</span>
-            <span class="tnum" style="font-weight:700;font-size:16px">{{ data.money(d.bruto) }}</span>
+            <span class="tnum" style="font-weight:700;font-size:16px">{{ d.bruto | brl }}</span>
           </div>
           <div class="col" style="flex:1;background:var(--accent-soft);border-radius:var(--r-md);padding:10px 13px">
             <span style="font-size:11.5px;color:var(--accent-text)">Comissão</span>
-            <span class="tnum" style="font-weight:800;font-size:16px;color:var(--accent-text)">{{ data.money(d.comissao) }}</span>
+            <span class="tnum" style="font-weight:800;font-size:16px;color:var(--accent-text)">{{ d.comissao | brl }}</span>
           </div>
         </div>
 
@@ -101,8 +102,8 @@ import { ExportService } from '../export.service';
               <span [style.width.px]="7" [style.height.px]="7" [style.borderRadius.px]="2"
                     [style.background]="data.srv(it.srv).cor" style="flex-shrink:0"></span>
               <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1">{{ data.srv(it.srv).nome }}</span>
-              <span class="muted" style="font-size:11.5px">{{ data.fmtData(it.data) }}</span>
-              <span class="tnum" style="font-weight:600">{{ data.money(it.valor) }}</span>
+              <span class="muted" style="font-size:11.5px">{{ it.data | dataBR:'curta' }}</span>
+              <span class="tnum" style="font-weight:600">{{ it.valor | brl }}</span>
             </div>
           }
           @if (d.c.itens.length > 3) {
@@ -123,7 +124,7 @@ import { ExportService } from '../export.service';
           @if (d.c.status === 'aberto') {
             <button class="btn btn-primary btn-sm" style="flex:1"
               (click)="notify.emit('Comissão de ' + d.p.apelido + ' marcada como paga')">
-              <app-icon name="check" [size]="14"></app-icon> Pagar {{ data.money(d.comissao) }}
+              <app-icon name="check" [size]="14"></app-icon> Pagar {{ d.comissao | brl }}
             </button>
           } @else {
             <button class="btn btn-subtle btn-sm" style="flex:1" disabled>Quitado</button>
@@ -167,11 +168,11 @@ import { ExportService } from '../export.service';
           <tbody>
             @for (it of recibo.c.itens; track $index) {
               <tr>
-                <td class="mono" style="font-size:12.5px">{{ data.fmtData(it.data) }}</td>
+                <td class="mono" style="font-size:12.5px">{{ it.data | dataBR:'curta' }}</td>
                 <td>{{ data.cli(it.cli).nome.split(' ')[0] }}</td>
                 <td>{{ data.srv(it.srv).nome }}</td>
-                <td class="tnum">{{ data.money(it.valor) }}</td>
-                <td class="tnum" style="font-weight:600">{{ data.money(calcComissaoItem(it.valor, recibo.p.comissao)) }}</td>
+                <td class="tnum">{{ it.valor | brl }}</td>
+                <td class="tnum" style="font-weight:600">{{ calcComissaoItem(it.valor, recibo.p.comissao) | brl }}</td>
               </tr>
             }
           </tbody>
@@ -180,7 +181,7 @@ import { ExportService } from '../export.service';
 
       <div class="row" style="padding:12px 14px;background:var(--accent-soft);border-radius:var(--r-md)">
         <span style="font-weight:700;color:var(--accent-text)">Total a receber</span>
-        <span class="tnum" style="margin-left:auto;font-weight:800;font-size:18px;color:var(--accent-text)">{{ data.money(recibo.comissao) }}</span>
+        <span class="tnum" style="margin-left:auto;font-weight:800;font-size:18px;color:var(--accent-text)">{{ recibo.comissao | brl }}</span>
       </div>
 
       <div modalFoot>
@@ -216,7 +217,7 @@ import { ExportService } from '../export.service';
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
         <div style="background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px">
           <div class="muted" style="font-size:11.5px">Total recebido</div>
-          <div class="tnum" style="font-weight:800;font-size:15px;color:var(--accent-text)">{{ data.money(histTotalProf) }}</div>
+          <div class="tnum" style="font-weight:800;font-size:15px;color:var(--accent-text)">{{ histTotalProf | brl }}</div>
         </div>
         <div style="background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px">
           <div class="muted" style="font-size:11.5px">Atendimentos</div>
@@ -224,7 +225,7 @@ import { ExportService } from '../export.service';
         </div>
         <div style="background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px">
           <div class="muted" style="font-size:11.5px">Média / período</div>
-          <div class="tnum" style="font-weight:800;font-size:15px">{{ data.money(histMediaProf) }}</div>
+          <div class="tnum" style="font-weight:800;font-size:15px">{{ histMediaProf | brl }}</div>
         </div>
       </div>
 
@@ -246,9 +247,9 @@ import { ExportService } from '../export.service';
               <tr>
                 <td style="font-weight:600;font-size:13px">{{ h.periodo }}</td>
                 <td class="tnum muted" style="text-align:center;font-size:13px">{{ h.atendimentos }}</td>
-                <td class="tnum" style="text-align:right;font-size:13px">{{ data.money(h.bruto) }}</td>
-                <td class="tnum" style="text-align:right;font-weight:700;color:var(--accent-text)">{{ data.money(h.comissao) }}</td>
-                <td class="mono muted" style="font-size:12.5px">{{ h.dataPagamento ? data.fmtDataFull(h.dataPagamento) : '—' }}</td>
+                <td class="tnum" style="text-align:right;font-size:13px">{{ h.bruto | brl }}</td>
+                <td class="tnum" style="text-align:right;font-weight:700;color:var(--accent-text)">{{ h.comissao | brl }}</td>
+                <td class="mono muted" style="font-size:12.5px">{{ h.dataPagamento | dataBR:'ano2' }}</td>
                 <td>
                   @if (h.formaPagamento) {
                     <span class="tag" style="border-color:transparent"
@@ -273,7 +274,7 @@ import { ExportService } from '../export.service';
 
       <div class="row" style="padding:12px 14px;background:var(--accent-soft);border-radius:var(--r-md)">
         <span style="font-weight:700;color:var(--accent-text)">Total recebido (histórico)</span>
-        <span class="tnum" style="margin-left:auto;font-weight:800;font-size:18px;color:var(--accent-text)">{{ data.money(histTotalProf) }}</span>
+        <span class="tnum" style="margin-left:auto;font-weight:800;font-size:18px;color:var(--accent-text)">{{ histTotalProf | brl }}</span>
       </div>
 
       <div modalFoot>
@@ -297,8 +298,8 @@ export class ComissoesComponent {
   historico: any = null;
 
   readonly FORMA_LABEL: any = { pix: 'Pix', dinheiro: 'Dinheiro', cartao: 'Cartão' };
-  readonly FORMA_COR: any = { pix: 'var(--st-atendimento)', dinheiro: 'var(--accent)', cartao: '#7c3aed' };
-  readonly FORMA_BG: any = { pix: 'var(--st-atendimento-bg)', dinheiro: 'var(--accent-soft)', cartao: '#ede9fe' };
+  readonly FORMA_COR: any = { pix: 'var(--st-atendimento)', dinheiro: 'var(--accent)', cartao: 'var(--violet)' };
+  readonly FORMA_BG: any = { pix: 'var(--st-atendimento-bg)', dinheiro: 'var(--accent-soft)', cartao: 'var(--violet-soft)' };
 
   constructor(public data: DataService, private auth: AuthService, private exportSvc: ExportService) {}
 
@@ -397,7 +398,7 @@ export class ComissoesComponent {
   get dados() {
     const totalItens = this.data.staff.reduce(
       (s, p) => s + (this.data.comissoes[p.id]?.itens.length || 0), 0);
-    const key = `${this.periodo}|${totalItens}`;
+    const key = `${this.periodo}|${this.data.revision}|${totalItens}|${this.data.staff.map(p => p.comissao).join(',')}`;
     if (this._dadosCache && this._dadosKey === key) return this._dadosCache;
     const { ini, fim } = this.periodRange();
     this._dadosCache = this.data.staff.map(p => this.calcInRange(p.id, ini, fim));

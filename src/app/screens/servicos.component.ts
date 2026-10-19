@@ -8,11 +8,15 @@ import { ModalComponent } from '../shared/modal.component';
 import { CheckboxComponent } from '../shared/checkbox.component';
 import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService, Servico, Staff } from '../data.service';
+import { ToastService } from '../toast.service';
+import { CampoErroComponent } from '../shared/campo-erro.component';
+import { PIPES } from '../shared/pipes';
+import { V, validar, temErros, Erros } from '../shared/validacao';
 
 @Component({
   selector: 'app-servicos',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, MenuComponent, ModalComponent, CheckboxComponent, SelectComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, MenuComponent, ModalComponent, CheckboxComponent, SelectComponent, CampoErroComponent, ...PIPES],
   template: `
     <div class="page">
       <div class="row" style="margin-bottom:16px;flex-wrap:wrap;gap:10px">
@@ -63,7 +67,7 @@ import { DataService, Servico, Staff } from '../data.service';
             <!-- faixa de cor / "foto" -->
             <div
               [style.height.px]="96"
-              [style.background]="'linear-gradient(135deg, color-mix(in oklch, ' + s.cor + ' 18%, #ffffff), color-mix(in oklch, ' + s.cor + ' 8%, #ffffff))'"
+              [style.background]="'linear-gradient(135deg, color-mix(in oklch, ' + s.cor + ' 18%, var(--surface)), color-mix(in oklch, ' + s.cor + ' 8%, var(--surface)))'"
               style="position:relative;display:grid;place-items:center">
 
               <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
@@ -102,11 +106,11 @@ import { DataService, Servico, Staff } from '../data.service';
 
               <div class="row" style="gap:16px;padding-top:4px">
                 <div class="col">
-                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ data.money(s.preco) }}</span>
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">{{ s.preco | brl }}</span>
                   <span class="muted" style="font-size:11.5px">
                     preço
                     @if (s.combo && economiaCombo(s) > 0) {
-                      · <span style="color:var(--accent-text);font-weight:600">economiza {{ data.money(economiaCombo(s)) }}</span>
+                      · <span style="color:var(--accent-text);font-weight:600">economiza {{ economiaCombo(s) | brl }}</span>
                     }
                   </span>
                 </div>
@@ -150,32 +154,38 @@ import { DataService, Servico, Staff } from '../data.service';
 
           <div class="row" style="gap:12px;flex-wrap:wrap">
             <div class="field" style="flex:1;min-width:160px">
-              <label>Nome</label>
-              <input class="input" [(ngModel)]="draft.nome" placeholder="Nome do serviço">
+              <label>Nome<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['nome']" [(ngModel)]="draft.nome" placeholder="Nome do serviço" maxlength="80">
+              <app-campo-erro [msg]="erros['nome']"></app-campo-erro>
             </div>
             <div class="field" style="min-width:140px">
-              <label>Categoria</label>
-              <app-select [(ngModel)]="draft.cat" [options]="catOptions" [allowCreate]="true" placeholder="Ex: Cabelo"></app-select>
+              <label>Categoria<span class="req">*</span></label>
+              <app-select [class.invalid]="erros['cat']" [(ngModel)]="draft.cat" [options]="catOptions" [allowCreate]="true" placeholder="Ex: Cabelo"></app-select>
+              <app-campo-erro [msg]="erros['cat']"></app-campo-erro>
             </div>
           </div>
 
           <div class="field">
             <label>Descrição</label>
-            <input class="input" [(ngModel)]="draft.desc" placeholder="Breve descrição do serviço">
+            <input class="input" [class.invalid]="erros['desc']" [(ngModel)]="draft.desc" placeholder="Breve descrição do serviço" maxlength="255">
+            <app-campo-erro [msg]="erros['desc']"></app-campo-erro>
           </div>
 
           <div class="row" style="gap:12px;flex-wrap:wrap">
             <div class="field" style="flex:1;min-width:100px">
-              <label>Duração (min)</label>
-              <input class="input" type="number" [(ngModel)]="draft.dur" min="1">
+              <label>Duração (min)<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['dur']" type="number" [(ngModel)]="draft.dur" min="5" max="600" step="5">
+              <app-campo-erro [msg]="erros['dur']"></app-campo-erro>
             </div>
             <div class="field" style="flex:1;min-width:100px">
-              <label>Preço (R$)</label>
-              <input class="input" type="number" [(ngModel)]="draft.preco" min="0" step="0.01">
+              <label>Preço (R$)<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['preco']" type="number" [(ngModel)]="draft.preco" min="0" step="0.01">
+              <app-campo-erro [msg]="erros['preco']"></app-campo-erro>
             </div>
             <div class="field" style="flex:1;min-width:100px">
               <label>Custo (R$)</label>
-              <input class="input" type="number" [(ngModel)]="draft.custo" min="0" step="0.01">
+              <input class="input" [class.invalid]="erros['custo']" type="number" [(ngModel)]="draft.custo" min="0" step="0.01">
+              <app-campo-erro [msg]="erros['custo']"></app-campo-erro>
             </div>
           </div>
 
@@ -195,31 +205,33 @@ import { DataService, Servico, Staff } from '../data.service';
                     [style.borderColor]="draftItens.includes(s.id) ? s.cor : 'var(--border)'">
                     <span [style.background]="s.cor" style="width:8px;height:8px;border-radius:99px"></span>
                     {{ s.nome }}
-                    <span class="muted tnum" style="font-size:11.5px">{{ data.money(s.preco) }} · {{ s.dur }}min</span>
+                    <span class="muted tnum" style="font-size:11.5px">{{ s.preco | brl }} · {{ s.dur | duracao }}</span>
                   </button>
                 }
               </div>
               @if (draftItens.length) {
                 <div class="row" style="margin-top:10px;padding:10px 12px;background:var(--surface-2);border-radius:var(--r-md);gap:16px;font-size:12.5px">
-                  <div class="col"><span class="muted">Soma dos itens</span><span class="tnum" style="font-weight:700">{{ data.money(somaItens()) }} · {{ duracaoItens() }}min</span></div>
+                  <div class="col"><span class="muted">Soma dos itens</span><span class="tnum" style="font-weight:700">{{ somaItens() | brl }} · {{ duracaoItens() | duracao }}</span></div>
                   @if (draft.preco && draft.preco < somaItens()) {
-                    <div class="col" style="margin-left:auto;align-items:flex-end"><span class="muted">Economia do combo</span><span class="tnum" style="font-weight:700;color:var(--accent-text)">{{ data.money(somaItens() - (draft.preco || 0)) }}</span></div>
+                    <div class="col" style="margin-left:auto;align-items:flex-end"><span class="muted">Economia do combo</span><span class="tnum" style="font-weight:700;color:var(--accent-text)">{{ somaItens() - (draft.preco || 0) | brl }}</span></div>
                   }
                 </div>
               }
+              <app-campo-erro [msg]="erros['itens']"></app-campo-erro>
             </div>
           }
 
           @if (draft.sinal) {
             <div class="field" style="max-width:220px">
               <label>% de sinal deste serviço</label>
-              <input class="input" type="number" min="0" max="100" [ngModel]="draft.sinalPct ?? null" (ngModelChange)="draft.sinalPct = $event === null || $event === '' ? undefined : +$event" [placeholder]="'Padrão do sistema: ' + sinalPadrao + '%'">
+              <input class="input" [class.invalid]="erros['sinalPct']" type="number" min="1" max="100" [ngModel]="draft.sinalPct ?? null" (ngModelChange)="draft.sinalPct = $event === null || $event === '' ? undefined : +$event" [placeholder]="'Padrão do sistema: ' + sinalPadrao + '%'">
+              <app-campo-erro [msg]="erros['sinalPct']"></app-campo-erro>
               <span class="muted" style="font-size:11.5px;margin-top:4px">Deixe em branco para usar o padrão global das Configurações.</span>
             </div>
           }
 
           <div class="field">
-            <label>Profissionais que executam</label>
+            <label>Profissionais que executam<span class="req">*</span></label>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
               @for (p of data.staff; track p.id) {
                 <button type="button" (click)="toggleExec(p.id)"
@@ -231,6 +243,7 @@ import { DataService, Servico, Staff } from '../data.service';
                 </button>
               }
             </div>
+            <app-campo-erro [msg]="erros['exec']"></app-campo-erro>
           </div>
 
         </div>
@@ -257,7 +270,7 @@ export class ServicosComponent {
   criandoCategoria = false;
   novaCategoria = '';
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private toast: ToastService) {}
 
   get cats(): string[] {
     return ['todas', ...this.allCats];
@@ -338,6 +351,7 @@ export class ServicosComponent {
   closeModal() {
     this.modalAberto = false;
     this.editando = null;
+    this.enviado = false;
   }
 
   toggleExec(id: string) {
@@ -346,7 +360,31 @@ export class ServicosComponent {
     else this.draftExec.push(id);
   }
 
+  /** Liga a exibição dos erros após a 1ª tentativa de salvar; depois revalida a cada digitação. */
+  enviado = false;
+
+  get erros(): Erros {
+    if (!this.enviado) return {};
+    const d = this.draft;
+    const nomeDup = !!d.nome?.trim() && this.data.servicos.some(s =>
+      s.id !== this.editando?.id && s.nome.trim().toLowerCase() === d.nome!.trim().toLowerCase());
+    return validar({
+      nome: [V.obrigatorio(d.nome), V.tamanho(d.nome, 2, 80), V.se(nomeDup, 'Já existe um serviço com esse nome.')],
+      cat: [V.obrigatorio(d.cat, 'Escolha ou crie uma categoria.'), V.tamanho(d.cat, 2, 40)],
+      desc: [V.tamanho(d.desc, 0, 255)],
+      dur: [V.obrigatorio(d.dur), V.numero(d.dur, { min: 5, max: 600, inteiro: true })],
+      preco: [V.obrigatorio(d.preco), V.dinheiro(d.preco, { max: 100000 })],
+      custo: [V.dinheiro(d.custo, { max: 100000 }),
+        V.se(Number(d.custo) > Number(d.preco), 'O custo não pode ser maior que o preço.')],
+      itens: [V.se(!!d.combo && this.draftItens.length < 2, 'Um combo precisa de pelo menos 2 serviços.')],
+      sinalPct: [d.sinal ? V.numero(d.sinalPct, { min: 1, max: 100, inteiro: true }) : null],
+      exec: [V.se(!this.draftExec.length, 'Selecione ao menos um profissional.')],
+    });
+  }
+
   salvar() {
+    this.enviado = true;
+    if (temErros(this.erros)) { this.toast.error('Corrija os campos destacados.'); return; }
     const payload: Partial<Servico> = {
       ...this.draft,
       exec: this.draftExec,
@@ -374,6 +412,7 @@ export class ServicosComponent {
   salvarCategoria() {
     const nome = this.novaCategoria.trim();
     if (!nome) return;
+    if (nome.length < 2 || nome.length > 40) { this.toast.error('A categoria deve ter entre 2 e 40 caracteres.'); return; }
     this.data.addCategoriaServico(nome);
     this.cat = this.allCats.find(c => c.toLowerCase() === nome.toLowerCase()) || nome;
     this.cancelarCategoria();

@@ -6,6 +6,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
 
 :root {
+  /* Informa ao browser o esquema de cor → controles nativos (date/time picker,
+     seus indicadores de calendário/relógio, e popups) seguem o tema. */
+  color-scheme: light;
+
   /* ── Fundos – camadas quentes neutras ── */
   --bg:        #f6f5f2;
   --surface:   #ffffff;
@@ -49,6 +53,15 @@
   --st-faltou-bg:      #fee2e2;
   --st-cancelado:      #9ca3af;
   --st-cancelado-bg:   #f3f4f6;
+
+  /* ── Violeta — usado p/ "Cartão" e categorias (fora da paleta de status) ── */
+  --violet:      #7c3aed;
+  --violet-soft: #ede9fe;
+
+  /* ── Tags (contexto cliente) ── */
+  --tag-vip:        #92400e; --tag-vip-bg:    #fef3c7; --tag-vip-bd:    #fde68a;
+  --tag-novo:       #047857; --tag-novo-bg:   #d1fae5; --tag-novo-bd:   #a7f3d0;
+  --tag-sumido:     #b91c1c; --tag-sumido-bg: #fee2e2; --tag-sumido-bd: #fecaca;
 
   /* ── Radii ── */
   --r-sm: 6px;
@@ -102,6 +115,7 @@
 
 /* ── Tema escuro ── */
 html[data-theme="dark"] {
+  color-scheme: dark;
   --bg:          #0e0d0b;
   --surface:     #1c1a18;
   --surface-2:   #242220;
@@ -122,6 +136,24 @@ html[data-theme="dark"] {
   --btn-bg-hover: #ffffff;
   --btn-bg-press: #d0ccc8;
   --btn-fg:       #1a1816;
+
+  /* ── Status — texto mais claro + fundo translúcido tingido (legível no escuro) ── */
+  --st-pendente:       #fbbf24;  --st-pendente-bg:    rgba(217,119,6,0.16);
+  --st-confirmado:     #34d399;  --st-confirmado-bg:  rgba(5,150,105,0.16);
+  --st-atendimento:    #60a5fa;  --st-atendimento-bg: rgba(37,99,235,0.16);
+  --st-concluido:      #cbd5e1;  --st-concluido-bg:   rgba(148,163,184,0.16);
+  --st-faltou:         #f87171;  --st-faltou-bg:      rgba(220,38,38,0.16);
+  --st-cancelado:      #9ca3af;  --st-cancelado-bg:   rgba(156,163,175,0.14);
+
+  /* ── Violeta ── */
+  --violet:      #a78bfa;
+  --violet-soft: rgba(139,92,246,0.20);
+
+  /* ── Tags ── */
+  --tag-vip:    #fcd34d; --tag-vip-bg:    rgba(245,158,11,0.15); --tag-vip-bd:    rgba(245,158,11,0.30);
+  --tag-novo:   #6ee7b7; --tag-novo-bg:   rgba(16,185,129,0.15); --tag-novo-bd:   rgba(16,185,129,0.30);
+  --tag-sumido: #fca5a5; --tag-sumido-bg: rgba(239,68,68,0.15);  --tag-sumido-bd: rgba(239,68,68,0.30);
+
   --sh-sm:  0 1px 2px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.04);
   --sh-md:  0 3px 10px rgba(0,0,0,0.32), 0 0 0 1px rgba(255,255,255,0.04);
   --sh-lg:  0 8px 24px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.04);
@@ -203,8 +235,8 @@ input, select, textarea { font-family: inherit; font-size: inherit; color: inher
    ═══════════════════════════════════════════════════════════════ */
 .sidebar {
   align-self: center;
-  width: max-content;
-  max-width: calc(100% - 24px);
+  /* ocupa toda a largura da tela (só um respiro de 12px de cada lado) */
+  width: calc(100% - 24px);
   height: 52px;
   margin: 12px auto 12px;
   background: var(--app-bg); /* gradiente vive DENTRO da pílula */
@@ -269,11 +301,14 @@ input, select, textarea { font-family: inherit; font-size: inherit; color: inher
   position: relative;
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   flex: 1;
   align-self: stretch;
   overflow-x: auto;
   scrollbar-width: none;
+  /* itens sempre lado a lado, a partir da marca — com poucas telas liberadas
+     (permissões) eles não se espalham pelas pontas da barra */
+  justify-content: flex-start;
 }
 .tn-groups::-webkit-scrollbar { display: none; }
 
@@ -362,6 +397,70 @@ input, select, textarea { font-family: inherit; font-size: inherit; color: inher
   transition: background .12s;
 }
 .tn-user:hover { background: var(--nav-user-h); }
+
+/* ═══════════════════════════════════════════════════════════════
+   COLAPSO PROGRESSIVO (telas médias / tablets)
+   O componente mede o overflow real e aplica .nav-compact ou .nav-icons
+   na .sidebar, garantindo que nenhum item fique cortado nem inacessível.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Compacto: mantém TODOS os rótulos; libera espaço escondendo o texto da
+   marca (o logo fica) e os ícones secundários (busca/config). ── */
+.sidebar.nav-compact .tn-brand-name { display: none; }
+.sidebar.nav-compact .tn-brand { padding-right: 10px; margin-right: 4px; }
+.sidebar.nav-compact .tn-nav-item { padding: 6px 9px; gap: 5px; font-size: 12px; }
+.sidebar.nav-compact .tn-end { padding-left: 10px; margin-left: 4px; }
+.sidebar.nav-compact .tn-hide-compact { display: none !important; }
+
+/* ── Ícones: todos os 10 itens viram alvos só-ícone, sempre visíveis.
+   O rótulo textual continua acessível via tooltip (atributo title). ── */
+.sidebar.nav-icons .tn-brand-name { display: none; }
+.sidebar.nav-icons .tn-brand { padding-right: 10px; margin-right: 4px; }
+.sidebar.nav-icons .tn-hide-compact { display: none !important; }
+.sidebar.nav-icons .tn-nav-label { display: none; }
+.sidebar.nav-icons .tn-end { padding-left: 10px; margin-left: 4px; }
+.sidebar.nav-icons .tn-nav-item { padding: 8px 11px; gap: 0; font-size: 0; }
+/* ícones lado a lado com respiro fixo */
+.sidebar.nav-icons .tn-groups { gap: 4px; }
+/* badge numérico vira um pontinho no canto do ícone */
+.sidebar.nav-icons .tn-badge {
+  position: absolute; top: 3px; right: 5px;
+  min-width: 0; width: 7px; height: 7px; padding: 0;
+  font-size: 0; border-radius: 999px;
+  background: var(--st-faltou, #dc2626);
+}
+
+/* ── Preencher (8+ telas liberadas, ver SidebarComponent.preencheBarra):
+   os botões crescem para ocupar toda a largura da barra e o texto/ícone
+   escalam com a tela. Os modos compacto/ícones continuam valendo quando
+   não cabe: o crescimento não reduz o botão abaixo do conteúdo. ── */
+.sidebar.nav-fill .tn-nav-item { flex: 1 0 auto; justify-content: center; }
+.sidebar.nav-fill .tn-indicator { height: calc(100% - 14px); top: 7px; margin-top: 0; }
+/* escala com a tela só no modo cheio — compacto/ícones mantêm a própria redução */
+.sidebar.nav-fill:not(.nav-compact):not(.nav-icons) .tn-nav-item {
+  font-size: clamp(12px, 0.42vw + 6.5px, 17px);
+  padding-block: clamp(6px, 0.3vw + 2px, 12px);
+}
+.sidebar.nav-fill:not(.nav-compact):not(.nav-icons) .tn-nav-item svg { width: 1.15em; height: 1.15em; }
+.sidebar.nav-fill:not(.nav-compact):not(.nav-icons) .tn-badge { font-size: 0.75em; min-width: 1.3em; height: 1.3em; }
+
+/* ── Telas largas: a barra cresce E os elementos internos crescem junto,
+   preenchendo o espaço em vez de deixar itens pequenos e vazio à direita. ── */
+@media (min-width: 1200px) {
+  .sidebar { height: 58px; padding: 0 10px; }
+  .tn-logo { width: 32px; height: 32px; border-radius: 8px; }
+  .tn-brand-name { font-size: 15px; }
+  .tn-nav-item { font-size: 13.5px; padding: 9px 15px; gap: 7px; }
+  .tn-indicator { height: 38px; margin-top: -19px; }
+  .tn-icon-btn { width: 36px; height: 36px; }
+  .tn-user { width: 38px; height: 38px; }
+}
+@media (min-width: 1600px) {
+  .sidebar { height: 62px; }
+  .tn-nav-item { font-size: 14.5px; padding: 10px 18px; }
+  .tn-indicator { height: 40px; margin-top: -20px; }
+  .tn-brand-name { font-size: 16px; }
+}
 
 /* ═══════════════════════════════════════════════════════════════
    MAIN — page bar + content
@@ -531,9 +630,9 @@ input, select, textarea { font-family: inherit; font-size: inherit; color: inher
   background: var(--surface-2); color: var(--text-2);
   border: 1px solid var(--border);
 }
-.tag-vip    { background: #fef3c7; color: #92400e; border-color: #fde68a; }
-.tag-novo   { background: #d1fae5; color: #047857; border-color: #a7f3d0; }
-.tag-sumido { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+.tag-vip    { background: var(--tag-vip-bg);    color: var(--tag-vip);    border-color: var(--tag-vip-bd); }
+.tag-novo   { background: var(--tag-novo-bg);   color: var(--tag-novo);   border-color: var(--tag-novo-bd); }
+.tag-sumido { background: var(--tag-sumido-bg); color: var(--tag-sumido); border-color: var(--tag-sumido-bd); }
 
 /* ──────────────────────────── Avatar ──────────────────────────── */
 .avatar {
@@ -629,13 +728,31 @@ input, select, textarea { font-family: inherit; font-size: inherit; color: inher
 }
 textarea.input { resize: vertical; min-height: 70px; }
 
+/* ── Validação: campo com erro + mensagem (ver shared/validacao.ts) ── */
+.input.invalid, .select.invalid,
+app-select.invalid .sel-trigger {
+  border-color: var(--st-faltou);
+}
+.input.invalid:focus, .select.invalid:focus,
+app-select.invalid .sel-trigger:focus {
+  box-shadow: 0 0 0 3px var(--st-faltou-bg);
+}
+.field-erro {
+  font-size: 12px; font-weight: 500; line-height: 1.35;
+  color: var(--st-faltou);
+}
+.field label .req { color: var(--st-faltou); margin-left: 2px; }
+
 /* ── Number input spinners ── */
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='18' viewBox='0 0 10 18'%3E%3Cpath d='M5 0L10 7H0Z' fill='white'/%3E%3Cpath d='M5 18L0 11H10Z' fill='white'/%3E%3C/svg%3E") center center / 7px 13px no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='18' viewBox='0 0 10 18'%3E%3Cpath d='M5 0L10 7H0Z' fill='%236b6560'/%3E%3Cpath d='M5 18L0 11H10Z' fill='%236b6560'/%3E%3C/svg%3E") center center / 7px 13px no-repeat;
   width: 28px;
   cursor: pointer;
   opacity: 1;
+}
+html[data-theme="dark"] input[type=number]::-webkit-inner-spin-button {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='18' viewBox='0 0 10 18'%3E%3Cpath d='M5 0L10 7H0Z' fill='%23a09b95'/%3E%3Cpath d='M5 18L0 11H10Z' fill='%23a09b95'/%3E%3C/svg%3E") center center / 7px 13px no-repeat;
 }
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -823,6 +940,8 @@ input[type=number]::-webkit-outer-spin-button {
   /* ── Nav pill: esconde os itens de navegação, mantém logo + marca + ícones ── */
   .tn-groups { display: none !important; }
   .tn-hide-mobile { display: none !important; }
+  /* sem os itens de nav, a pílula volta a abraçar o conteúdo (centralizada) */
+  .sidebar { width: max-content; }
 
   /* ── Bottom Tab Bar ── */
   .tn-bottom-bar {

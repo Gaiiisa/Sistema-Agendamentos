@@ -133,6 +133,11 @@ interface Notification {
     .notif-ico--cliente      { background: rgba(79,70,229,0.12);  color: var(--accent); }
     .notif-ico--estoque      { background: rgba(217,119,6,0.12);  color: #d97706; }
     .notif-ico--lembrete     { background: rgba(220,38,38,0.12);  color: #dc2626; }
+    /* Cores mais claras no tema escuro para manter contraste do ícone */
+    :host-context(html[data-theme="dark"]) .notif-ico--agendamento { background: rgba(96,165,250,0.16); color: #60a5fa; }
+    :host-context(html[data-theme="dark"]) .notif-ico--pagamento   { background: rgba(52,211,153,0.16); color: #34d399; }
+    :host-context(html[data-theme="dark"]) .notif-ico--estoque     { background: rgba(251,191,36,0.16); color: #fbbf24; }
+    :host-context(html[data-theme="dark"]) .notif-ico--lembrete    { background: rgba(248,113,113,0.16); color: #f87171; }
 
     .notif-body { flex: 1; min-width: 0; }
 

@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Serviços · Navalha & Cia — Lâmina</title>
+  <script>(function(){try{var t=localStorage.getItem('lamina-demo-theme');document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <nav class="sidebar">
+    <div class="tn-brand">
+      <div class="tn-logo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--topbar-text)"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+      </div>
+      <span class="tn-brand-name">Navalha</span>
+    </div>
+
+    <div class="tn-groups">
+      <a href="dashboard.html" class="tn-nav-item" data-route="dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+        <span class="tn-nav-label">Dashboard</span>
+      </a>
+      <a href="agenda.html" class="tn-nav-item" data-route="agenda">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+        <span class="tn-nav-label">Agenda</span>
+        <span class="tn-badge">15</span>
+      </a>
+      <a href="clientes.html" class="tn-nav-item" data-route="clientes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tn-nav-label">Clientes</span>
+      </a>
+      <a href="servicos.html" class="tn-nav-item active" data-route="servicos">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        <span class="tn-nav-label">Serviços</span>
+      </a>
+      <a href="equipe.html" class="tn-nav-item" data-route="equipe">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tn-nav-label">Equipe</span>
+      </a>
+      <a href="financeiro.html" class="tn-nav-item" data-route="financeiro">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span class="tn-nav-label">Financeiro</span>
+      </a>
+      <a href="comissoes.html" class="tn-nav-item" data-route="comissoes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+        <span class="tn-nav-label">Comissões</span>
+      </a>
+      <a href="estoque.html" class="tn-nav-item" data-route="estoque">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+        <span class="tn-nav-label">Estoque</span>
+      </a>
+      <a href="fidelidade.html" class="tn-nav-item" data-route="fidelidade">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        <span class="tn-nav-label">Fidelidade</span>
+      </a>
+      <a href="central.html" class="tn-nav-item" data-route="central">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span class="tn-nav-label">Central</span>
+      </a>
+    </div>
+
+    <div class="tn-end">
+      <button class="tn-icon-btn tn-hide-mobile tn-hide-compact" title="Buscar" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"></path></svg>
+      </button>
+      <button class="tn-icon-btn" title="Alternar tema" type="button" data-theme-toggle>
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path></svg>
+      </button>
+      <a href="config.html" class="tn-icon-btn tn-hide-mobile" title="Configurações" data-route="config">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </a>
+      <button class="tn-icon-btn" title="Notificações" type="button" style="position:relative" data-open-modal="notifDrawer">
+        <span class="tn-dot"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </button>
+      <button class="tn-user" title="Carlos Menezes" type="button">
+        <div class="avatar" style="width:28px;height:28px;font-size:11px;background:#0e9f6e">CM</div>
+      </button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-spacer"></div>
+      <div class="tb-page">
+        <span class="tb-title">Serviços</span>
+        <span class="tb-sub">Catálogo, preços e margens</span>
+      </div>
+      <div class="tb-actions">
+        <button class="btn btn-primary" type="button" data-open-modal="modalNovoServico">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+          <span class="btn-text">Novo serviço</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page">
+
+        <div class="row" style="margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <div class="seg">
+            <button type="button" class="on" data-tab-group="servicos-cat" data-tab="todas">Todas</button>
+            <button type="button" data-tab-group="servicos-cat" data-tab="cabelo">Cabelo</button>
+            <button type="button" data-tab-group="servicos-cat" data-tab="combo">Combo</button>
+            <button type="button" data-tab-group="servicos-cat" data-tab="barba">Barba</button>
+            <button type="button" data-tab-group="servicos-cat" data-tab="estetica">Estética</button>
+            <button type="button" data-tab-group="servicos-cat" data-tab="quimica">Química</button>
+          </div>
+
+          <button class="btn btn-ghost" type="button" style="display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:13px;font-weight:600">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+            Nova categoria
+          </button>
+        </div>
+
+        <!-- ═══ Painel: Todas (10 serviços) ═══ -->
+        <div data-tab-panel-group="servicos-cat" data-tab-panel="todas" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
+
+          <!-- s1 · Corte Masculino -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0e9f6e 18%, var(--surface)), color-mix(in oklch, #0e9f6e 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0e9f6e">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Corte Masculino</div>
+                  <div class="muted" style="font-size:12.5px">Corte na tesoura e máquina, com acabamento</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 45,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    30min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">93%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">3 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s2 · Corte + Barba (combo) -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0e9f6e 18%, var(--surface)), color-mix(in oklch, #0e9f6e 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <span class="tag" style="position:absolute;top:10px;left:10px;background:var(--surface)">Combo</span>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0e9f6e">Combo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Corte + Barba (combo)</div>
+                  <div class="muted" style="font-size:12.5px">Corte completo + barba na navalha, com desconto</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 70,00</span>
+                  <span class="muted" style="font-size:11.5px">preço · <span style="color:var(--accent-text);font-weight:600">economiza R$ 10,00</span></span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    50min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">91%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">3 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s3 · Barba Completa -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #9333ea 18%, var(--surface)), color-mix(in oklch, #9333ea 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#9333ea">Barba</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Barba Completa</div>
+                  <div class="muted" style="font-size:12.5px">Toalha quente, navalha e finalização com óleo</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 35,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    25min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">89%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">2 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s4 · Degradê (Fade) -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #2563eb 18%, var(--surface)), color-mix(in oklch, #2563eb 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#2563eb">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Degradê (Fade)</div>
+                  <div class="muted" style="font-size:12.5px">Degradê na máquina com transição de acabamento</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 55,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    40min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">95%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">2 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s5 · Pezinho / Acabamento -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0e9f6e 18%, var(--surface)), color-mix(in oklch, #0e9f6e 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0e9f6e">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Pezinho / Acabamento</div>
+                  <div class="muted" style="font-size:12.5px">Retoque rápido de contorno e nuca</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 20,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    15min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">95%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">3 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s6 · Pigmentação de Barba -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #9333ea 18%, var(--surface)), color-mix(in oklch, #9333ea 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#9333ea">Barba</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Pigmentação de Barba</div>
+                  <div class="muted" style="font-size:12.5px">Coloração para uniformizar falhas na barba</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 60,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    45min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">85%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s7 · Sobrancelha -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #db2777 18%, var(--surface)), color-mix(in oklch, #db2777 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#db2777">Estética</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Sobrancelha</div>
+                  <div class="muted" style="font-size:12.5px">Design e alinhamento na navalha</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 15,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    10min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">93%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">4 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s8 · Corte Infantil -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #ea580c 18%, var(--surface)), color-mix(in oklch, #ea580c 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#ea580c">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Corte Infantil</div>
+                  <div class="muted" style="font-size:12.5px">Corte para crianças até 10 anos, com paciência extra</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 40,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    25min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">95%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s9 · Hidratação Capilar (INATIVO — demonstra o estado) -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column;opacity:0.55;filter:grayscale(0.4)">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #2563eb 18%, var(--surface)), color-mix(in oklch, #2563eb 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <span class="tag" style="position:absolute;top:10px;left:10px;background:var(--st-faltou-bg);color:var(--st-faltou);font-weight:700">Inativo</span>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#2563eb">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Hidratação Capilar</div>
+                  <div class="muted" style="font-size:12.5px">Tratamento profundo para cabelo ressecado</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item" type="button" data-toast="Serviço reativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                      Reativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 30,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    20min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">77%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- s10 · Platinado / Global (exige sinal) -->
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0891b2 18%, var(--surface)), color-mix(in oklch, #0891b2 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <span class="tag tag-novo" style="position:absolute;top:10px;right:10px">Sinal 30%</span>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0891b2">Química</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Platinado / Global</div>
+                  <div class="muted" style="font-size:12.5px">Descoloração completa com tonalizante</div>
+                </div>
+                <div class="menu-root">
+                  <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                  </button>
+                  <div class="menu-panel" data-menu-panel hidden>
+                    <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </button>
+                    <button class="menu-item" type="button" data-toast="Serviço duplicado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+                      Duplicar
+                    </button>
+                    <div class="divider" style="margin:5px 0"></div>
+                    <button class="menu-item danger" type="button" data-toast="Serviço desativado">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                      Desativar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col">
+                  <span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 150,00</span>
+                  <span class="muted" style="font-size:11.5px">preço</span>
+                </div>
+                <div class="col">
+                  <span class="row tnum" style="font-size:15px;font-weight:700;gap:4px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>
+                    90min
+                  </span>
+                  <span class="muted" style="font-size:11.5px">duração</span>
+                </div>
+                <div class="col" style="margin-left:auto;align-items:flex-end">
+                  <span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">75%</span>
+                  <span class="muted" style="font-size:11.5px">margem</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- ═══ /Painel Todas ═══ -->
+
+        <!-- ═══ Painel: Cabelo (s1, s4, s5, s8, s9) ═══ -->
+        <div data-tab-panel-group="servicos-cat" data-tab-panel="cabelo" hidden style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0e9f6e 18%, var(--surface)), color-mix(in oklch, #0e9f6e 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0e9f6e">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Corte Masculino</div>
+                  <div class="muted" style="font-size:12.5px">Corte na tesoura e máquina, com acabamento</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 45,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>30min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">93%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">3 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #2563eb 18%, var(--surface)), color-mix(in oklch, #2563eb 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#2563eb">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Degradê (Fade)</div>
+                  <div class="muted" style="font-size:12.5px">Degradê na máquina com transição de acabamento</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 55,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>40min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">95%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">2 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0e9f6e 18%, var(--surface)), color-mix(in oklch, #0e9f6e 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0e9f6e">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Pezinho / Acabamento</div>
+                  <div class="muted" style="font-size:12.5px">Retoque rápido de contorno e nuca</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 20,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>15min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">95%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">3 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #ea580c 18%, var(--surface)), color-mix(in oklch, #ea580c 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#ea580c">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Corte Infantil</div>
+                  <div class="muted" style="font-size:12.5px">Corte para crianças até 10 anos, com paciência extra</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 40,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>25min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">95%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column;opacity:0.55;filter:grayscale(0.4)">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #2563eb 18%, var(--surface)), color-mix(in oklch, #2563eb 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <span class="tag" style="position:absolute;top:10px;left:10px;background:var(--st-faltou-bg);color:var(--st-faltou);font-weight:700">Inativo</span>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#2563eb">Cabelo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Hidratação Capilar</div>
+                  <div class="muted" style="font-size:12.5px">Tratamento profundo para cabelo ressecado</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 30,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>20min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">77%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ /Painel Cabelo ═══ -->
+
+        <!-- ═══ Painel: Combo (s2) ═══ -->
+        <div data-tab-panel-group="servicos-cat" data-tab-panel="combo" hidden style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0e9f6e 18%, var(--surface)), color-mix(in oklch, #0e9f6e 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0e9f6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <span class="tag" style="position:absolute;top:10px;left:10px;background:var(--surface)">Combo</span>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0e9f6e">Combo</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Corte + Barba (combo)</div>
+                  <div class="muted" style="font-size:12.5px">Corte completo + barba na navalha, com desconto</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 70,00</span><span class="muted" style="font-size:11.5px">preço · <span style="color:var(--accent-text);font-weight:600">economiza R$ 10,00</span></span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>50min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">91%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">3 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ /Painel Combo ═══ -->
+
+        <!-- ═══ Painel: Barba (s3, s6) ═══ -->
+        <div data-tab-panel-group="servicos-cat" data-tab-panel="barba" hidden style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #9333ea 18%, var(--surface)), color-mix(in oklch, #9333ea 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#9333ea">Barba</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Barba Completa</div>
+                  <div class="muted" style="font-size:12.5px">Toalha quente, navalha e finalização com óleo</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 35,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>25min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">89%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">2 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #9333ea 18%, var(--surface)), color-mix(in oklch, #9333ea 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#9333ea">Barba</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Pigmentação de Barba</div>
+                  <div class="muted" style="font-size:12.5px">Coloração para uniformizar falhas na barba</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 60,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>45min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">85%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ /Painel Barba ═══ -->
+
+        <!-- ═══ Painel: Estética (s7) ═══ -->
+        <div data-tab-panel-group="servicos-cat" data-tab-panel="estetica" hidden style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #db2777 18%, var(--surface)), color-mix(in oklch, #db2777 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+              </div>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#db2777">Estética</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Sobrancelha</div>
+                  <div class="muted" style="font-size:12.5px">Design e alinhamento na navalha</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 15,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>10min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">93%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#2563eb">DS</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#9333ea">LF</div></div>
+                  <div style="margin-left:-8px;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#ea580c">BA</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">4 profissionais executam</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ /Painel Estética ═══ -->
+
+        <!-- ═══ Painel: Química (s10) ═══ -->
+        <div data-tab-panel-group="servicos-cat" data-tab-panel="quimica" hidden style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%, 290px),1fr));gap:14px">
+          <div class="card" style="overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:96px;background:linear-gradient(135deg, color-mix(in oklch, #0891b2 18%, var(--surface)), color-mix(in oklch, #0891b2 8%, var(--surface)));position:relative;display:grid;place-items:center">
+              <div style="width:48px;height:48px;border-radius:12px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+              </div>
+              <span class="tag tag-novo" style="position:absolute;top:10px;right:10px">Sinal 30%</span>
+              <div style="position:absolute;bottom:10px;right:12px;font-size:11.5px;font-weight:600;color:#0891b2">Química</div>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1">
+              <div class="row" style="align-items:flex-start">
+                <div class="col" style="flex:1;line-height:1.3">
+                  <div style="font-weight:700;font-size:16px;letter-spacing:-0.01em">Platinado / Global</div>
+                  <div class="muted" style="font-size:12.5px">Descoloração completa com tonalizante</div>
+                </div>
+              </div>
+              <div class="row" style="gap:16px;padding-top:4px">
+                <div class="col"><span class="tnum" style="font-size:20px;font-weight:800;letter-spacing:-0.02em">R$ 150,00</span><span class="muted" style="font-size:11.5px">preço</span></div>
+                <div class="col"><span class="row tnum" style="font-size:15px;font-weight:700;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2"></path></svg>90min</span><span class="muted" style="font-size:11.5px">duração</span></div>
+                <div class="col" style="margin-left:auto;align-items:flex-end"><span class="tnum" style="font-size:15px;font-weight:700;color:var(--accent-text)">75%</span><span class="muted" style="font-size:11.5px">margem</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="gap:8px">
+                <div style="display:flex">
+                  <div style="margin-left:0;border:2px solid var(--surface);border-radius:99px"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:#0e9f6e">RM</div></div>
+                </div>
+                <span class="muted" style="font-size:12.5px">1 profissional executa</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ /Painel Química ═══ -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bottom Tab Bar (mobile) ── -->
+  <div class="tn-bottom-bar">
+    <a href="dashboard.html" class="tn-tab" data-route="dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+      <span>Início</span>
+    </a>
+    <a href="agenda.html" class="tn-tab" data-route="agenda">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+      <span>Agenda</span>
+    </a>
+    <a href="clientes.html" class="tn-tab" data-route="clientes">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Clientes</span>
+    </a>
+    <a href="financeiro.html" class="tn-tab" data-route="financeiro">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      <span>Financeiro</span>
+    </a>
+    <button class="tn-tab" type="button" data-open-modal="moreSheetRoot">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+      <span>Mais</span>
+    </button>
+  </div>
+
+  <!-- ── Sheet "Mais" (mobile) ── -->
+  <div id="moreSheetRoot" data-modal-root hidden>
+    <div class="tn-sheet-overlay" data-modal-backdrop></div>
+    <div class="tn-sheet">
+      <div class="tn-sheet-handle"></div>
+      <a href="servicos.html" class="tn-sheet-item active" data-route="servicos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        Serviços
+      </a>
+      <a href="equipe.html" class="tn-sheet-item" data-route="equipe">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Equipe
+      </a>
+      <a href="comissoes.html" class="tn-sheet-item" data-route="comissoes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+        Comissões
+      </a>
+      <a href="estoque.html" class="tn-sheet-item" data-route="estoque">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+        Estoque
+      </a>
+      <a href="fidelidade.html" class="tn-sheet-item" data-route="fidelidade">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        Fidelidade
+      </a>
+      <a href="central.html" class="tn-sheet-item" data-route="central">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        Central
+      </a>
+      <a href="config.html" class="tn-sheet-item" data-route="config">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Configurações
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Drawer de notificações (idêntico em todas as páginas) ── -->
+  <div id="notifDrawer" data-modal-root hidden>
+    <div class="drawer-overlay" data-modal-backdrop></div>
+    <div class="drawer notif-drawer">
+      <div class="drawer-head">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="drawer-title">Notificações</span>
+          <span class="notif-count">5</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="icon-btn" title="Marcar todas como lidas" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          </button>
+          <button class="icon-btn" title="Fechar" type="button" data-close-modal>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="notif-list">
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Novo agendamento confirmado</div>
+            <div class="notif-desc">Ana Lima — Corte + Escova · hoje às 14h00</div>
+            <div class="notif-time">Há 5 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Pagamento recebido</div>
+            <div class="notif-desc">R$ 120,00 · Marcos Oliveira · Cartão de crédito</div>
+            <div class="notif-time">Há 18 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Lembrete: agendamento em 1h</div>
+            <div class="notif-desc">Fernanda Costa — Coloração · 15h30</div>
+            <div class="notif-time">Há 32 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--cliente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Novo cliente cadastrado</div>
+            <div class="notif-desc">Rafael Souza entrou pela primeira vez</div>
+            <div class="notif-time">Há 1 hora</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--estoque"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Estoque baixo</div>
+            <div class="notif-desc">Coloração Louro 8.1 — apenas 2 unidades restantes</div>
+            <div class="notif-time">Há 2 horas</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Agendamento cancelado</div>
+            <div class="notif-desc">Juliana Mendes — Manicure · amanhã 10h00</div>
+            <div class="notif-time">Há 3 horas</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Pagamento recebido</div>
+            <div class="notif-desc">R$ 85,00 · Carla Dias · Pix</div>
+            <div class="notif-time">Ontem 17h42</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Resumo do dia</div>
+            <div class="notif-desc">12 atendimentos realizados · R$ 1.340 faturados</div>
+            <div class="notif-time">Ontem 18h00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal: Novo serviço ── -->
+  <div id="modalNovoServico" data-modal-root hidden>
+    <div class="overlay" data-modal-backdrop>
+      <div class="modal wide">
+        <div class="modal-head">
+          <div class="modal-title">Novo serviço</div>
+          <button class="icon-btn" style="margin-left:auto;width:32px;height:32px" type="button" data-close-modal>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;flex-direction:column;gap:16px">
+
+            <div class="row" style="gap:12px;flex-wrap:wrap">
+              <div class="field" style="flex:1;min-width:160px">
+                <label>Nome</label>
+                <input class="input" placeholder="Nome do serviço">
+              </div>
+              <div class="field" style="min-width:140px">
+                <label>Categoria</label>
+                <select class="select">
+                  <option>Selecione...</option>
+                  <option>Cabelo</option>
+                  <option>Combo</option>
+                  <option>Barba</option>
+                  <option>Estética</option>
+                  <option>Química</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Descrição</label>
+              <input class="input" placeholder="Breve descrição do serviço">
+            </div>
+
+            <div class="row" style="gap:12px;flex-wrap:wrap">
+              <div class="field" style="flex:1;min-width:100px">
+                <label>Duração (min)</label>
+                <input class="input" type="number" min="1" placeholder="30">
+              </div>
+              <div class="field" style="flex:1;min-width:100px">
+                <label>Preço (R$)</label>
+                <input class="input" type="number" min="0" step="0.01" placeholder="0,00">
+              </div>
+              <div class="field" style="flex:1;min-width:100px">
+                <label>Custo (R$)</label>
+                <input class="input" type="number" min="0" step="0.01" placeholder="0,00">
+              </div>
+            </div>
+
+            <div class="row" style="gap:12px;flex-wrap:wrap;align-items:center">
+              <div class="field" style="min-width:120px">
+                <label>Cor identificadora</label>
+                <div class="row" style="gap:8px;padding-top:2px">
+                  <span style="width:22px;height:22px;border-radius:99px;background:#0e9f6e;border:2px solid var(--accent);cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#3b82f6;cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#8b5cf6;cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#ec4899;cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#f59e0b;cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#ef4444;cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#14b8a6;cursor:pointer"></span>
+                  <span style="width:22px;height:22px;border-radius:99px;background:#f97316;cursor:pointer"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" style="gap:20px">
+              <span class="chk">
+                <span class="checkbox" data-checkbox data-checked="false" tabindex="0" role="checkbox" aria-checked="false">
+                  <svg class="chk-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                </span>
+                <span class="chk-txt">É combo</span>
+              </span>
+              <span class="chk">
+                <span class="checkbox" data-checkbox data-checked="false" tabindex="0" role="checkbox" aria-checked="false">
+                  <svg class="chk-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                </span>
+                <span class="chk-txt">Exige sinal</span>
+              </span>
+            </div>
+
+            <div class="field">
+              <label>Profissionais que executam</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+                <button type="button" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:var(--r-md);border:1px solid var(--border);font-size:13.5px;font-weight:500;background:var(--surface)">
+                  <div class="avatar" style="width:22px;height:22px;font-size:9px;background:#0e9f6e">RM</div>
+                  Rafa
+                </button>
+                <button type="button" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:var(--r-md);border:1px solid var(--border);font-size:13.5px;font-weight:500;background:var(--surface)">
+                  <div class="avatar" style="width:22px;height:22px;font-size:9px;background:#2563eb">DS</div>
+                  Diego
+                </button>
+                <button type="button" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:var(--r-md);border:1px solid var(--border);font-size:13.5px;font-weight:500;background:var(--surface)">
+                  <div class="avatar" style="width:22px;height:22px;font-size:9px;background:#9333ea">LF</div>
+                  Lucas
+                </button>
+                <button type="button" style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:var(--r-md);border:1px solid var(--border);font-size:13.5px;font-weight:500;background:var(--surface)">
+                  <div class="avatar" style="width:22px;height:22px;font-size:9px;background:#ea580c">BA</div>
+                  Bruno
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-foot">
+          <div>
+            <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+            <button class="btn btn-primary" type="button" data-close-modal data-toast="Serviço criado com sucesso">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              Criar serviço
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast (mensagens de sucesso simuladas) ── -->
+  <div id="toastRoot" hidden></div>
+
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

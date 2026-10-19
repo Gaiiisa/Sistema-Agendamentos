@@ -320,7 +320,7 @@ interface ExportItem {
     /* Spinner de carregamento no botão de exportação */
     .spinner-mini {
       display: inline-block; width: 13px; height: 13px; border-radius: 50%;
-      border: 2px solid rgba(0,0,0,0.15); border-top-color: var(--accent);
+      border: 2px solid var(--border-strong); border-top-color: var(--accent);
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }

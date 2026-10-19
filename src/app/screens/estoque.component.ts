@@ -8,11 +8,15 @@ import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService } from '../data.service';
 import type { MenuItem } from '../shared/menu.component';
 import type { Produto } from '../data.service';
+import { ToastService } from '../toast.service';
+import { CampoErroComponent } from '../shared/campo-erro.component';
+import { PIPES } from '../shared/pipes';
+import { V, validar, temErros, Erros } from '../shared/validacao';
 
 @Component({
   selector: 'app-estoque',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, MenuComponent, ModalComponent, SelectComponent],
+  imports: [CommonModule, FormsModule, IconComponent, MenuComponent, ModalComponent, SelectComponent, CampoErroComponent, ...PIPES],
   template: `
 <div class="page">
 
@@ -36,7 +40,7 @@ import type { Produto } from '../data.service';
           <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
         </div>
       </div>
-      <div class="stat-val tnum">{{ data.money(valorEstoque) }}</div>
+      <div class="stat-val tnum">{{ valorEstoque | brl }}</div>
     </div>
 
     <div class="stat">
@@ -145,7 +149,7 @@ import type { Produto } from '../data.service';
                   </div>
                 </td>
                 <td class="tnum muted" data-label="Mínimo">{{ p.min }}</td>
-                <td class="tnum" data-label="Custo">{{ data.money(p.custo) }}</td>
+                <td class="tnum" data-label="Custo">{{ p.custo | brl }}</td>
                 <td class="muted" data-label="Fornecedor" style="font-size:13px">{{ p.fornecedor }}</td>
                 <td data-label="Baixa auto.">
                   @if (p.consumo && data.srv(p.consumo)) {
@@ -207,7 +211,7 @@ import type { Produto } from '../data.service';
                   </span>
                 }
               </td>
-              <td class="mono muted" data-label="Data / Hora" style="font-size:13px">{{ data.fmtData(m.data) }} · {{ m.hora }}</td>
+              <td class="mono muted" data-label="Data / Hora" style="font-size:13px">{{ m.data | dataBR:'curta' }} · {{ m.hora }}</td>
               <td class="muted" data-label="Motivo">{{ m.motivo }}</td>
               <td class="tnum" data-label="Qtd" [style.fontWeight]="700"
                 [style.color]="m.tipo === 'entrada' ? 'var(--accent-text)' : 'var(--st-faltou)'">
@@ -235,7 +239,7 @@ import type { Produto } from '../data.service';
               <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#{{ i + 1 }}</span>
               <span style="font-weight:600;font-size:14px;flex:1">{{ data.prod(r.id).nome }}</span>
               <span class="tnum" style="font-weight:700">{{ r.n }} un</span>
-              <span class="muted tnum" style="font-size:12.5px">{{ data.money(r.n * data.prod(r.id).custo) }} em custo</span>
+              <span class="muted tnum" style="font-size:12.5px">{{ r.n * data.prod(r.id).custo | brl }} em custo</span>
             </div>
             <div class="progress" style="margin-left:32px">
               <span [style.width]="(r.n / rankMax * 100) + '%'"></span>
@@ -299,7 +303,7 @@ import type { Produto } from '../data.service';
             <div class="row" style="gap:6px;align-items:center">
               <button class="btn btn-sm" (click)="dec()" [disabled]="movQtd <= 1"
                 style="width:34px;padding:5px 0;font-size:16px;line-height:1">−</button>
-              <input class="input" type="number" [(ngModel)]="movQtd" min="1"
+              <input class="input" [class.invalid]="erroMovQtd" type="number" [(ngModel)]="movQtd" min="1" max="10000" step="1"
                 style="width:90px;text-align:center">
               <button class="btn btn-sm" (click)="inc(1)"
                 style="width:34px;padding:5px 0;font-size:16px;line-height:1">+</button>
@@ -310,6 +314,7 @@ import type { Produto } from '../data.service';
               <button class="btn btn-sm btn-subtle" (click)="inc(25)">+25</button>
             </div>
           </div>
+          <app-campo-erro [msg]="erroMovQtd"></app-campo-erro>
           @if (modalTipo === 'saida' && prodSel && movQtd > prodSel.qtd) {
             <span style="color:var(--st-faltou);font-size:12.5px;margin-top:6px;display:flex;align-items:center;gap:5px">
               <app-icon name="alert" [size]="13"></app-icon>
@@ -334,9 +339,11 @@ import type { Produto } from '../data.service';
             <button [class.on]="movMotivoCustom" (click)="ativarOutroMotivo()">Outro</button>
           </div>
           @if (movMotivoCustom) {
-            <input class="input" [(ngModel)]="movMotivo"
+            <input class="input" [(ngModel)]="movMotivo" maxlength="120"
+              [class.invalid]="!movMotivo.trim()"
               [placeholder]="modalTipo === 'entrada' ? 'Ex: Compra — Barba Brava Dist.' : 'Ex: Consumo — Corte Masculino'"
               style="margin-top:8px">
+            <app-campo-erro [msg]="movMotivo.trim() ? null : 'Descreva o motivo.'"></app-campo-erro>
           }
         </div>
 
@@ -388,38 +395,45 @@ import type { Produto } from '../data.service';
 
         <div class="row" style="gap:12px;flex-wrap:wrap">
           <div class="field" style="flex:2;min-width:160px">
-            <label>Nome do produto</label>
-            <input class="input" [(ngModel)]="draft.nome" placeholder="Ex: Pomada Modeladora">
+            <label>Nome do produto<span class="req">*</span></label>
+            <input class="input" [class.invalid]="erros['nome']" [(ngModel)]="draft.nome" placeholder="Ex: Pomada Modeladora" maxlength="80">
+            <app-campo-erro [msg]="erros['nome']"></app-campo-erro>
           </div>
           <div class="field" style="flex:1;min-width:130px">
-            <label>Categoria</label>
-            <app-select [(ngModel)]="draft.cat" [options]="prodCatsOptions" [allowCreate]="true" placeholder="Ex: Finalização"></app-select>
+            <label>Categoria<span class="req">*</span></label>
+            <app-select [class.invalid]="erros['cat']" [(ngModel)]="draft.cat" [options]="prodCatsOptions" [allowCreate]="true" placeholder="Ex: Finalização"></app-select>
+            <app-campo-erro [msg]="erros['cat']"></app-campo-erro>
           </div>
         </div>
 
         <div class="row" style="gap:12px;flex-wrap:wrap">
           <div class="field" style="flex:1;min-width:100px">
-            <label>Qtd em estoque</label>
-            <input class="input" type="number" [(ngModel)]="draft.qtd" min="0">
+            <label>Qtd em estoque<span class="req">*</span></label>
+            <input class="input" [class.invalid]="erros['qtd']" type="number" [(ngModel)]="draft.qtd" min="0" step="1">
+            <app-campo-erro [msg]="erros['qtd']"></app-campo-erro>
           </div>
           <div class="field" style="flex:1;min-width:100px">
-            <label>Qtd mínima</label>
-            <input class="input" type="number" [(ngModel)]="draft.min" min="0">
+            <label>Qtd mínima<span class="req">*</span></label>
+            <input class="input" [class.invalid]="erros['min']" type="number" [(ngModel)]="draft.min" min="0" step="1">
+            <app-campo-erro [msg]="erros['min']"></app-campo-erro>
           </div>
           <div class="field" style="flex:1;min-width:100px">
-            <label>Custo unit. (R$)</label>
-            <input class="input" type="number" [(ngModel)]="draft.custo" min="0" step="0.01">
+            <label>Custo unit. (R$)<span class="req">*</span></label>
+            <input class="input" [class.invalid]="erros['custo']" type="number" [(ngModel)]="draft.custo" min="0" step="0.01">
+            <app-campo-erro [msg]="erros['custo']"></app-campo-erro>
           </div>
           <div class="field" style="flex:1;min-width:110px">
             <label>Preço de venda (R$)</label>
-            <input class="input" type="number" [(ngModel)]="draftPreco" min="0" step="0.01" placeholder="Sem venda">
+            <input class="input" [class.invalid]="erros['preco']" type="number" [(ngModel)]="draftPreco" min="0" step="0.01" placeholder="Sem venda">
+            <app-campo-erro [msg]="erros['preco']"></app-campo-erro>
           </div>
         </div>
 
         <div class="row" style="gap:12px;flex-wrap:wrap">
           <div class="field" style="flex:1;min-width:160px">
             <label>Fornecedor ou Link de compra</label>
-            <input class="input" [(ngModel)]="draft.fornecedor" placeholder="Ex: Beauty Pro">
+            <input class="input" [class.invalid]="erros['fornecedor']" [(ngModel)]="draft.fornecedor" placeholder="Ex: Beauty Pro" maxlength="255">
+            <app-campo-erro [msg]="erros['fornecedor']"></app-campo-erro>
           </div>
           <div class="field" style="flex:1;min-width:180px">
             <label>Baixa automática (serviço vinculado)</label>
@@ -466,14 +480,24 @@ export class EstoqueComponent {
     ok:      { label: 'OK',     cor: 'var(--accent-text)', bg: 'var(--accent-soft)'    },
   };
 
-  readonly rank = [
-    { id: 'pr1', n: 38 }, { id: 'pr2', n: 31 }, { id: 'pr7', n: 22 },
-    { id: 'pr4', n: 17 }, { id: 'pr5', n: 12 }, { id: 'pr9', n: 6  },
-  ];
+  /** Ranking de produtos mais consumidos, derivado das saídas reais de estoque.
+   *  Antes era mock com IDs fixos (pr1..), que quebrava com dados reais (BUG-08). */
+  get rank(): { id: string; n: number }[] {
+    const totais: Record<string, number> = {};
+    for (const m of this.data.movEstoque) {
+      if (m.tipo !== 'saida') continue;
+      totais[m.prod] = (totais[m.prod] || 0) + m.qtd;
+    }
+    return Object.entries(totais)
+      .filter(([id]) => this.data.produtos.some(p => p.id === id))
+      .map(([id, n]) => ({ id, n }))
+      .sort((a, b) => b.n - a.n)
+      .slice(0, 8);
+  }
 
-  readonly rankMax = this.rank[0].n;
+  get rankMax(): number { return this.rank[0]?.n ?? 1; }
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private toast: ToastService) {}
 
   get modalTitle(): string {
     const labels: Record<string, string> = {
@@ -540,10 +564,40 @@ export class EstoqueComponent {
   }
 
   get movValido(): boolean {
-    if (!this.prodSel || this.movQtd < 1) return false;
-    if (!this.movMotivo.trim()) return false;
-    if (this.modalTipo === 'saida' && this.movQtd > this.prodSel.qtd) return false;
+    if (!this.prodSel) return false;
+    const q = Number(this.movQtd);
+    if (!Number.isInteger(q) || q < 1 || q > 10000) return false;
+    const motivo = this.movMotivo.trim();
+    if (!motivo || motivo.length > 120) return false;
+    if (this.modalTipo === 'saida' && q > this.prodSel.qtd) return false;
     return true;
+  }
+
+  /** Mensagem do campo quantidade da movimentação (inteiro entre 1 e 10.000). */
+  get erroMovQtd(): string | null {
+    return V.obrigatorio(this.movQtd) || V.numero(this.movQtd, { min: 1, max: 10000, inteiro: true });
+  }
+
+  /** Erros do cadastro de produto: aparecem após a 1ª tentativa de salvar. */
+  enviado = false;
+
+  get erros(): Erros {
+    if (!this.enviado) return {};
+    const d = this.draft;
+    const nomeDup = !!d.nome?.trim() && this.data.produtos.some(p =>
+      p.id !== this.prodSel?.id && p.nome.trim().toLowerCase() === d.nome!.trim().toLowerCase());
+    const forn = String(d.fornecedor ?? '').trim();
+    return validar({
+      nome: [V.obrigatorio(d.nome), V.tamanho(d.nome, 2, 80), V.se(nomeDup, 'Já existe um produto com esse nome.')],
+      cat: [V.obrigatorio(d.cat, 'Escolha ou crie uma categoria.'), V.tamanho(d.cat, 2, 40)],
+      qtd: [V.obrigatorio(d.qtd), V.numero(d.qtd, { min: 0, max: 100000, inteiro: true })],
+      min: [V.obrigatorio(d.min), V.numero(d.min, { min: 0, max: 100000, inteiro: true })],
+      custo: [V.obrigatorio(d.custo), V.dinheiro(d.custo, { max: 100000 })],
+      preco: [V.dinheiro(this.draftPreco, { max: 100000 }),
+        V.se(this.draftPreco != null && (this.draftPreco as any) !== '' && Number(this.draftPreco) < Number(d.custo),
+          'O preço de venda não pode ser menor que o custo.')],
+      fornecedor: [V.tamanho(forn, 0, 255), /^https?:/i.test(forn) ? V.url(forn) : null],
+    });
   }
 
   openEditar(p: Produto) {
@@ -589,15 +643,18 @@ export class EstoqueComponent {
   closeModal() {
     this.modalTipo = null;
     this.prodSel = null;
+    this.enviado = false;
   }
 
   salvarMov() {
-    if (!this.prodSel || this.movQtd < 1) return;
-    this.data.registrarMov(this.prodSel.id, this.modalTipo as 'entrada' | 'saida', this.movQtd, this.movMotivo);
+    if (!this.prodSel || !this.movValido) return;
+    this.data.registrarMov(this.prodSel.id, this.modalTipo as 'entrada' | 'saida', Number(this.movQtd), this.movMotivo.trim());
     this.closeModal();
   }
 
   salvarProduto() {
+    this.enviado = true;
+    if (temErros(this.erros)) { this.toast.error('Corrija os campos destacados.'); return; }
     const preco = this.draftPreco != null && !isNaN(Number(this.draftPreco)) ? Number(this.draftPreco) : null;
     const consumo = this.draftConsumo.trim() || null;
     const imagem = this.draftImagem;

@@ -4,8 +4,11 @@
    Porte do data.js original para um serviço Angular.
    ============================================================ */
 import { Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { debounceTime, firstValueFrom } from 'rxjs';
 import { ApiService } from './api.service';
+import { ToastService } from './toast.service';
+import { AuthService } from './auth.service';
+import { brl, dataBR } from './shared/formatacao';
 
 export interface Staff {
   id: string; nome: string; apelido: string; cor: string; especialidades: string[];
@@ -48,7 +51,7 @@ export interface Produto {
   imagem?: string | null;
 }
 export interface MovEstoque { id: string; prod: string; tipo: string; qtd: number; motivo: string; data: string; hora: string; }
-export interface Lancamento { id: string; tipo: string; cat: string; desc: string; valor: number; forma: string; data: string; hora: string; prof?: string; }
+export interface Lancamento { id: string; tipo: string; cat: string; desc: string; valor: number; forma: string; data: string; hora: string; prof?: string; agendamento?: string; }
 export interface AReceberItem { id: string; cli: string; desc: string; valor: number; venc: string; dias: number; }
 export interface FluxoItem { dia: string; rec: number; desp: number; }
 export interface CatItem { cat: string; valor: number; qtd: number; }
@@ -74,6 +77,17 @@ export interface HistoricoComissaoPagamento {
   status: 'pago' | 'aberto'; dataPagamento?: string; formaPagamento?: string;
 }
 
+export interface UsuarioAdmin {
+  id: string; nome: string; email: string; papel: string; papelCod: string;
+  nivel: 'master' | 'ceo' | 'usuario'; ativo: boolean; criadoEm: string | null; ultimoAcesso: string | null;
+  /** nome de quem criou a conta (só vem para o master) */
+  criadoPor?: string | null;
+  /** a sessão atual pode editar/excluir esta conta (hierarquia calculada no backend) */
+  gerenciavel: boolean;
+}
+export interface Opcao { value: string; label: string; }
+export interface PermCatalogoItem { modulo: string; label: string; acoes: string[]; }
+
 @Injectable({ providedIn: 'root' })
 export class DataService {
   readonly estabelecimento = {
@@ -81,7 +95,7 @@ export class DataService {
     documento: '', tipo_negocio: 'Barbearia', cep: '', telefone: '', endereco: '',
     descricao: '', instagram: '', site: '', google_perfil: '',
   };
-  readonly usuario = { nome: 'Carlos Menezes', papel: 'Dono / Admin', cor: '#0e9f6e' };
+  readonly usuario = { id: '', nome: 'Carlos Menezes', email: '', papel: 'Dono / Admin', papelCod: 'dono', cor: '#0e9f6e' };
 
   // ---------- Horário de funcionamento / expediente (Configurações › Horários) ----------
   expediente: { diaSemana: number; dia: string; abrev: string; aberto: boolean; inicio: string; fim: string; pausaInicio: string | null; pausaFim: string | null }[] = [];
@@ -240,7 +254,11 @@ export class DataService {
 
   // ---------- FASE 2 · Caixa / Financeiro ----------
   readonly caixa = { aberto: true, abertura: '08:30', valorAbertura: 200, operador: 'Carlos Menezes' };
-  readonly hojeData = '2026-06-09';
+  /** Data de hoje em ISO (YYYY-MM-DD), no fuso local. */
+  get hojeData(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
   readonly lancamentos: Lancamento[] = [
     { id: 'l1',  tipo: 'receita', cat: 'Atendimento', desc: 'Corte + Barba — André Lima', valor: 70, forma: 'pix',     data: '2026-06-09', hora: '09:52', prof: 'p1' },
     { id: 'l2',  tipo: 'receita', cat: 'Atendimento', desc: 'Pigmentação — Marcos Pereira', valor: 60, forma: 'cartao', data: '2026-06-09', hora: '10:18', prof: 'p3' },
@@ -409,14 +427,45 @@ export class DataService {
     concluido: 'Concluído', faltou: 'Faltou', cancelado: 'Cancelado',
   };
 
-  constructor(private api: ApiService) {}
+  /** true quando o /bootstrap falhou e a tela está operando sobre dados mock. */
+  apiOffline = false;
+
+  /** Invalida os caches das telas, inclusive em edições sem mudança de quantidade. */
+  revision = 0;
+  private loadSequence = 0;
+
+  constructor(private api: ApiService, private toast: ToastService, private auth: AuthService) {
+    // Aguarda todas as gravações relacionadas (status, estoque, receita) terminarem.
+    // Recarrega também após falhas para desfazer alterações otimistas rejeitadas.
+    this.api.mutationsSettled.pipe(debounceTime(100)).subscribe(() => {
+      if (!this.api.writing) void this.load();
+    });
+  }
+
+  /** Handler padrão para falhas de escrita: registra e avisa o usuário
+   *  (em vez de engolir o erro silenciosamente — BUG-01).
+   *  403 = sem permissão: mostra o motivo real e recarrega do servidor para
+   *  desfazer a alteração otimista (e atualizar as permissões da sessão). */
+  private saveError = (e: any) => {
+    console.error('[DataService] Falha ao salvar no servidor.', e);
+    if (e?.status === 403) {
+      this.toast.error(e?.error?.error || 'Você não tem permissão para esta ação.');
+      this.auth.restore().catch(() => {});
+      this.load();
+      return;
+    }
+    this.toast.error(e?.error?.error || 'Não foi possível salvar. Verifique a conexão e tente novamente.');
+  };
 
   // ---------- Carga inicial (hidrata os arrays a partir do banco) ----------
   // Chamado por um APP_INITIALIZER em main.ts, antes da UI renderizar.
   // Se a API estiver fora do ar, mantém os dados mock (fallback resiliente).
   async load(): Promise<void> {
+    const sequence = ++this.loadSequence;
+    const version = this.api.version;
     try {
       const b: any = await firstValueFrom(this.api.bootstrap());
+      if (sequence !== this.loadSequence || version !== this.api.version || this.api.writing) return;
       Object.assign(this.estabelecimento, b.estabelecimento);
       Object.assign(this.usuario, b.usuario);
       this.fill(this.expediente, b.horarios);
@@ -442,7 +491,11 @@ export class DataService {
       this.fill(this.campanhas, b.campanhas);
       this.fill(this.modelos, b.modelos);
       if (b.relatorio) Object.assign(this.relatorio, b.relatorio);
+      this.apiOffline = false;
+      this.revision++;
     } catch (e) {
+      if (sequence !== this.loadSequence || version !== this.api.version) return;
+      this.apiOffline = true;
       console.warn('[DataService] API indisponível — usando dados mock locais.', e);
     }
   }
@@ -463,18 +516,95 @@ export class DataService {
   /** persiste os dados do estabelecimento (Configurações › Estabelecimento) */
   updateEstabelecimento(changes: Record<string, any>) {
     Object.assign(this.estabelecimento, changes);
-    this.api.put('/estabelecimento', changes).subscribe({ error: () => {} });
+    this.api.put('/estabelecimento', changes).subscribe({ error: this.saveError });
+  }
+
+  /** Atualiza os dados da própria conta (Configurações › Conta).
+   *  `senhaAtual` só é necessária ao trocar o e-mail (verificação no backend).
+   *  Aguarda a resposta e só atualiza o estado local em caso de sucesso —
+   *  pode falhar (e-mail duplicado, senha incorreta) e a UI precisa saber. */
+  async updateConta(changes: { nome?: string; email?: string }, senhaAtual?: string): Promise<void> {
+    await firstValueFrom(this.api.put('/conta', { ...changes, senha: senhaAtual }));
+    if (changes.nome !== undefined) this.usuario.nome = changes.nome;
+    if (changes.email !== undefined) this.usuario.email = changes.email;
+  }
+
+  /** Troca a senha do usuário logado. Rejeita se a senha atual estiver incorreta. */
+  async alterarSenha(atual: string, nova: string): Promise<void> {
+    await firstValueFrom(this.api.put('/senha', { atual, nova }));
+  }
+
+  // ---------- Usuários e Permissões (restrito a master e CEO; hierarquia validada no backend) ----------
+  /** Lista todas as contas do estabelecimento + opções de perfil e de nível atribuível. */
+  async listarUsuarios(): Promise<{ usuarios: UsuarioAdmin[]; papeis: Opcao[]; niveis: Opcao[] }> {
+    const r: any = await firstValueFrom(this.api.get('/usuarios'));
+    return { usuarios: r.usuarios || [], papeis: r.papeis || [], niveis: r.niveis || [] };
+  }
+  /** Cria uma conta (login = e-mail ou usuário) já com o nível e as permissões escolhidas. */
+  async criarUsuario(d: { nome: string; email: string; senha: string; papel: string; nivel: string; permissoes: string[] }): Promise<UsuarioAdmin> {
+    const r: any = await firstValueFrom(this.api.post('/usuarios', d));
+    return r.usuario;
+  }
+  /** Edita nome, login, perfil, nível e status de uma conta. */
+  async atualizarUsuario(id: string, d: { nome?: string; email?: string; papel?: string; nivel?: string; ativo?: boolean }): Promise<UsuarioAdmin> {
+    const r: any = await firstValueFrom(this.api.put('/usuarios/' + id, d));
+    return r.usuario;
+  }
+  /** Redefine a senha de uma conta. */
+  async redefinirSenhaUsuario(id: string, nova: string): Promise<void> {
+    await firstValueFrom(this.api.put('/usuarios/' + id + '/senha', { nova }));
+  }
+  /** Exclui uma conta (o backend recusa se ela já operou o caixa). */
+  async excluirUsuario(id: string): Promise<void> {
+    await firstValueFrom(this.api.delete('/usuarios/' + id));
+  }
+  /** Catálogo de módulos/ações para montar a matriz. */
+  async catalogoPermissoes(): Promise<{ catalogo: PermCatalogoItem[]; acoes: Record<string, string> }> {
+    return firstValueFrom(this.api.get('/permissoes/catalogo'));
+  }
+  /** Permissões atuais de uma conta ('modulo:acao'). */
+  async permissoesDoUsuario(id: string): Promise<string[]> {
+    const r: any = await firstValueFrom(this.api.get('/usuarios/' + id + '/permissoes'));
+    return r.permissoes || [];
+  }
+  /** Grava permissões (e status) de uma conta. Rejeita se o backend negar. */
+  async salvarPermissoesUsuario(id: string, permissoes: string[], ativo?: boolean): Promise<void> {
+    await firstValueFrom(this.api.put('/usuarios/' + id + '/permissoes', { permissoes, ativo }));
   }
 
   /** persiste o horário de funcionamento (Configurações › Horários) */
   updateHorarios(dias: { diaSemana: number; aberto: boolean; inicio: string; fim: string; pausaInicio: string | null; pausaFim: string | null }[]) {
-    this.api.put('/horarios', { dias }).subscribe({ error: () => {} });
+    this.api.put('/horarios', { dias }).subscribe({ error: this.saveError });
+  }
+
+  /** persiste as políticas de agenda (Configurações › Agenda): antecedência, cancelamento e sinal. */
+  updatePoliticasAgenda(p: { antecedenciaAgendamento: number; antecedenciaCancelamento: number; sinalPct: number }) {
+    const e: any = this.estabelecimento;
+    e.antecedencia_min_agendamento_horas = p.antecedenciaAgendamento;
+    e.antecedencia_min_cancelamento_horas = p.antecedenciaCancelamento;
+    e.sinal_valor = p.sinalPct;
+    e.exige_sinal_padrao = p.sinalPct > 0;
+    e.sinal_tipo = 'percentual';
+    this.api.put('/config/agenda', p).subscribe({ error: this.saveError });
+  }
+
+  /** persiste as formas de pagamento, chave Pix e taxa de cartão (Configurações › Pagamentos). */
+  updatePagamentos(p: {
+    aceitaPix: boolean; aceitaDebito: boolean; aceitaCredito: boolean; aceitaDinheiro: boolean; aceitaFiado: boolean;
+    pixTipo: string; pixChave: string; pixNome: string; repassaTaxa: boolean; taxaPct: number;
+  }) {
+    const e: any = this.estabelecimento;
+    e.aceita_pix = p.aceitaPix; e.aceita_debito = p.aceitaDebito; e.aceita_credito = p.aceitaCredito;
+    e.aceita_dinheiro = p.aceitaDinheiro; e.aceita_fiado = p.aceitaFiado;
+    e.pix_tipo = p.pixTipo; e.pix_chave = p.pixChave; e.pix_nome = p.pixNome;
+    e.repassa_taxa_cartao = p.repassaTaxa; e.taxa_cartao_pct = p.taxaPct;
+    this.api.put('/config/pagamentos', p).subscribe({ error: this.saveError });
   }
 
   updateServico(id: string, changes: Partial<Servico>) {
     const s = this.servicos.find(s => s.id === id);
     if (s) Object.assign(s, changes);
-    this.api.put('/servicos/' + id, changes).subscribe({ error: () => {} });
+    this.api.put('/servicos/' + id, changes).subscribe({ error: this.saveError });
   }
 
   /** Alterna ativo/inativo de um serviço. Serviços inativos ficam ocultos das telas de agendamento. */
@@ -488,7 +618,7 @@ export class DataService {
   addServico(servico: Omit<Servico, 'id'>) {
     const novo = { ...servico, id: 'sn' + Date.now() } as Servico;
     this.servicos.push(novo);
-    this.api.post('/servicos', novo).subscribe({ error: () => {} });
+    this.api.post('/servicos', novo).subscribe({ error: this.saveError });
   }
 
   /** Cria uma categoria avulsa de serviço (persiste no banco). No-op se já existir. */
@@ -499,7 +629,7 @@ export class DataService {
       || this.servicos.some(s => s.cat.toLowerCase() === trimmed.toLowerCase());
     if (existe) return;
     this.categoriasServico.push(trimmed);
-    this.api.post('/categorias-servico', { nome: trimmed }).subscribe({ error: () => {} });
+    this.api.post('/categorias-servico', { nome: trimmed }).subscribe({ error: this.saveError });
   }
 
   /** Remove uma categoria avulsa. Só remove se nenhum serviço a estiver usando. */
@@ -508,38 +638,38 @@ export class DataService {
     const i = this.categoriasServico.indexOf(nome);
     if (i < 0) return false;
     this.categoriasServico.splice(i, 1);
-    this.api.delete('/categorias-servico/' + encodeURIComponent(nome)).subscribe({ error: () => {} });
+    this.api.delete('/categorias-servico/' + encodeURIComponent(nome)).subscribe({ error: this.saveError });
     return true;
   }
 
   updateStaff(id: string, changes: Partial<Staff>) {
     const p = this.staff.find(p => p.id === id);
     if (p) Object.assign(p, changes);
-    this.api.put('/profissionais/' + id, changes).subscribe({ error: () => {} });
+    this.api.put('/profissionais/' + id, changes).subscribe({ error: this.saveError });
   }
 
   addStaff(staff: Omit<Staff, 'id' | 'vendido'>) {
     const novo = { ...staff, id: 'pn' + Date.now(), vendido: 0 } as Staff;
     this.staff.push(novo);
-    this.api.post('/profissionais', novo).subscribe({ error: () => {} });
+    this.api.post('/profissionais', novo).subscribe({ error: this.saveError });
   }
 
   updateCampanha(id: string, changes: Partial<Campanha>) {
     const c = this.campanhas.find(c => c.id === id);
     if (c) Object.assign(c, changes);
-    this.api.put('/campanhas/' + id, changes).subscribe({ error: () => {} });
+    this.api.put('/campanhas/' + id, changes).subscribe({ error: this.saveError });
   }
 
   addModelo(m: Omit<Modelo, 'id'>) {
     const novo = { ...m, id: 'mdn' + Date.now() } as Modelo;
     this.modelos.push(novo);
-    this.api.post('/modelos', novo).subscribe({ error: () => {} });
+    this.api.post('/modelos', novo).subscribe({ error: this.saveError });
   }
 
   updateModelo(id: string, changes: Partial<Modelo>) {
     const m = this.modelos.find(m => m.id === id);
     if (m) Object.assign(m, changes);
-    this.api.put('/modelos/' + id, changes).subscribe({ error: () => {} });
+    this.api.put('/modelos/' + id, changes).subscribe({ error: this.saveError });
   }
 
   removeModelo(id: string) {
@@ -550,24 +680,25 @@ export class DataService {
   addCampanha(c: Omit<Campanha, 'id' | 'enviadas' | 'retorno' | 'taxa'>) {
     const novo = { ...c, id: 'cpn' + Date.now(), enviadas: 0, retorno: 0, taxa: 0 } as Campanha;
     this.campanhas.push(novo);
-    this.api.post('/campanhas', novo).subscribe({ error: () => {} });
+    this.api.post('/campanhas', novo).subscribe({ error: this.saveError });
   }
 
   updateProduto(id: string, changes: Partial<Produto>) {
     const p = this.produtos.find(p => p.id === id);
     if (p) Object.assign(p, changes);
-    this.api.put('/produtos/' + id, changes).subscribe({ error: () => {} });
+    this.api.put('/produtos/' + id, changes).subscribe({ error: this.saveError });
   }
 
   addProduto(p: Omit<Produto, 'id'>) {
     const novo = { ...p, id: 'prn' + Date.now() } as Produto;
     this.produtos.push(novo);
-    this.api.post('/produtos', novo).subscribe({ error: () => {} });
+    this.api.post('/produtos', novo).subscribe({ error: this.saveError });
   }
 
   baixaAutomatica(srvId: string) {
     const nome = this.srv(srvId)?.nome ?? srvId;
-    for (const p of this.produtos.filter(p => p.consumo === srvId)) {
+    // produto zerado não tem o que baixar (a API recusa saída maior que o estoque)
+    for (const p of this.produtos.filter(p => p.consumo === srvId && p.qtd > 0)) {
       this.registrarMov(p.id, 'saida', 1, `Baixa automática — ${nome}`);
     }
   }
@@ -580,7 +711,7 @@ export class DataService {
     this.movEstoque.push({ id, prod, tipo, qtd, motivo, data, hora });
     const p = this.produtos.find(p => p.id === prod);
     if (p) p.qtd = tipo === 'entrada' ? p.qtd + qtd : Math.max(0, p.qtd - qtd);
-    this.api.post('/movimentacoes', { id, prod, tipo, qtd, motivo }).subscribe({ error: () => {} });
+    this.api.post('/movimentacoes', { id, prod, tipo, qtd, motivo }).subscribe({ error: this.saveError });
   }
 
   get produtosAlerta(): Produto[] {
@@ -680,13 +811,17 @@ export class DataService {
     }
     // Se remarcou pra outro dia, remove da timeline de hoje.
     if (changes.data) {
-      const hojeIso = new Date().toISOString().slice(0, 10);
+      const hojeIso = this.hojeData;
       if (changes.data !== hojeIso) {
         const i = this.hoje.findIndex(x => x.id === id);
         if (i >= 0) this.hoje.splice(i, 1);
       }
+      if (changes.data === hojeIso && ag && !this.hoje.some(x => x.id === id)) {
+        this.hoje.push({ ...ag, ini: ag.hora, sinal: false });
+      }
     }
-    this.api.put('/agendamentos/' + id, changes).subscribe({ error: () => {} });
+    this.revision++;
+    this.api.put('/agendamentos/' + id, changes).subscribe({ error: this.saveError });
   }
 
   /** muda o status de um agendamento (na timeline de hoje e na lista) e persiste */
@@ -696,26 +831,63 @@ export class DataService {
     if (a) a.status = status;
     const ag = this.agendamentos.find(a => a.id === id);
     if (ag) ag.status = status;
+    this.revision++;
     if (status === 'concluido' && anterior !== 'concluido' && a) {
       this.baixaAutomatica(a.srv);
+      this.gerarLancamentoAtendimento(a);
     }
-    this.api.put('/agendamentos/' + id, { status }).subscribe({ error: () => {} });
+    this.api.put('/agendamentos/' + id, { status }).subscribe({ error: this.saveError });
+  }
+
+  /** Ao concluir um atendimento, registra a receita no financeiro (BUG-03).
+   *  Idempotente por agendamento: não duplica se já houver lançamento vinculado. */
+  private gerarLancamentoAtendimento(a: Appt) {
+    if (this.lancamentos.some(l => l.agendamento === a.id)) return;
+    const srv = this.servicos.find(s => s.id === a.srv);
+    if (!srv) return;
+    const cliente = this.clientes.find(c => c.id === a.cli);
+    const lanc: Lancamento = {
+      id: 'ln' + Date.now(),
+      tipo: 'receita',
+      cat: 'Atendimento',
+      desc: `${srv.nome}${cliente ? ' — ' + cliente.nome : ''}`,
+      valor: srv.preco,
+      forma: 'dinheiro',
+      data: this.financeiro.hoje,
+      hora: new Date().toTimeString().slice(0, 5),
+      prof: a.prof,
+      agendamento: a.id,
+    };
+    this.lancamentos.push(lanc);
+    this.api.post('/lancamentos', lanc).subscribe({ error: this.saveError });
   }
 
   addCliente(c: Omit<Cliente, 'id'>) {
     const novo = { ...c, id: 'cn' + Date.now() } as Cliente;
     this.clientes.push(novo);
-    this.api.post('/clientes', novo).subscribe({ error: () => {} });
+    this.api.post('/clientes', novo).subscribe({ error: this.saveError });
   }
 
   /** persiste um novo agendamento criado pela UI */
   persistAppt(a: Partial<Appt> & { id: string }) {
+    a = { ...a, status: a.status || 'pendente' };
     const s = a.srv ? this.servicos.find(x => x.id === a.srv) : null;
+    if (a.cli && a.srv && a.prof && a.ini) {
+      if (!this.hoje.some(x => x.id === a.id)) this.hoje.push(a as Appt);
+      if (!this.agendamentos.some(x => x.id === a.id)) {
+        this.agendamentos.push({
+          id: a.id, cli: a.cli, srv: a.srv, prof: a.prof,
+          data: this.hojeData, hora: a.ini, status: a.status || 'pendente', valor: s?.preco ?? 0,
+        });
+      }
+      this.revision++;
+    }
     this.api.post('/agendamentos', {
+      data: this.hojeData,
       id: a.id, cli: a.cli, srv: a.srv, prof: a.prof, ini: a.ini,
-      status: a.status || 'confirmado', sinal: !!a.sinal,
+      status: a.status || 'pendente', sinal: !!a.sinal,
       valor: s ? s.preco : 0, _dur: s ? s.dur : 30,
-    }).subscribe({ error: () => {} });
+    }).subscribe({ error: this.saveError });
   }
 
   // ---------- Bloqueios de agenda ----------
@@ -756,6 +928,32 @@ export class DataService {
     return null;
   }
 
+  /** Verifica se um novo agendamento colide com outro agendamento ativo do
+   *  mesmo profissional (overbooking — BUG-04). Retorna o conflitante ou null.
+   *  `ignoreId` evita colisão consigo mesmo ao remarcar. */
+  agendamentoConflitante(prof: string, data: string, ini: string, dur: number, ignoreId?: string): Appt | Agendamento | null {
+    const s = this.toMin(ini), e = s + dur;
+    const ativos = new Set(['pendente', 'confirmado', 'atendimento', 'concluido']);
+    const hojeIso = this.hojeData;
+    // timeline de hoje (Appt não tem campo 'data' — é sempre o dia atual)
+    if (data === hojeIso) {
+      for (const a of this.hoje) {
+        if (a.id === ignoreId || a.prof !== prof || !ativos.has(a.status)) continue;
+        const aIni = this.toMin(a.ini);
+        const aFim = aIni + (this.srv(a.srv)?.dur ?? a._dur ?? 30);
+        if (aIni < e && aFim > s) return a;
+      }
+    }
+    // lista de agendamentos (período maior)
+    for (const a of this.agendamentos) {
+      if (a.id === ignoreId || a.data !== data || a.prof !== prof || !ativos.has(a.status)) continue;
+      const aIni = this.toMin(a.hora);
+      const aFim = aIni + (this.srv(a.srv)?.dur ?? 30);
+      if (aIni < e && aFim > s) return a;
+    }
+    return null;
+  }
+
   /** Verifica se um novo agendamento colide com um bloqueio existente. */
   bloqueadoParaAgendamento(prof: string, data: string, ini: string, dur: number): Bloqueio | null {
     const s = this.toMin(ini), e = s + dur;
@@ -775,7 +973,7 @@ export class DataService {
       const res: any = await firstValueFrom(this.api.post('/bloqueios', novo));
       if (res && res.id) novo.id = res.id;
     } catch (e) {
-      console.warn('[DataService] Falha ao persistir bloqueio.', e);
+      this.saveError(e);
     }
     return novo;
   }
@@ -786,7 +984,7 @@ export class DataService {
     try {
       await firstValueFrom(this.api.put('/bloqueios/' + id, changes));
     } catch (e) {
-      console.warn('[DataService] Falha ao atualizar bloqueio.', e);
+      this.saveError(e);
     }
   }
 
@@ -796,7 +994,7 @@ export class DataService {
     try {
       await firstValueFrom(this.api.delete('/bloqueios/' + id));
     } catch (e) {
-      console.warn('[DataService] Falha ao excluir bloqueio.', e);
+      this.saveError(e);
     }
   }
 
@@ -805,12 +1003,17 @@ export class DataService {
   srv = (id: string) => this.servicos.find(s => s.id === id)!;
   cli = (id: string) => this.clientes.find(c => c.id === id)!;
   prof = (id: string) => this.staff.find(p => p.id === id)!;
-  money = (n: number) => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-  money2 = (n: number) => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  // Formatação: delega para shared/formatacao (mesma regra dos pipes | brl e | dataBR).
+  money = (n: number) => brl(n);
+  money2 = (n: number) => brl(n, 2);
   initials = (nome: string) => nome.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   toMin = (hhmm: string) => { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; };
   fromMin = (min: number) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
-  fmtData = (iso: string) => { const [, m, d] = iso.split('-'); return `${d}/${m}`; };
-  fmtDataFull = (iso: string) => { const [y, m, d] = iso.split('-'); return `${d}/${m}/${y.slice(2)}`; };
-  diasDesde = (iso: string) => Math.round((+new Date('2026-06-09') - +new Date(iso)) / 86400000);
+  fmtData = (iso: string) => dataBR(iso, 'curta');
+  fmtDataFull = (iso: string) => dataBR(iso, 'ano2');
+  diasDesde = (iso: string) => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return Math.round((+hoje - +new Date(iso)) / 86400000);
+  };
 }

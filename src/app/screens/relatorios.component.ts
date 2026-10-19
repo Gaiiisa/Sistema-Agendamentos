@@ -6,11 +6,12 @@ import { AreaChartComponent } from '../shared/area-chart.component';
 import { DonutComponent } from '../shared/donut.component';
 import { HeatmapComponent } from '../shared/heatmap.component';
 import { DataService } from '../data.service';
+import { PIPES } from '../shared/pipes';
 
 @Component({
   selector: 'app-relatorios',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, AreaChartComponent, DonutComponent, HeatmapComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, AreaChartComponent, DonutComponent, HeatmapComponent, ...PIPES],
   template: `
 <div class="page">
 
@@ -40,7 +41,7 @@ import { DataService } from '../data.service';
           <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
         </div>
       </div>
-      <div class="stat-val tnum">{{ data.money(r.faturamento) }}</div>
+      <div class="stat-val tnum">{{ r.faturamento | brl }}</div>
       <div class="stat-meta">
         <span [class.trend-up]="delta>=0" [class.trend-down]="delta<0">
           <app-icon [name]="delta>=0 ? 'trend' : 'trendD'" [size]="13"
@@ -57,7 +58,7 @@ import { DataService } from '../data.service';
           <app-icon name="coins" [size]="17" style="color:var(--st-atendimento)"></app-icon>
         </div>
       </div>
-      <div class="stat-val tnum">{{ data.money(r.ticketMedio) }}</div>
+      <div class="stat-val tnum">{{ r.ticketMedio | brl }}</div>
       <div class="stat-meta">{{ r.atendimentos }} atendimentos</div>
     </div>
 
@@ -83,7 +84,7 @@ import { DataService } from '../data.service';
         </div>
       </div>
       <div class="stat-val tnum">{{ r.noShowTaxa }}%</div>
-      <div class="stat-meta">{{ r.noShowQtd }} faltas · {{ data.money(r.noShowCusto) }} perdidos</div>
+      <div class="stat-meta">{{ r.noShowQtd }} faltas · {{ r.noShowCusto | brl }} perdidos</div>
     </div>
 
     <div class="stat">
@@ -172,7 +173,7 @@ import { DataService } from '../data.service';
                       [style.background]="FORMA_COR[f.forma]" style="flex-shrink:0"></span>
                 <span style="font-weight:600;font-size:13px;flex:1">{{ f.forma }}</span>
                 <span class="tnum muted" style="font-size:12px">{{ f.pct }}%</span>
-                <span class="tnum" style="font-weight:700;font-size:13px">{{ data.money(f.valor) }}</span>
+                <span class="tnum" style="font-weight:700;font-size:13px">{{ f.valor | brl }}</span>
               </div>
               <div class="progress">
                 <span [style.width.%]="f.pct" [style.background]="FORMA_COR[f.forma]"></span>
@@ -204,7 +205,7 @@ import { DataService } from '../data.service';
                     [style.background]="data.srv(x.srv).cor" style="flex-shrink:0"></span>
               <span style="font-weight:600;font-size:13.5px;flex:1">{{ data.srv(x.srv).nome }}</span>
               <span class="muted tnum" style="font-size:12.5px">{{ x.qtd }}×</span>
-              <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(x.receita) }}</span>
+              <span class="tnum" style="font-weight:700;font-size:13.5px">{{ x.receita | brl }}</span>
             </div>
             <div class="progress">
               <span [style.width]="(x.receita / rankServicosMax * 100) + '%'"
@@ -240,7 +241,7 @@ import { DataService } from '../data.service';
                 </span>
               </div>
               <div class="stat-meta">
-                {{ data.money(m.prof.vendido) }} de {{ data.money(m.prof.meta) }}
+                {{ m.prof.vendido | brl }} de {{ m.prof.meta | brl }}
               </div>
             </div>
           </div>
@@ -291,7 +292,7 @@ import { DataService } from '../data.service';
       <div class="row" style="gap:8px;margin-top:10px">
         <app-icon name="coins" [size]="15" style="color:var(--text-3)"></app-icon>
         <span class="muted" style="font-size:13px;flex:1">Ticket médio do período</span>
-        <span class="tnum" style="font-weight:700;font-size:14px">{{ data.money(r.ticketMedio) }}</span>
+        <span class="tnum" style="font-weight:700;font-size:14px">{{ r.ticketMedio | brl }}</span>
       </div>
     </div>
 
@@ -315,7 +316,7 @@ import { DataService } from '../data.service';
               Há {{ data.diasDesde(c.ultima) }} dias sem visitar ·
               {{ c.visitas }} visita{{ c.visitas === 1 ? '' : 's' }}
             </span>
-            <span class="muted" style="font-size:12px">Gasto total: {{ data.money(c.total) }}</span>
+            <span class="muted" style="font-size:12px">Gasto total: {{ c.total | brl }}</span>
           </div>
           <button class="btn btn-whatsapp btn-sm"
                   (click)="notify.emit('Mensagem de reativação enviada para ' + c.nome)">
@@ -335,7 +336,7 @@ export class RelatoriosComponent {
 
   readonly FORMA_COR: any = {
     'Pix':      'var(--st-atendimento)',
-    'Cartão':   '#7c3aed',
+    'Cartão':   'var(--violet)',
     'Dinheiro': 'var(--accent)',
   };
 

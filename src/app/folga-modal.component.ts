@@ -8,28 +8,33 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from './icon.component';
 import { ModalComponent } from './shared/modal.component';
 import { DataService, Staff } from './data.service';
+import { CampoErroComponent } from './shared/campo-erro.component';
+import { V, validar, temErros, Erros } from './shared/validacao';
 
 @Component({
   selector: 'app-folga-modal',
   standalone: true,
-  imports: [CommonModule, IconComponent, ModalComponent],
+  imports: [CommonModule, IconComponent, ModalComponent, CampoErroComponent],
   template: `
     <app-modal [title]="'Definir folga · ' + prof.nome" (close)="close.emit()">
 
       <div class="field">
-        <label>Motivo</label>
-        <input class="input" [value]="motivo" (input)="motivo = $any($event.target).value"
+        <label>Motivo<span class="req">*</span></label>
+        <input class="input" [class.invalid]="erros['motivo']" maxlength="120" [value]="motivo" (input)="motivo = $any($event.target).value"
           placeholder="Ex.: Férias, atestado médico, viagem…" />
+        <app-campo-erro [msg]="erros['motivo']"></app-campo-erro>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="field">
-          <label>Início</label>
-          <input class="input" type="date" [value]="ini" (input)="ini = $any($event.target).value" [min]="hoje" />
+          <label>Início<span class="req">*</span></label>
+          <input class="input" [class.invalid]="erros['ini']" type="date" [value]="ini" (input)="ini = $any($event.target).value" [min]="hoje" />
+          <app-campo-erro [msg]="erros['ini']"></app-campo-erro>
         </div>
         <div class="field">
-          <label>Fim</label>
-          <input class="input" type="date" [value]="fim" (input)="fim = $any($event.target).value" [min]="ini || hoje" />
+          <label>Fim<span class="req">*</span></label>
+          <input class="input" [class.invalid]="erros['fim']" type="date" [value]="fim" (input)="fim = $any($event.target).value" [min]="ini || hoje" />
+          <app-campo-erro [msg]="erros['fim']"></app-campo-erro>
         </div>
       </div>
 
@@ -49,9 +54,7 @@ import { DataService, Staff } from './data.service';
 
       <div modalFoot>
         <button class="btn btn-ghost" (click)="close.emit()">Cancelar</button>
-        <button class="btn btn-primary" [disabled]="!valido || salvando"
-          [style]="(!valido || salvando) ? 'opacity:0.5;cursor:not-allowed' : null"
-          (click)="onSave()">
+        <button class="btn btn-primary" [disabled]="salvando" (click)="onSave()">
           <app-icon name="check" [size]="16"></app-icon> Definir folga
         </button>
       </div>
@@ -77,8 +80,20 @@ export class FolgaModalComponent implements OnInit {
     this.fim = this.hoje;
   }
 
-  get valido(): boolean {
-    return !!(this.motivo.trim() && this.ini && this.fim && this.ini <= this.fim);
+  /** Limite de uma folga de uma vez (evita criar centenas de bloqueios por engano). */
+  private readonly MAX_DIAS = 90;
+  enviado = false;
+
+  get erros(): Erros {
+    if (!this.enviado) return {};
+    return validar({
+      motivo: [V.obrigatorio(this.motivo, 'Informe o motivo da folga.'), V.tamanho(this.motivo, 3, 120)],
+      ini: [V.obrigatorio(this.ini, 'Informe o início.'), V.data(this.ini),
+        V.dataNaoPassada(this.ini, 'A folga não pode começar no passado.')],
+      fim: [V.obrigatorio(this.fim, 'Informe o fim.'), V.data(this.fim),
+        V.se(!!this.ini && !!this.fim && this.fim < this.ini, 'O fim deve ser igual ou depois do início.'),
+        V.se(this.diasCobertos > this.MAX_DIAS, `A folga pode ter no máximo ${this.MAX_DIAS} dias de uma vez.`)],
+    });
   }
 
   get diasCobertos(): number {
@@ -101,7 +116,8 @@ export class FolgaModalComponent implements OnInit {
 
   async onSave() {
     this.erro = '';
-    if (!this.valido) { this.erro = 'Preencha o motivo e um intervalo válido.'; return; }
+    this.enviado = true;
+    if (temErros(this.erros)) return;
 
     this.salvando = true;
     try {

@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Estoque · Navalha & Cia — Lâmina</title>
+  <script>(function(){try{var t=localStorage.getItem('lamina-demo-theme');document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <nav class="sidebar">
+    <div class="tn-brand">
+      <div class="tn-logo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--topbar-text)"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+      </div>
+      <span class="tn-brand-name">Navalha</span>
+    </div>
+
+    <div class="tn-groups">
+      <a href="dashboard.html" class="tn-nav-item" data-route="dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+        <span class="tn-nav-label">Dashboard</span>
+      </a>
+      <a href="agenda.html" class="tn-nav-item" data-route="agenda">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+        <span class="tn-nav-label">Agenda</span>
+        <span class="tn-badge">15</span>
+      </a>
+      <a href="clientes.html" class="tn-nav-item" data-route="clientes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tn-nav-label">Clientes</span>
+      </a>
+      <a href="servicos.html" class="tn-nav-item" data-route="servicos">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        <span class="tn-nav-label">Serviços</span>
+      </a>
+      <a href="equipe.html" class="tn-nav-item" data-route="equipe">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tn-nav-label">Equipe</span>
+      </a>
+      <a href="financeiro.html" class="tn-nav-item" data-route="financeiro">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span class="tn-nav-label">Financeiro</span>
+      </a>
+      <a href="comissoes.html" class="tn-nav-item" data-route="comissoes">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+        <span class="tn-nav-label">Comissões</span>
+      </a>
+      <a href="estoque.html" class="tn-nav-item active" data-route="estoque">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+        <span class="tn-nav-label">Estoque</span>
+      </a>
+      <a href="fidelidade.html" class="tn-nav-item" data-route="fidelidade">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        <span class="tn-nav-label">Fidelidade</span>
+      </a>
+      <a href="central.html" class="tn-nav-item" data-route="central">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span class="tn-nav-label">Central</span>
+      </a>
+    </div>
+
+    <div class="tn-end">
+      <button class="tn-icon-btn tn-hide-mobile tn-hide-compact" title="Buscar" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"></path></svg>
+      </button>
+      <button class="tn-icon-btn" title="Alternar tema" type="button" data-theme-toggle>
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path></svg>
+      </button>
+      <a href="config.html" class="tn-icon-btn tn-hide-mobile" title="Configurações" data-route="config">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </a>
+      <button class="tn-icon-btn" title="Notificações" type="button" style="position:relative" data-open-modal="notifDrawer">
+        <span class="tn-dot"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </button>
+      <button class="tn-user" title="Carlos Menezes" type="button">
+        <div class="avatar" style="width:28px;height:28px;font-size:11px;background:#0e9f6e">CM</div>
+      </button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-spacer"></div>
+      <div class="tb-page">
+        <span class="tb-title">Estoque</span>
+        <span class="tb-sub">Produtos, baixa automática e reposição</span>
+      </div>
+      <div class="tb-actions">
+        <button class="btn btn-primary" type="button" data-open-modal="modalNovoProduto">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+          <span class="btn-text">Novo produto</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page">
+
+        <!-- ── Stat grid ── -->
+        <div class="stat-grid" style="margin-bottom:16px">
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Produtos cadastrados</div>
+              <div class="stat-ico" style="background:var(--surface-3)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">9</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Valor em estoque</div>
+              <div class="stat-ico" style="background:var(--accent-soft)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">R$ 1.767</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Precisam repor</div>
+              <div class="stat-ico" style="background:var(--st-faltou-bg)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-faltou)"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">3</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-top">
+              <div class="stat-label">Com baixa automática</div>
+              <div class="stat-ico" style="background:var(--st-atendimento-bg)">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-atendimento)"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+              </div>
+            </div>
+            <div class="stat-val tnum">4</div>
+          </div>
+
+        </div>
+
+        <!-- ── Alerta de reposição ── -->
+        <div class="card card-pad" style="margin-bottom:16px;border-left:3px solid var(--st-faltou)">
+          <div class="row" style="margin-bottom:10px;flex-wrap:wrap">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--st-faltou);flex-shrink:0"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+            <div style="font-weight:700;font-size:14.5px;flex:1;min-width:180px">3 produtos no nível mínimo</div>
+            <button class="btn btn-primary btn-sm" style="margin-left:auto" type="button" data-toast="Pedido de reposição gerado">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.5 4.21M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+              Gerar pedido de reposição
+            </button>
+          </div>
+          <div class="row" style="gap:8px;flex-wrap:wrap">
+            <span class="tag" style="background:var(--st-faltou-bg);color:var(--st-faltou);border-color:transparent">
+              <span class="pdot" style="width:6px;height:6px;border-radius:99px;background:currentColor"></span>
+              Pomada Modeladora · 3/8
+            </span>
+            <span class="tag" style="background:var(--st-faltou-bg);color:var(--st-faltou);border-color:transparent">
+              <span class="pdot" style="width:6px;height:6px;border-radius:99px;background:currentColor"></span>
+              Lâmina de Barbear (cx) · 2/5
+            </span>
+            <span class="tag" style="background:var(--st-faltou-bg);color:var(--st-faltou);border-color:transparent">
+              <span class="pdot" style="width:6px;height:6px;border-radius:99px;background:currentColor"></span>
+              Cera Capilar · 1/6
+            </span>
+          </div>
+        </div>
+
+        <!-- ── Tabs + search ── -->
+        <div class="row" style="margin-bottom:16px;gap:10px;flex-wrap:wrap">
+          <div class="seg">
+            <button type="button" class="on" data-tab-group="estoque-view" data-tab="produtos">Produtos</button>
+            <button type="button" data-tab-group="estoque-view" data-tab="historico">Histórico</button>
+            <button type="button" data-tab-group="estoque-view" data-tab="consumo">Mais consumidos</button>
+          </div>
+          <div class="search-inp" data-tab-panel-group="estoque-view" data-tab-panel="produtos">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35"></path></svg>
+            <input placeholder="Buscar produto…" data-filter-table="tabelaProdutos">
+          </div>
+        </div>
+
+        <!-- ── Tab: Produtos ── -->
+        <div data-tab-panel-group="estoque-view" data-tab-panel="produtos">
+          <div class="card">
+            <div class="tbl-scroll">
+              <table class="tbl tbl-card" id="tabelaProdutos">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Em estoque</th>
+                    <th>Mínimo</th>
+                    <th>Custo unit.</th>
+                    <th>Fornecedor</th>
+                    <th>Baixa automática</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <!-- Pomada Modeladora — crítico (3/8, min*0.5=4 → 3<=4) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Pomada Modeladora</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Finalização</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--st-faltou)">3 un</span>
+                        <div class="progress" style="width:70px"><span style="width:18%;background:var(--st-faltou)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">8</td>
+                    <td class="tnum" data-label="Custo">R$ 18,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">Barba Brava Dist.</td>
+                    <td data-label="Baixa auto.">
+                      <span class="row" style="gap:5px;font-size:12.5px;color:var(--st-atendimento)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+                        Corte + Barba (combo)
+                      </span>
+                    </td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--st-faltou-bg);color:var(--st-faltou)"><span class="pdot"></span>Crítico</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-open-modal="modalEntrada-pomada">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-open-modal="modalSaida-pomada">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Lâmina de Barbear (cx) — crítico (2/5, min*0.5=2.5 → 2<=2.5) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Lâmina de Barbear (cx)</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Insumo</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--st-faltou)">2 un</span>
+                        <div class="progress" style="width:70px"><span style="width:20%;background:var(--st-faltou)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">5</td>
+                    <td class="tnum" data-label="Custo">R$ 25,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">SupplyMax</td>
+                    <td data-label="Baixa auto."><span class="muted" style="font-size:12.5px">—</span></td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--st-faltou-bg);color:var(--st-faltou)"><span class="pdot"></span>Crítico</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Óleo para Barba — ok (14/6) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Óleo para Barba</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Barba</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--accent-text)">14 un</span>
+                        <div class="progress" style="width:70px"><span style="width:100%;background:var(--accent-text)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">6</td>
+                    <td class="tnum" data-label="Custo">R$ 22,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">Barba Brava Dist.</td>
+                    <td data-label="Baixa auto.">
+                      <span class="row" style="gap:5px;font-size:12.5px;color:var(--st-atendimento)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+                        Barba Completa
+                      </span>
+                    </td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--accent-soft);color:var(--accent-text)"><span class="pdot"></span>OK</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Shampoo Profissional 1L — ok (9/4) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Shampoo Profissional 1L</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Lavagem</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--accent-text)">9 un</span>
+                        <div class="progress" style="width:70px"><span style="width:100%;background:var(--accent-text)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">4</td>
+                    <td class="tnum" data-label="Custo">R$ 35,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">Beauty Pro</td>
+                    <td data-label="Baixa auto."><span class="muted" style="font-size:12.5px">—</span></td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--accent-soft);color:var(--accent-text)"><span class="pdot"></span>OK</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Tinta Pigment. Barba — ok (6/3) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Tinta Pigment. Barba</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Química</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--accent-text)">6 un</span>
+                        <div class="progress" style="width:70px"><span style="width:100%;background:var(--accent-text)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">3</td>
+                    <td class="tnum" data-label="Custo">R$ 40,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">Beauty Pro</td>
+                    <td data-label="Baixa auto.">
+                      <span class="row" style="gap:5px;font-size:12.5px;color:var(--st-atendimento)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+                        Pigmentação de Barba
+                      </span>
+                    </td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--accent-soft);color:var(--accent-text)"><span class="pdot"></span>OK</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Pó Mentolado — ok (11/5) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Pó Mentolado</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Finalização</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--accent-text)">11 un</span>
+                        <div class="progress" style="width:70px"><span style="width:100%;background:var(--accent-text)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">5</td>
+                    <td class="tnum" data-label="Custo">R$ 12,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">Barba Brava Dist.</td>
+                    <td data-label="Baixa auto."><span class="muted" style="font-size:12.5px">—</span></td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--accent-soft);color:var(--accent-text)"><span class="pdot"></span>OK</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Cera Capilar — crítico (1/6, min*0.5=3 → 1<=3) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Cera Capilar</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Finalização</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--st-faltou)">1 un</span>
+                        <div class="progress" style="width:70px"><span style="width:8%;background:var(--st-faltou)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">6</td>
+                    <td class="tnum" data-label="Custo">R$ 20,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">SupplyMax</td>
+                    <td data-label="Baixa auto."><span class="muted" style="font-size:12.5px">—</span></td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--st-faltou-bg);color:var(--st-faltou)"><span class="pdot"></span>Crítico</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Toalhas Descartáveis (pct) — ok (22/10) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Toalhas Descartáveis (pct)</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Insumo</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--accent-text)">22 un</span>
+                        <div class="progress" style="width:70px"><span style="width:100%;background:var(--accent-text)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">10</td>
+                    <td class="tnum" data-label="Custo">R$ 15,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">SupplyMax</td>
+                    <td data-label="Baixa auto."><span class="muted" style="font-size:12.5px">—</span></td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--accent-soft);color:var(--accent-text)"><span class="pdot"></span>OK</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Pó Descolorante — ok (4/2) -->
+                  <tr>
+                    <td class="card-header">
+                      <div class="row" style="gap:10px">
+                        <div style="width:30px;height:30px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;flex-shrink:0;overflow:hidden">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        </div>
+                        <span style="font-weight:600">Pó Descolorante</span>
+                      </div>
+                    </td>
+                    <td data-label="Categoria"><span class="tag">Química</span></td>
+                    <td data-label="Em estoque">
+                      <div class="col" style="gap:4px;min-width:90px">
+                        <span class="tnum" style="font-weight:700;color:var(--accent-text)">4 un</span>
+                        <div class="progress" style="width:70px"><span style="width:100%;background:var(--accent-text)"></span></div>
+                      </div>
+                    </td>
+                    <td class="tnum muted" data-label="Mínimo">2</td>
+                    <td class="tnum" data-label="Custo">R$ 48,00</td>
+                    <td class="muted" data-label="Fornecedor" style="font-size:13px">Beauty Pro</td>
+                    <td data-label="Baixa auto.">
+                      <span class="row" style="gap:5px;font-size:12.5px;color:var(--st-atendimento)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg>
+                        Platinado / Global
+                      </span>
+                    </td>
+                    <td data-label="Status">
+                      <span class="pill" style="background:var(--accent-soft);color:var(--accent-text)"><span class="pdot"></span>OK</span>
+                    </td>
+                    <td class="card-actions">
+                      <div class="menu-root">
+                        <button class="icon-btn" style="width:32px;height:32px" type="button" data-menu-toggle>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM12 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"></path></svg>
+                        </button>
+                        <div class="menu-panel" data-menu-panel hidden>
+                          <button class="menu-item" type="button" data-toast="Entrada registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                            Registrar entrada
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Saída registrada com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                            Registrar saída
+                          </button>
+                          <button class="menu-item" type="button" data-toast="Editado com sucesso">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            Editar
+                          </button>
+                          <div class="divider" style="margin:5px 0"></div>
+                          <button class="menu-item danger" type="button" data-toast="Removido">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Tab: Histórico ── -->
+        <div data-tab-panel-group="estoque-view" data-tab-panel="historico" hidden>
+          <div class="card">
+            <div class="tbl-scroll">
+              <table class="tbl tbl-card">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Movimentação</th>
+                    <th>Data / Hora</th>
+                    <th>Motivo</th>
+                    <th>Qtd</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Pomada Modeladora</td>
+                    <td data-label="Movimento"><span class="pill pill-faltou"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Saída</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">09/06 · 11:20</td>
+                    <td class="muted" data-label="Motivo">Consumo — Corte + Barba</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--st-faltou)">−1</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Lâmina de Barbear (cx)</td>
+                    <td data-label="Movimento"><span class="pill pill-faltou"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Saída</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">09/06 · 09:05</td>
+                    <td class="muted" data-label="Motivo">Consumo</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--st-faltou)">−1</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Óleo para Barba</td>
+                    <td data-label="Movimento"><span class="pill pill-confirmado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Entrada</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">08/06 · 16:40</td>
+                    <td class="muted" data-label="Motivo">Compra — Barba Brava Dist.</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--accent-text)">+10</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Cera Capilar</td>
+                    <td data-label="Movimento"><span class="pill pill-faltou"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Saída</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">08/06 · 14:15</td>
+                    <td class="muted" data-label="Motivo">Perda/quebra</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--st-faltou)">−2</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Shampoo Profissional 1L</td>
+                    <td data-label="Movimento"><span class="pill pill-confirmado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Entrada</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">07/06 · 10:00</td>
+                    <td class="muted" data-label="Motivo">Compra — Beauty Pro</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--accent-text)">+6</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Tinta Pigment. Barba</td>
+                    <td data-label="Movimento"><span class="pill pill-faltou"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Saída</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">07/06 · 09:30</td>
+                    <td class="muted" data-label="Motivo">Consumo — Pigmentação de Barba</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--st-faltou)">−1</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Toalhas Descartáveis (pct)</td>
+                    <td data-label="Movimento"><span class="pill pill-confirmado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Entrada</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">05/06 · 08:50</td>
+                    <td class="muted" data-label="Motivo">Compra — SupplyMax</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--accent-text)">+20</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Pó Descolorante</td>
+                    <td data-label="Movimento"><span class="pill pill-faltou"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Saída</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">04/06 · 15:10</td>
+                    <td class="muted" data-label="Motivo">Consumo — Platinado / Global</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--st-faltou)">−1</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Pó Mentolado</td>
+                    <td data-label="Movimento"><span class="pill pill-confirmado"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Entrada</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">03/06 · 09:15</td>
+                    <td class="muted" data-label="Motivo">Devolução</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--accent-text)">+2</td>
+                  </tr>
+                  <tr>
+                    <td class="card-header" style="font-weight:600">Pomada Modeladora</td>
+                    <td data-label="Movimento"><span class="pill pill-faltou"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Saída</span></td>
+                    <td class="mono muted" data-label="Data / Hora" style="font-size:13px">02/06 · 17:45</td>
+                    <td class="muted" data-label="Motivo">Consumo — Corte + Barba</td>
+                    <td class="tnum" data-label="Qtd" style="font-weight:700;color:var(--st-faltou)">−1</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Tab: Mais consumidos ── -->
+        <div data-tab-panel-group="estoque-view" data-tab-panel="consumo" hidden>
+          <div class="card">
+            <div class="card-head">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+              <div class="card-title">Produtos mais consumidos · últimos 30 dias</div>
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:16px">
+
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:10px">
+                  <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#1</span>
+                  <span style="font-weight:600;font-size:14px;flex:1">Pomada Modeladora</span>
+                  <span class="tnum" style="font-weight:700">14 un</span>
+                  <span class="muted tnum" style="font-size:12.5px">R$ 252,00 em custo</span>
+                </div>
+                <div class="progress" style="margin-left:32px"><span style="width:100%"></span></div>
+              </div>
+
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:10px">
+                  <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#2</span>
+                  <span style="font-weight:600;font-size:14px;flex:1">Lâmina de Barbear (cx)</span>
+                  <span class="tnum" style="font-weight:700">11 un</span>
+                  <span class="muted tnum" style="font-size:12.5px">R$ 275,00 em custo</span>
+                </div>
+                <div class="progress" style="margin-left:32px"><span style="width:79%"></span></div>
+              </div>
+
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:10px">
+                  <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#3</span>
+                  <span style="font-weight:600;font-size:14px;flex:1">Tinta Pigment. Barba</span>
+                  <span class="tnum" style="font-weight:700">8 un</span>
+                  <span class="muted tnum" style="font-size:12.5px">R$ 320,00 em custo</span>
+                </div>
+                <div class="progress" style="margin-left:32px"><span style="width:57%"></span></div>
+              </div>
+
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:10px">
+                  <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#4</span>
+                  <span style="font-weight:600;font-size:14px;flex:1">Cera Capilar</span>
+                  <span class="tnum" style="font-weight:700">7 un</span>
+                  <span class="muted tnum" style="font-size:12.5px">R$ 140,00 em custo</span>
+                </div>
+                <div class="progress" style="margin-left:32px"><span style="width:50%"></span></div>
+              </div>
+
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:10px">
+                  <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#5</span>
+                  <span style="font-weight:600;font-size:14px;flex:1">Pó Descolorante</span>
+                  <span class="tnum" style="font-weight:700">5 un</span>
+                  <span class="muted tnum" style="font-size:12.5px">R$ 240,00 em custo</span>
+                </div>
+                <div class="progress" style="margin-left:32px"><span style="width:36%"></span></div>
+              </div>
+
+              <div class="col" style="gap:7px">
+                <div class="row" style="gap:10px">
+                  <span class="tnum" style="font-weight:800;color:var(--text-3);width:22px">#6</span>
+                  <span style="font-weight:600;font-size:14px;flex:1">Óleo para Barba</span>
+                  <span class="tnum" style="font-weight:700">4 un</span>
+                  <span class="muted tnum" style="font-size:12.5px">R$ 88,00 em custo</span>
+                </div>
+                <div class="progress" style="margin-left:32px"><span style="width:29%"></span></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bottom Tab Bar (mobile) ── -->
+  <div class="tn-bottom-bar">
+    <a href="dashboard.html" class="tn-tab" data-route="dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+      <span>Início</span>
+    </a>
+    <a href="agenda.html" class="tn-tab" data-route="agenda">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>
+      <span>Agenda</span>
+    </a>
+    <a href="clientes.html" class="tn-tab" data-route="clientes">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Clientes</span>
+    </a>
+    <a href="financeiro.html" class="tn-tab" data-route="financeiro">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      <span>Financeiro</span>
+    </a>
+    <button class="tn-tab" type="button" data-open-modal="moreSheetRoot">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+      <span>Mais</span>
+    </button>
+  </div>
+
+  <!-- ── Sheet "Mais" (mobile) ── -->
+  <div id="moreSheetRoot" data-modal-root hidden>
+    <div class="tn-sheet-overlay" data-modal-backdrop></div>
+    <div class="tn-sheet">
+      <div class="tn-sheet-handle"></div>
+      <a href="servicos.html" class="tn-sheet-item" data-route="servicos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"></path></svg>
+        Serviços
+      </a>
+      <a href="equipe.html" class="tn-sheet-item" data-route="equipe">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Equipe
+      </a>
+      <a href="comissoes.html" class="tn-sheet-item" data-route="comissoes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4M16.71 13.88l.7.71-2.82 2.82"></path></svg>
+        Comissões
+      </a>
+      <a href="estoque.html" class="tn-sheet-item active" data-route="estoque">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+        Estoque
+      </a>
+      <a href="fidelidade.html" class="tn-sheet-item" data-route="fidelidade">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+        Fidelidade
+      </a>
+      <a href="central.html" class="tn-sheet-item" data-route="central">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        Central
+      </a>
+      <a href="config.html" class="tn-sheet-item" data-route="config">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Configurações
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Drawer de notificações (idêntico em todas as páginas) ── -->
+  <div id="notifDrawer" data-modal-root hidden>
+    <div class="drawer-overlay" data-modal-backdrop></div>
+    <div class="drawer notif-drawer">
+      <div class="drawer-head">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="drawer-title">Notificações</span>
+          <span class="notif-count">5</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="icon-btn" title="Marcar todas como lidas" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          </button>
+          <button class="icon-btn" title="Fechar" type="button" data-close-modal>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="notif-list">
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Novo agendamento confirmado</div>
+            <div class="notif-desc">Ana Lima — Corte + Escova · hoje às 14h00</div>
+            <div class="notif-time">Há 5 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Pagamento recebido</div>
+            <div class="notif-desc">R$ 120,00 · Marcos Oliveira · Cartão de crédito</div>
+            <div class="notif-time">Há 18 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Lembrete: agendamento em 1h</div>
+            <div class="notif-desc">Fernanda Costa — Coloração · 15h30</div>
+            <div class="notif-time">Há 32 minutos</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card unread">
+          <div class="notif-ico notif-ico--cliente"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Novo cliente cadastrado</div>
+            <div class="notif-desc">Rafael Souza entrou pela primeira vez</div>
+            <div class="notif-time">Há 1 hora</div>
+          </div>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--estoque"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Estoque baixo</div>
+            <div class="notif-desc">Coloração Louro 8.1 — apenas 2 unidades restantes</div>
+            <div class="notif-time">Há 2 horas</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--agendamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Agendamento cancelado</div>
+            <div class="notif-desc">Juliana Mendes — Manicure · amanhã 10h00</div>
+            <div class="notif-time">Há 3 horas</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--pagamento"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Pagamento recebido</div>
+            <div class="notif-desc">R$ 85,00 · Carla Dias · Pix</div>
+            <div class="notif-time">Ontem 17h42</div>
+          </div>
+        </div>
+        <div class="notif-card">
+          <div class="notif-ico notif-ico--lembrete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+          <div class="notif-body">
+            <div class="notif-title">Resumo do dia</div>
+            <div class="notif-desc">12 atendimentos realizados · R$ 1.340 faturados</div>
+            <div class="notif-time">Ontem 18h00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast (mensagens de sucesso simuladas) ── -->
+  <div id="toastRoot" hidden></div>
+
+</div>
+
+<!-- ── Modal: Novo produto ── -->
+<div id="modalNovoProduto" data-modal-root hidden>
+  <div class="overlay" data-modal-backdrop>
+    <div class="modal wide">
+      <div class="modal-head">
+        <div class="modal-title">Novo produto</div>
+        <button class="icon-btn" style="margin-left:auto;width:32px;height:32px" type="button" data-close-modal>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="field">
+          <label>Imagem do produto</label>
+          <div class="row" style="gap:12px;align-items:center">
+            <div style="width:72px;height:72px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;flex-shrink:0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+            </div>
+            <div class="col" style="gap:6px;flex:1">
+              <div class="row" style="gap:8px;flex-wrap:wrap">
+                <button class="btn btn-sm" type="button">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>
+                  Escolher imagem
+                </button>
+              </div>
+              <span class="muted" style="font-size:12px">PNG, JPG ou WebP · até 2 MB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <div class="field" style="flex:2;min-width:160px">
+            <label>Nome do produto</label>
+            <input class="input" placeholder="Ex: Pomada Modeladora">
+          </div>
+          <div class="field" style="flex:1;min-width:130px">
+            <label>Categoria</label>
+            <select class="select">
+              <option>Finalização</option>
+              <option>Insumo</option>
+              <option>Barba</option>
+              <option>Lavagem</option>
+              <option>Química</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:100px">
+            <label>Qtd em estoque</label>
+            <input class="input" type="number" min="0" value="0">
+          </div>
+          <div class="field" style="flex:1;min-width:100px">
+            <label>Qtd mínima</label>
+            <input class="input" type="number" min="0" value="5">
+          </div>
+          <div class="field" style="flex:1;min-width:100px">
+            <label>Custo unit. (R$)</label>
+            <input class="input" type="number" min="0" step="0.01" placeholder="0,00">
+          </div>
+          <div class="field" style="flex:1;min-width:110px">
+            <label>Preço de venda (R$)</label>
+            <input class="input" type="number" min="0" step="0.01" placeholder="Sem venda">
+          </div>
+        </div>
+
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:160px">
+            <label>Fornecedor ou Link de compra</label>
+            <input class="input" placeholder="Ex: Beauty Pro">
+          </div>
+          <div class="field" style="flex:1;min-width:180px">
+            <label>Baixa automática (serviço vinculado)</label>
+            <select class="select">
+              <option>Sem serviço vinculado</option>
+              <option>Corte Masculino</option>
+              <option>Corte + Barba (combo)</option>
+              <option>Barba Completa</option>
+              <option>Degradê (Fade)</option>
+              <option>Pigmentação de Barba</option>
+              <option>Platinado / Global</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-foot">
+        <div>
+          <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+          <button class="btn btn-primary" type="button" data-close-modal data-toast="Produto cadastrado com sucesso">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            Criar produto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal: Registrar entrada (demonstração — Pomada Modeladora) ── -->
+<div id="modalEntrada-pomada" data-modal-root hidden>
+  <div class="overlay" data-modal-backdrop>
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Registrar entrada</div>
+        <button class="icon-btn" style="margin-left:auto;width:32px;height:32px" type="button" data-close-modal>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--surface-2);border-radius:var(--r-md)">
+          <div style="width:36px;height:36px;border-radius:9px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm);flex-shrink:0;overflow:hidden">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+          </div>
+          <div class="col" style="line-height:1.35">
+            <span style="font-weight:700;font-size:15px">Pomada Modeladora</span>
+            <span class="muted" style="font-size:12.5px">Finalização · mínimo: <strong>8 un</strong></span>
+          </div>
+        </div>
+
+        <div class="row" style="gap:14px;align-items:center;padding:14px;background:var(--surface-2);border-radius:var(--r-md)">
+          <div class="col" style="gap:2px;align-items:center;flex:1">
+            <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.4px">Atual</span>
+            <span class="tnum" style="font-size:22px;font-weight:700">3 un</span>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);flex-shrink:0"><path d="M9 18l6-6-6-6"></path></svg>
+          <div class="col" style="gap:2px;align-items:center;flex:1">
+            <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.4px">Após</span>
+            <span class="tnum" style="font-size:22px;font-weight:700;color:var(--st-faltou)">4 un</span>
+          </div>
+          <span class="pill" style="background:var(--st-faltou-bg);color:var(--st-faltou);flex-shrink:0">
+            <span class="pdot"></span>
+            Crítico
+          </span>
+        </div>
+
+        <div class="field">
+          <label>Quantidade</label>
+          <div class="row" style="gap:10px;align-items:center;flex-wrap:wrap">
+            <div class="row" style="gap:6px;align-items:center">
+              <button class="btn btn-sm" type="button" style="width:34px;padding:5px 0;font-size:16px;line-height:1">−</button>
+              <input class="input" type="number" value="1" min="1" style="width:90px;text-align:center">
+              <button class="btn btn-sm" type="button" style="width:34px;padding:5px 0;font-size:16px;line-height:1">+</button>
+            </div>
+            <div class="row" style="gap:6px">
+              <button class="btn btn-sm btn-subtle" type="button">+5</button>
+              <button class="btn btn-sm btn-subtle" type="button">+10</button>
+              <button class="btn btn-sm btn-subtle" type="button">+25</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Motivo</label>
+          <div class="seg" style="flex-wrap:wrap;max-width:100%">
+            <button type="button" class="on">Compra</button>
+            <button type="button">Devolução</button>
+            <button type="button">Ajuste</button>
+            <button type="button">Bonificação</button>
+            <button type="button">Outro</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-foot">
+        <div>
+          <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+          <button class="btn btn-primary" type="button" data-close-modal data-toast="Entrada registrada com sucesso">Registrar entrada</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal: Registrar saída (demonstração — Pomada Modeladora) ── -->
+<div id="modalSaida-pomada" data-modal-root hidden>
+  <div class="overlay" data-modal-backdrop>
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Registrar saída</div>
+        <button class="icon-btn" style="margin-left:auto;width:32px;height:32px" type="button" data-close-modal>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div style="display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--surface-2);border-radius:var(--r-md)">
+          <div style="width:36px;height:36px;border-radius:9px;background:var(--surface);display:grid;place-items:center;box-shadow:var(--sh-sm);flex-shrink:0;overflow:hidden">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-2)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+          </div>
+          <div class="col" style="line-height:1.35">
+            <span style="font-weight:700;font-size:15px">Pomada Modeladora</span>
+            <span class="muted" style="font-size:12.5px">Finalização · mínimo: <strong>8 un</strong></span>
+          </div>
+        </div>
+
+        <div class="row" style="gap:14px;align-items:center;padding:14px;background:var(--surface-2);border-radius:var(--r-md)">
+          <div class="col" style="gap:2px;align-items:center;flex:1">
+            <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.4px">Atual</span>
+            <span class="tnum" style="font-size:22px;font-weight:700">3 un</span>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3);flex-shrink:0"><path d="M9 18l6-6-6-6"></path></svg>
+          <div class="col" style="gap:2px;align-items:center;flex:1">
+            <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.4px">Após</span>
+            <span class="tnum" style="font-size:22px;font-weight:700;color:var(--st-faltou)">2 un</span>
+          </div>
+          <span class="pill" style="background:var(--st-faltou-bg);color:var(--st-faltou);flex-shrink:0">
+            <span class="pdot"></span>
+            Crítico
+          </span>
+        </div>
+
+        <div class="field">
+          <label>Quantidade</label>
+          <div class="row" style="gap:10px;align-items:center;flex-wrap:wrap">
+            <div class="row" style="gap:6px;align-items:center">
+              <button class="btn btn-sm" type="button" style="width:34px;padding:5px 0;font-size:16px;line-height:1">−</button>
+              <input class="input" type="number" value="1" min="1" style="width:90px;text-align:center">
+              <button class="btn btn-sm" type="button" style="width:34px;padding:5px 0;font-size:16px;line-height:1">+</button>
+            </div>
+            <div class="row" style="gap:6px">
+              <button class="btn btn-sm btn-subtle" type="button">+5</button>
+              <button class="btn btn-sm btn-subtle" type="button">+10</button>
+              <button class="btn btn-sm btn-subtle" type="button">+25</button>
+            </div>
+          </div>
+          <span style="color:var(--st-pendente);font-size:12.5px;margin-top:6px;display:flex;align-items:center;gap:5px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+            Após a saída o estoque fica em 2 un (mínimo 8) — considere repor
+          </span>
+        </div>
+
+        <div class="field">
+          <label>Motivo</label>
+          <div class="seg" style="flex-wrap:wrap;max-width:100%">
+            <button type="button" class="on">Consumo</button>
+            <button type="button">Perda/quebra</button>
+            <button type="button">Vencimento</button>
+            <button type="button">Ajuste</button>
+            <button type="button">Outro</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-foot">
+        <div>
+          <button class="btn btn-ghost" type="button" data-close-modal>Cancelar</button>
+          <button class="btn btn-primary" type="button" data-close-modal data-toast="Saída registrada com sucesso">Registrar saída</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

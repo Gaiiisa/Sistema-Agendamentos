@@ -8,6 +8,7 @@ import { MenuComponent } from '../shared/menu.component';
 import { SelectComponent, SelectOption } from '../shared/select.component';
 import { DataService, Appt, Agendamento, Staff, Bloqueio } from '../data.service';
 import { BloqueioModalComponent } from '../bloqueio-modal.component';
+import { PIPES } from '../shared/pipes';
 
 interface Ghost { id: string; ini: string; dur: number; prof: string; }
 interface Drag {
@@ -28,7 +29,7 @@ const LIST_TABS = [
 @Component({
   selector: 'app-agenda',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, BloqueioModalComponent, SelectComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, StatusPillComponent, MenuComponent, BloqueioModalComponent, SelectComponent, ...PIPES],
   template: `
     <div class="page" [style.paddingBottom.px]="24">
       <ng-container *ngTemplateOutlet="header"></ng-container>
@@ -62,7 +63,7 @@ const LIST_TABS = [
                 <app-icon name="money" [size]="20" style="color:var(--st-pendente)"></app-icon>
               </div>
               <div class="col">
-                <div class="stat-val tnum" style="font-size:24px">{{ data.money(custoFaltas) }}</div>
+                <div class="stat-val tnum" style="font-size:24px">{{ custoFaltas | brl }}</div>
                 <div class="stat-label">Receita perdida c/ faltas</div>
               </div>
             </div>
@@ -146,8 +147,8 @@ const LIST_TABS = [
                       </span>
                     </td>
                     <td class="muted" data-label="Profissional">{{ data.prof(r.prof).apelido }}</td>
-                    <td class="tnum" data-label="Data / Hora">{{ data.fmtData(r.data) }} · {{ r.hora }}</td>
-                    <td class="tnum" data-label="Valor" style="font-weight:600">{{ data.money(r.valor) }}</td>
+                    <td class="tnum" data-label="Data / Hora">{{ r.data | dataBR:'curta' }} · {{ r.hora }}</td>
+                    <td class="tnum" data-label="Valor" style="font-weight:600">{{ r.valor | brl }}</td>
                     <td data-label="Status"><app-status-pill [status]="r.status"></app-status-pill></td>
                     <td class="card-actions">
                       <app-menu [items]="[
@@ -192,7 +193,7 @@ const LIST_TABS = [
         @if (view !== 'dia') {
           @if (view === 'semana') {
             <div class="card agenda-semana-wrap" style="padding:16px;overflow-x:auto">
-              <div class="agenda-semana-grid" style="display:grid;grid-template-columns:56px repeat(6, minmax(120px,1fr));gap:1px;min-width:min-content">
+              <div class="agenda-semana-grid" style="display:grid;grid-template-columns:56px repeat(7, minmax(120px,1fr));gap:1px;min-width:min-content">
                 <div></div>
                 @for (d of dias; track d; let i = $index) {
                   <div [style.textAlign]="'center'" style="font-weight:700;font-size:13px;padding:6px 0;border-radius:8px"
@@ -225,6 +226,9 @@ const LIST_TABS = [
                 @for (d of mesDows; track d) {
                   <div style="text-align:center;font-size:12px;font-weight:700;color:var(--text-3);padding:4px 0">{{ d }}</div>
                 }
+                @for (_ of mesLeading; track $index) {
+                  <div></div>
+                }
                 @for (day of mesCells; track day) {
                   <div class="mes-cell" [style.minHeight.px]="92" style="border-radius:10px;padding:8px"
                     [style.border]="'1px solid ' + (isTodayCell(day) ? 'var(--accent)' : 'var(--border)')"
@@ -237,7 +241,7 @@ const LIST_TABS = [
                     }
                     @if (isPastDay(day) && mesFaturamento(day) > 0) {
                       <div style="margin-top:5px;font-size:11px;font-weight:700;color:var(--accent)">
-                        {{ data.money(mesFaturamento(day)) }}
+                        {{ mesFaturamento(day) | brl }}
                       </div>
                     }
                   </div>
@@ -668,17 +672,17 @@ export class AgendaComponent {
     return this.addDays(base, -back);
   }
 
-  /** Rótulos "Seg 8, Ter 9…" da semana visível (segunda a sábado). */
+  /** Rótulos da semana completa, incluindo domingo. */
   get dias(): string[] {
     const seg = this.semanaSegunda();
-    return Array.from({ length: 6 }, (_, i) => {
+    return Array.from({ length: 7 }, (_, i) => {
       const d = this.addDays(seg, i);
       return `${this.DIAS_ABR[d.getDay()]} ${d.getDate()}`;
     });
   }
   get diasDatas(): string[] {
     const seg = this.semanaSegunda();
-    return Array.from({ length: 6 }, (_, i) => this.isoLocal(this.addDays(seg, i)));
+    return Array.from({ length: 7 }, (_, i) => this.isoLocal(this.addDays(seg, i)));
   }
 
   /** Dias do mês visível — sempre o mês da data atualmente selecionada. */
@@ -768,7 +772,7 @@ export class AgendaComponent {
     return filtered;
   }
   get gridCols() { return `64px repeat(${this.profs.length}, 1fr)`; }
-  get semanaHrs() { return this.data.horarios.filter((_, i) => i % 2 === 0); }
+  get semanaHrs() { return this.data.horarios.filter(h => this.data.toMin(h) % 60 === 0); }
 
   visible(a: Appt) {
     if (this.statusFilter === 'todos') return a.status !== 'concluido';
@@ -959,7 +963,7 @@ export class AgendaComponent {
     const gh = this.ghost;
     const drag = this.drag;
     if (gh && drag) {
-      const a = this.appts.find(x => x.id === gh.id);
+      const a = this.dayAppts.find(x => x.id === gh.id);
       if (a) {
         const dur = gh.dur || this.durOf(a);
         const conflito = this.data.bloqueadoParaAgendamento(gh.prof, this.currentDate, gh.ini, dur);
@@ -1048,14 +1052,14 @@ export class AgendaComponent {
     const date = this.diasDatas[di];
     const slotMin = this.data.toMin(h);
     return this.data.agendamentos.filter(a =>
-      a.data === date && this.data.toMin(a.hora) >= slotMin && this.data.toMin(a.hora) < slotMin + 120
+      a.data === date && this.calendarVisible(a) && this.data.toMin(a.hora) >= slotMin && this.data.toMin(a.hora) < slotMin + 60
     );
   }
 
   openSemanaSlot(di: number, h: string) {
     const appts = this.semanaSlotAppts(di, h);
     if (!appts.length) return;
-    const slotEnd = this.data.fromMin(this.data.toMin(h) + 120);
+    const slotEnd = this.data.fromMin(this.data.toMin(h) + 60);
     this.semanaModal = { label: `${this.dias[di]} · ${h}–${slotEnd}`, appts };
   }
 
@@ -1068,6 +1072,16 @@ export class AgendaComponent {
     return `${this.viewMonthPrefix()}-${String(day).padStart(2, '0')}`;
   }
 
+  private calendarVisible(a: Agendamento): boolean {
+    return (this.profFilter === 'todos' || a.prof === this.profFilter) &&
+      (this.statusFilter === 'todos' ? a.status !== 'concluido' : a.status === this.statusFilter);
+  }
+
+  get mesLeading(): null[] {
+    const base = this.addDays(this.baseToday, this.currentDayOffset);
+    return Array((new Date(base.getFullYear(), base.getMonth(), 1).getDay() + 6) % 7).fill(null);
+  }
+
   get mesTrailing(): null[] {
     const base = this.addDays(this.baseToday, this.currentDayOffset);
     const ultimo = new Date(base.getFullYear(), base.getMonth() + 1, 0);
@@ -1078,7 +1092,7 @@ export class AgendaComponent {
 
   mesCnt(day: number): number {
     const date = this.mesDate(day);
-    return this.data.agendamentos.filter(a => a.data === date && a.status !== 'cancelado' && a.status !== 'faltou').length;
+    return this.data.agendamentos.filter(a => a.data === date && this.calendarVisible(a)).length;
   }
 
   isPastDay(day: number): boolean {
@@ -1115,7 +1129,7 @@ export class AgendaComponent {
    * e filtrada dezenas de vezes por interação, travando o navegador. */
   get rows(): Agendamento[] {
     const key = [
-      this.data.agendamentos.length, this.listTab, this.listProfF,
+      this.data.revision, this.data.agendamentos.length, this.listTab, this.listProfF,
       this.listStatusF, this.q,
     ].join('|');
     if (this._rowsCache && this._rowsKey === key) return this._rowsCache;

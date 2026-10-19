@@ -17,3 +17,25 @@ export async function q(sql, params = []) {
   const [rows] = await pool.query(sql, params);
   return rows;
 }
+
+// Executa `fn` dentro de uma transação. `fn` recebe uma função `run(sql, params)`
+// ligada à mesma conexão. Faz COMMIT no sucesso e ROLLBACK em qualquer erro —
+// evita estado parcial em escritas multi-passo (DELETE + N INSERTs, etc.).
+export async function tx(fn) {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const run = async (sql, params = []) => {
+      const [rows] = await conn.query(sql, params);
+      return rows;
+    };
+    const result = await fn(run);
+    await conn.commit();
+    return result;
+  } catch (e) {
+    try { await conn.rollback(); } catch { /* ignora falha de rollback */ }
+    throw e;
+  } finally {
+    conn.release();
+  }
+}

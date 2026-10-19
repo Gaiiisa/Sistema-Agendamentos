@@ -7,11 +7,12 @@ import { AreaChartComponent } from '../shared/area-chart.component';
 import { DonutComponent } from '../shared/donut.component';
 import { GaugeComponent } from '../shared/gauge.component';
 import { DataService, Lancamento } from '../data.service';
+import { PIPES } from '../shared/pipes';
 
 @Component({
   selector: 'app-financeiro',
   standalone: true,
-  imports: [CommonModule, IconComponent, AvatarComponent, MenuComponent, AreaChartComponent, DonutComponent, GaugeComponent],
+  imports: [CommonModule, IconComponent, AvatarComponent, MenuComponent, AreaChartComponent, DonutComponent, GaugeComponent, ...PIPES],
   template: `
 <div class="page">
 
@@ -47,7 +48,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(fin.mes.receita) }}</div>
+          <div class="stat-val tnum">{{ fin.mes.receita | brl }}</div>
           <div class="stat-meta">
             @if (recDelta !== null) {
               <span [class.trend-up]="recDelta>=0" [class.trend-down]="recDelta<0">
@@ -66,7 +67,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="trendD" [size]="17" style="color:var(--st-faltou)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(fin.mes.despesa) }}</div>
+          <div class="stat-val tnum">{{ fin.mes.despesa | brl }}</div>
           <div class="stat-meta">{{ pctDespesa }}% da receita do mês</div>
         </div>
         <!-- Resultado líquido -->
@@ -77,7 +78,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="chart" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(fin.mes.resultado) }}</div>
+          <div class="stat-val tnum">{{ fin.mes.resultado | brl }}</div>
           <div class="stat-meta">margem de {{ margem }}%</div>
         </div>
         <!-- Projeção do mês -->
@@ -88,7 +89,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="trend" [size]="17" style="color:var(--st-atendimento)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(projecao) }}</div>
+          <div class="stat-val tnum">{{ projecao | brl }}</div>
           <div class="stat-meta">no ritmo atual · {{ fin.mes.atendimentos }} atend.</div>
         </div>
       </div>
@@ -136,13 +137,13 @@ import { DataService, Lancamento } from '../data.service';
                         style="flex-shrink:0"></span>
                   <span style="font-weight:600;font-size:13px;flex:1">{{ f.label }}</span>
                   <span class="tnum muted" style="font-size:12px">{{ formaPct(f.valor) }}%</span>
-                  <span class="tnum" style="font-weight:700;font-size:13px">{{ data.money(f.valor) }}</span>
+                  <span class="tnum" style="font-weight:700;font-size:13px">{{ f.valor | brl }}</span>
                 </div>
               }
               <div class="divider"></div>
               <div class="row">
                 <span class="muted" style="font-size:12.5px;flex:1">Total</span>
-                <span class="tnum" style="font-weight:800;font-size:14px">{{ data.money(receitaFormaTotal) }}</span>
+                <span class="tnum" style="font-weight:800;font-size:14px">{{ receitaFormaTotal | brl }}</span>
               </div>
             </div>
           </div>
@@ -159,7 +160,7 @@ import { DataService, Lancamento } from '../data.service';
             <div class="col" style="align-items:center;gap:4px">
               <span style="font-size:15px;font-weight:700" [style.color]="margemCor">{{ margemTexto }}</span>
               <span class="muted" style="font-size:12.5px;text-align:center">
-                {{ data.money(fin.mes.resultado) }} de resultado líquido sobre {{ data.money(fin.mes.receita) }} de receita
+                {{ fin.mes.resultado | brl }} de resultado líquido sobre {{ fin.mes.receita | brl }} de receita
               </span>
             </div>
           </div>
@@ -184,7 +185,7 @@ import { DataService, Lancamento } from '../data.service';
                   <span [style.width.px]="8" [style.height.px]="8" [style.borderRadius.px]="3" [style.background]="catCor(c.cat)"></span>
                   <span style="font-weight:600;font-size:13.5px;flex:1">{{ c.cat }}</span>
                   <span class="muted tnum" style="font-size:12.5px">{{ c.qtd }}x</span>
-                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(c.valor) }}</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ c.valor | brl }}</span>
                 </div>
                 <div class="progress">
                   <span [style.width]="(c.valor / receitaCatMax * 100)+'%'" [style.background]="catCor(c.cat)"></span>
@@ -199,7 +200,7 @@ import { DataService, Lancamento } from '../data.service';
           <div class="card-head">
             <app-icon name="trendD" [size]="16" style="color:var(--text-2)"></app-icon>
             <div class="card-title">Para onde vai a despesa</div>
-            <span class="muted" style="margin-left:auto;font-size:12.5px">{{ data.money(despesaTotal) }}</span>
+            <span class="muted" style="margin-left:auto;font-size:12.5px">{{ despesaTotal | brl }}</span>
           </div>
           <div style="padding:18px;display:flex;flex-direction:column;gap:15px;flex:1;justify-content:space-evenly">
             @for (c of fin.despesaCategoria; track c.cat) {
@@ -208,7 +209,7 @@ import { DataService, Lancamento } from '../data.service';
                   <span [style.width.px]="8" [style.height.px]="8" [style.borderRadius.px]="3" [style.background]="catCor(c.cat)"></span>
                   <span style="font-weight:600;font-size:13.5px;flex:1">{{ c.cat }}</span>
                   <span class="muted tnum" style="font-size:12.5px">{{ pctDe(c.valor, despesaTotal) }}%</span>
-                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ data.money(c.valor) }}</span>
+                  <span class="tnum" style="font-weight:700;font-size:13.5px">{{ c.valor | brl }}</span>
                 </div>
                 <div class="progress">
                   <span [style.width]="(c.valor / despesaCatMax * 100)+'%'" [style.background]="catCor(c.cat)"></span>
@@ -239,7 +240,7 @@ import { DataService, Lancamento } from '../data.service';
               </div>
             </div>
             <span class="muted tnum" style="font-size:12.5px;width:60px;text-align:right">{{ p.qtd }} atend.</span>
-            <span class="tnum" style="font-weight:700;width:96px;text-align:right">{{ data.money(p.valor) }}</span>
+            <span class="tnum" style="font-weight:700;width:96px;text-align:right">{{ p.valor | brl }}</span>
           </div>
         }
       </div>
@@ -252,17 +253,28 @@ import { DataService, Lancamento } from '../data.service';
     <div class="col" style="gap:16px">
 
       <!-- status do caixa -->
-      <div class="card card-pad" style="display:flex;align-items:center;gap:14px;border-left:3px solid var(--accent);flex-wrap:wrap">
-        <div style="width:42px;height:42px;border-radius:11px;background:var(--accent-soft);display:grid;place-items:center;flex-shrink:0">
-          <app-icon name="money" [size]="20" style="color:var(--accent)"></app-icon>
+      <div class="card card-pad" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"
+           [style.borderLeft]="'3px solid ' + (data.caixa.aberto ? 'var(--accent)' : 'var(--text-3)')">
+        <div style="width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex-shrink:0"
+             [style.background]="data.caixa.aberto ? 'var(--accent-soft)' : 'var(--bg-2)'">
+          <app-icon name="money" [size]="20" [style.color]="data.caixa.aberto ? 'var(--accent)' : 'var(--text-3)'"></app-icon>
         </div>
         <div class="col" style="line-height:1.35;flex:1;min-width:200px">
-          <span style="font-weight:700;font-size:15px">Caixa aberto desde {{ data.caixa.abertura }}</span>
-          <span class="muted" style="font-size:13px">Operador: {{ data.caixa.operador }} · abertura {{ data.money(data.caixa.valorAbertura) }}</span>
+          @if (data.caixa.aberto) {
+            <span style="font-weight:700;font-size:15px">Caixa aberto desde {{ data.caixa.abertura }}</span>
+            <span class="muted" style="font-size:13px">Operador: {{ data.caixa.operador }} · abertura {{ data.caixa.valorAbertura | brl }}</span>
+          } @else {
+            <span style="font-weight:700;font-size:15px">Caixa fechado</span>
+            <span class="muted" style="font-size:13px">Nenhum caixa aberto no momento.</span>
+          }
         </div>
-        <span class="pill pill-confirmado" style="margin-left:auto">
-          <span class="pdot"></span> Aberto
-        </span>
+        @if (data.caixa.aberto) {
+          <span class="pill pill-confirmado" style="margin-left:auto">
+            <span class="pdot"></span> Aberto
+          </span>
+        } @else {
+          <span class="pill" style="margin-left:auto">Fechado</span>
+        }
       </div>
 
       <!-- KPIs do dia -->
@@ -274,8 +286,8 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="money" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(saldoHoje) }}</div>
-          <div class="stat-meta">abertura {{ data.money(data.caixa.valorAbertura) }} + movimento</div>
+          <div class="stat-val tnum">{{ saldoHoje | brl }}</div>
+          <div class="stat-meta">abertura {{ data.caixa.valorAbertura | brl }} + movimento</div>
         </div>
         <div class="stat">
           <div class="stat-top">
@@ -284,7 +296,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="trend" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totRecHoje) }}</div>
+          <div class="stat-val tnum">{{ totRecHoje | brl }}</div>
           <div class="stat-meta">{{ receitasHoje.length }} recebimentos</div>
         </div>
         <div class="stat">
@@ -294,7 +306,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="trendD" [size]="17" style="color:var(--st-faltou)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totDespHoje) }}</div>
+          <div class="stat-val tnum">{{ totDespHoje | brl }}</div>
           <div class="stat-meta">{{ despesasHoje.length }} despesas</div>
         </div>
         <div class="stat">
@@ -304,7 +316,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="chart" [size]="17" style="color:var(--st-atendimento)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totRecHoje - totDespHoje) }}</div>
+          <div class="stat-val tnum">{{ totRecHoje - totDespHoje | brl }}</div>
           <div class="stat-meta">entradas − saídas</div>
         </div>
       </div>
@@ -326,7 +338,7 @@ import { DataService, Lancamento } from '../data.service';
                     <app-icon [name]="FORMA[f].icon" [size]="15" [style.color]="FORMA[f].cor"></app-icon>
                   </div>
                   <span style="font-weight:600;font-size:14px">{{ FORMA[f].label }}</span>
-                  <span class="tnum" style="margin-left:auto;font-weight:700">{{ data.money(porFormaHoje[f] || 0) }}</span>
+                  <span class="tnum" style="margin-left:auto;font-weight:700">{{ porFormaHoje[f] || 0 | brl }}</span>
                   <span class="muted tnum" style="font-size:12.5px;width:38px;text-align:right">{{ pctHoje(f) }}%</span>
                 </div>
                 <div class="progress">
@@ -359,7 +371,7 @@ import { DataService, Lancamento } from '../data.service';
                 </div>
                 <span class="tnum" style="font-weight:700;font-size:14px"
                       [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
-                  {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
+                  {{ (l.tipo==='receita' ? '+' : '−') + (l.valor | brl) }}
                 </span>
               </div>
             } @empty {
@@ -380,15 +392,15 @@ import { DataService, Lancamento } from '../data.service';
       <div class="stat-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr))">
         <div class="stat">
           <div class="stat-top"><div class="stat-label">Entradas no período</div></div>
-          <div class="stat-val tnum" style="color:var(--accent-text)">{{ data.money(totalFiltrado.rec) }}</div>
+          <div class="stat-val tnum" style="color:var(--accent-text)">{{ totalFiltrado.rec | brl }}</div>
         </div>
         <div class="stat">
           <div class="stat-top"><div class="stat-label">Saídas no período</div></div>
-          <div class="stat-val tnum" style="color:var(--st-faltou)">{{ data.money(totalFiltrado.desp) }}</div>
+          <div class="stat-val tnum" style="color:var(--st-faltou)">{{ totalFiltrado.desp | brl }}</div>
         </div>
         <div class="stat">
           <div class="stat-top"><div class="stat-label">Resultado</div></div>
-          <div class="stat-val tnum">{{ data.money(totalFiltrado.rec - totalFiltrado.desp) }}</div>
+          <div class="stat-val tnum">{{ totalFiltrado.rec - totalFiltrado.desp | brl }}</div>
         </div>
       </div>
 
@@ -437,10 +449,10 @@ import { DataService, Lancamento } from '../data.service';
                   </div>
                   <span class="tnum" style="font-weight:700"
                         [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
-                    {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
+                    {{ (l.tipo==='receita' ? '+' : '−') + (l.valor | brl) }}
                   </span>
                 </td>
-                <td class="mono muted" data-label="Data" style="font-size:13px">{{ data.fmtData(l.data) }}</td>
+                <td class="mono muted" data-label="Data" style="font-size:13px">{{ l.data | dataBR:'curta' }}</td>
                 <td class="mono muted" data-label="Hora" style="font-size:13px">{{ l.hora }}</td>
                 <td data-label="Categoria" class="muted">{{ l.cat }}</td>
                 <td data-label="Forma">
@@ -456,7 +468,7 @@ import { DataService, Lancamento } from '../data.service';
                 </td>
                 <td class="tnum" data-label="Valor" style="font-weight:700;text-align:right"
                     [style.color]="l.tipo==='receita' ? 'var(--accent-text)' : 'var(--st-faltou)'">
-                  {{ (l.tipo==='receita' ? '+' : '−') + data.money(l.valor) }}
+                  {{ (l.tipo==='receita' ? '+' : '−') + (l.valor | brl) }}
                 </td>
                 <td class="card-actions">
                   <app-menu [items]="[{label:'Editar',icon:'edit'},{label:'Excluir',icon:'trash',danger:true}]"></app-menu>
@@ -485,7 +497,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="money" [size]="17" style="color:var(--st-pendente)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totalAReceber) }}</div>
+          <div class="stat-val tnum">{{ totalAReceber | brl }}</div>
           <div class="stat-meta">{{ data.aReceber.length }} títulos em aberto</div>
         </div>
         <div class="stat">
@@ -495,7 +507,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="clock" [size]="17" style="color:var(--accent)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum">{{ data.money(totalAVencer) }}</div>
+          <div class="stat-val tnum">{{ totalAVencer | brl }}</div>
           <div class="stat-meta">{{ aVencer.length }} títulos no prazo</div>
         </div>
         <div class="stat">
@@ -505,7 +517,7 @@ import { DataService, Lancamento } from '../data.service';
               <app-icon name="alert" [size]="17" style="color:var(--st-faltou)"></app-icon>
             </div>
           </div>
-          <div class="stat-val tnum" [style.color]="vencidas.length ? 'var(--st-faltou)' : 'var(--text)'">{{ data.money(totalVencido) }}</div>
+          <div class="stat-val tnum" [style.color]="vencidas.length ? 'var(--st-faltou)' : 'var(--text)'">{{ totalVencido | brl }}</div>
           <div class="stat-meta">{{ vencidas.length }} títulos vencidos</div>
         </div>
         <div class="stat">
@@ -545,17 +557,17 @@ import { DataService, Lancamento } from '../data.service';
                     <app-avatar [nome]="data.cli(r.cli).nome" cor="#2563eb" [size]="30"></app-avatar>
                     <span style="font-weight:600">{{ data.cli(r.cli).nome }}</span>
                   </div>
-                  <span class="tnum" style="font-weight:700">{{ data.money(r.valor) }}</span>
+                  <span class="tnum" style="font-weight:700">{{ r.valor | brl }}</span>
                 </td>
                 <td data-label="Descrição" class="muted">{{ r.desc }}</td>
-                <td data-label="Vencimento" class="mono muted" style="font-size:13px">{{ data.fmtData(r.venc) }}</td>
+                <td data-label="Vencimento" class="mono muted" style="font-size:13px">{{ r.venc | dataBR:'curta' }}</td>
                 <td data-label="Situação">
                   <span [class]="r.dias < 0 ? 'pill pill-faltou' : (r.dias <= 3 ? 'pill pill-pendente' : 'pill pill-confirmado')">
                     <span class="pdot"></span>
                     {{ r.dias < 0 ? 'Vencida há ' + abs(r.dias) + 'd' : (r.dias === 0 ? 'Vence hoje' : 'Vence em ' + r.dias + 'd') }}
                   </span>
                 </td>
-                <td data-label="Valor" class="tnum" style="font-weight:700;text-align:right">{{ data.money(r.valor) }}</td>
+                <td data-label="Valor" class="tnum" style="font-weight:700;text-align:right">{{ r.valor | brl }}</td>
                 <td class="card-actions">
                   <button class="btn btn-whatsapp btn-sm" (click)="notify.emit('Lembrete de pagamento enviado')">
                     <app-icon name="whatsapp" [size]="14"></app-icon> Cobrar
@@ -587,14 +599,14 @@ export class FinanceiroComponent {
   readonly FORMA: any = {
     dinheiro: { label: 'Dinheiro', cor: 'var(--accent)',            bg: 'var(--accent-soft)',          icon: 'money'   },
     pix:      { label: 'Pix',      cor: 'var(--st-atendimento)',    bg: 'var(--st-atendimento-bg)',    icon: 'sparkle' },
-    cartao:   { label: 'Cartão',   cor: '#7c3aed',                  bg: '#ede9fe',                     icon: 'coins'   },
+    cartao:   { label: 'Cartão',   cor: 'var(--violet)',            bg: 'var(--violet-soft)',          icon: 'coins'   },
   };
   readonly FORMA_COR: any = {
-    pix: 'var(--st-atendimento)', cartao: '#7c3aed', dinheiro: 'var(--accent)',
+    pix: 'var(--st-atendimento)', cartao: 'var(--violet)', dinheiro: 'var(--accent)',
   };
   readonly CAT_COR: any = {
     Atendimento: 'var(--accent)', Produto: 'var(--st-atendimento)',
-    Insumos: 'var(--st-faltou)', Marketing: '#7c3aed', Operacional: 'var(--st-pendente)',
+    Insumos: 'var(--st-faltou)', Marketing: 'var(--violet)', Operacional: 'var(--st-pendente)',
   };
 
   get formaKeys(): string[] { return Object.keys(this.FORMA); }

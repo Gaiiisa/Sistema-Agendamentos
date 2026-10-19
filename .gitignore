@@ -9,6 +9,7 @@
 
 # Auth — segredo JWT gerado em runtime (nunca versionar)
 /api/.auth-secret
+/api/.master-login.txt
 .env
 
 # IDE / OS

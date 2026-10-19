@@ -7,6 +7,8 @@ import { AvatarComponent } from './shared/avatar.component';
 import { StatusPillComponent } from './shared/status-pill.component';
 import { ModalComponent } from './shared/modal.component';
 import { DataService, Appt } from './data.service';
+import { PIPES } from './shared/pipes';
+import { V } from './shared/validacao';
 
 interface Sugestao { data: string; hora: string; label: string; }
 
@@ -16,7 +18,7 @@ const DOW_LABEL = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 @Component({
   selector: 'app-appt-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, StatusPillComponent, ModalComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, StatusPillComponent, ModalComponent, ...PIPES],
   template: `
     <app-modal title="Agendamento" (close)="close.emit()">
       <div class="row" style="gap:13px">
@@ -188,9 +190,30 @@ export class ApptDetailComponent {
     this.erroRemarcar = '';
   }
 
+  /** Regras de data/hora da remarcação (antes de checar conflitos). */
+  private validarRemarcacao(): string | null {
+    const regra = V.data(this.novaData) || V.dataNaoPassada(this.novaData, 'Não é possível remarcar para uma data que já passou.')
+      || V.hora(this.novaHora);
+    if (regra) return regra;
+    const ini = this.data.toMin(this.novaHora), fim = ini + this.dur;
+    if (this.novaData === this.hoje) {
+      const agora = new Date();
+      if (ini < agora.getHours() * 60 + agora.getMinutes()) return 'Esse horário de hoje já passou.';
+    }
+    const p = this.p;
+    if (p?.inicio && p?.fim && (ini < this.data.toMin(p.inicio) || fim > this.data.toMin(p.fim))) {
+      return `Fora do expediente de ${p.apelido || p.nome} (${p.inicio} às ${p.fim}).`;
+    }
+    const dia = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'][new Date(this.novaData + 'T00:00:00').getDay()];
+    if (p?.folga?.includes(dia)) return `${p.apelido || p.nome} não trabalha nesse dia da semana.`;
+    return null;
+  }
+
   confirmarRemarcacao() {
     this.erroRemarcar = '';
     if (!this.podeSalvarRemarcacao) return;
+    const invalido = this.validarRemarcacao();
+    if (invalido) { this.erroRemarcar = invalido; return; }
     const conflito = this.data.bloqueadoParaAgendamento(this.a.prof, this.novaData, this.novaHora, this.dur);
     if (conflito) {
       this.erroRemarcar = `Conflito com ${conflito.tipo} (${conflito.ini}–${conflito.fim}).`;

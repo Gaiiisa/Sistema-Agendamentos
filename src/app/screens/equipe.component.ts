@@ -7,11 +7,16 @@ import { MenuComponent, MenuItem } from '../shared/menu.component';
 import { ModalComponent } from '../shared/modal.component';
 import { DataService, Staff } from '../data.service';
 import { FolgaModalComponent } from '../folga-modal.component';
+import { ToastService } from '../toast.service';
+import { CampoErroComponent } from '../shared/campo-erro.component';
+import { MascaraDirective } from '../shared/mascara.directive';
+import { PIPES } from '../shared/pipes';
+import { V, validar, temErros, Erros } from '../shared/validacao';
 
 @Component({
   selector: 'app-equipe',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, MenuComponent, ModalComponent, FolgaModalComponent],
+  imports: [CommonModule, FormsModule, IconComponent, AvatarComponent, MenuComponent, ModalComponent, FolgaModalComponent, CampoErroComponent, MascaraDirective, ...PIPES],
   template: `
     <div class="page">
 
@@ -56,7 +61,7 @@ import { FolgaModalComponent } from '../folga-modal.component';
                 <span class="tnum"
                       style="margin-left:auto;font-weight:700"
                       [style.color]="pct(p) >= 100 ? 'var(--accent-text)' : 'var(--text)'">
-                  {{ data.money(p.vendido) }} / {{ data.money(p.meta) }}
+                  {{ p.vendido | brl }} / {{ p.meta | brl }}
                 </span>
               </div>
               <div class="progress">
@@ -96,7 +101,7 @@ import { FolgaModalComponent } from '../folga-modal.component';
             <div class="row" style="gap:10px;padding-top:4px">
               <div class="col" style="flex:1;background:var(--surface-2);border-radius:var(--r-md);padding:9px 12px">
                 <span class="tnum" style="font-weight:700;font-size:15px">{{ p.comissao }}%</span>
-                <span class="muted" style="font-size:11.5px">comissão · {{ data.money(comissaoMes(p)) }} no mês</span>
+                <span class="muted" style="font-size:11.5px">comissão · {{ comissaoMes(p) | brl }} no mês</span>
               </div>
               <div class="col" style="flex:1;background:var(--surface-2);border-radius:var(--r-md);padding:9px 12px">
                 <span class="tnum" style="font-weight:700;font-size:15px">{{ atendeHoje(p) }}</span>
@@ -118,12 +123,14 @@ import { FolgaModalComponent } from '../folga-modal.component';
           <!-- Nome + Apelido + Cor -->
           <div class="row" style="gap:12px;flex-wrap:wrap">
             <div class="field" style="flex:2;min-width:160px">
-              <label>Nome completo</label>
-              <input class="input" [(ngModel)]="draft.nome" placeholder="Ex: Rafael Moura">
+              <label>Nome completo<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['nome']" [(ngModel)]="draft.nome" placeholder="Ex: Rafael Moura" maxlength="80">
+              <app-campo-erro [msg]="erros['nome']"></app-campo-erro>
             </div>
             <div class="field" style="flex:1;min-width:100px">
-              <label>Apelido</label>
-              <input class="input" [(ngModel)]="draft.apelido" placeholder="Ex: Rafa">
+              <label>Apelido<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['apelido']" [(ngModel)]="draft.apelido" placeholder="Ex: Rafa" maxlength="20">
+              <app-campo-erro [msg]="erros['apelido']"></app-campo-erro>
             </div>
             <div class="field">
               <label>Cor</label>
@@ -135,34 +142,40 @@ import { FolgaModalComponent } from '../folga-modal.component';
           <!-- Apresentação -->
           <div class="field">
             <label>Apresentação</label>
-            <input class="input" [(ngModel)]="draft.bio" placeholder="Ex: Barbeiro-chefe. 8 anos de navalha.">
+            <input class="input" [class.invalid]="erros['bio']" [(ngModel)]="draft.bio" placeholder="Ex: Barbeiro-chefe. 8 anos de navalha." maxlength="160">
+            <app-campo-erro [msg]="erros['bio']"></app-campo-erro>
           </div>
 
           <!-- Contato + Comissão + Meta -->
           <div class="row" style="gap:12px;flex-wrap:wrap">
             <div class="field" style="flex:2;min-width:160px">
-              <label>Contato (WhatsApp)</label>
-              <input class="input" [(ngModel)]="draft.contato" placeholder="(11) 99999-0000">
+              <label>Contato (WhatsApp)<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['contato']" [(ngModel)]="draft.contato" mascara="telefone" placeholder="(11) 99999-0000">
+              <app-campo-erro [msg]="erros['contato']"></app-campo-erro>
             </div>
             <div class="field" style="flex:1;min-width:80px">
-              <label>Comissão %</label>
-              <input class="input" type="number" [(ngModel)]="draft.comissao" min="0" max="100">
+              <label>Comissão %<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['comissao']" type="number" [(ngModel)]="draft.comissao" min="0" max="100">
+              <app-campo-erro [msg]="erros['comissao']"></app-campo-erro>
             </div>
             <div class="field" style="flex:1;min-width:110px">
               <label>Meta mensal (R$)</label>
-              <input class="input" type="number" [(ngModel)]="draft.meta" min="0">
+              <input class="input" [class.invalid]="erros['meta']" type="number" [(ngModel)]="draft.meta" min="0" step="100">
+              <app-campo-erro [msg]="erros['meta']"></app-campo-erro>
             </div>
           </div>
 
           <!-- Horário de trabalho -->
           <div class="row" style="gap:12px;flex-wrap:wrap">
             <div class="field" style="flex:1;min-width:110px">
-              <label>Início do expediente</label>
-              <input class="input" type="time" [(ngModel)]="draft.inicio">
+              <label>Início do expediente<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['inicio']" type="time" [(ngModel)]="draft.inicio">
+              <app-campo-erro [msg]="erros['inicio']"></app-campo-erro>
             </div>
             <div class="field" style="flex:1;min-width:110px">
-              <label>Fim do expediente</label>
-              <input class="input" type="time" [(ngModel)]="draft.fim">
+              <label>Fim do expediente<span class="req">*</span></label>
+              <input class="input" [class.invalid]="erros['fim']" type="time" [(ngModel)]="draft.fim">
+              <app-campo-erro [msg]="erros['fim']"></app-campo-erro>
             </div>
           </div>
 
@@ -182,6 +195,7 @@ import { FolgaModalComponent } from '../folga-modal.component';
               }
             </div>
             <div class="muted" style="font-size:12px;margin-top:5px">Dias destacados = trabalha. Clique para alternar.</div>
+            <app-campo-erro [msg]="erros['dias']"></app-campo-erro>
           </div>
 
           <!-- Especialidades -->
@@ -198,7 +212,7 @@ import { FolgaModalComponent } from '../folga-modal.component';
                 </span>
               }
               <div class="row" style="gap:5px">
-                <input class="input" [(ngModel)]="espInput"
+                <input class="input" [(ngModel)]="espInput" maxlength="30"
                        placeholder="Nova especialidade…"
                        style="width:170px;height:28px;font-size:13px;padding:0 10px"
                        (keydown.enter)="addEsp()">
@@ -241,7 +255,7 @@ export class EquipeComponent {
 
   @Output() verAgenda = new EventEmitter<string>();
 
-  constructor(public data: DataService) {}
+  constructor(public data: DataService, private toast: ToastService) {}
 
   menuItems(p: Staff): MenuItem[] {
     return [
@@ -283,6 +297,28 @@ export class EquipeComponent {
   closeModal() {
     this.modalAberto = false;
     this.editando = null;
+    this.enviado = false;
+  }
+
+  /** Erros aparecem após a 1ª tentativa de salvar e se atualizam enquanto o usuário corrige. */
+  enviado = false;
+
+  get erros(): Erros {
+    if (!this.enviado) return {};
+    const d = this.draft;
+    const nomeDup = !!d.nome?.trim() && this.data.staff.some(p =>
+      p.id !== this.editando?.id && p.nome.trim().toLowerCase() === d.nome!.trim().toLowerCase());
+    return validar({
+      nome: [V.obrigatorio(d.nome), V.tamanho(d.nome, 3, 80), V.se(nomeDup, 'Já existe um profissional com esse nome.')],
+      apelido: [V.obrigatorio(d.apelido), V.tamanho(d.apelido, 2, 20)],
+      bio: [V.tamanho(d.bio, 0, 160)],
+      contato: [V.obrigatorio(d.contato, 'Informe o WhatsApp do profissional.'), V.telefone(d.contato)],
+      comissao: [V.obrigatorio(d.comissao), V.percentual(d.comissao)],
+      meta: [V.dinheiro(d.meta, { max: 1000000 })],
+      inicio: [V.obrigatorio(d.inicio), V.hora(d.inicio)],
+      fim: [V.obrigatorio(d.fim), V.hora(d.fim), V.horaDepois(d.fim, d.inicio)],
+      dias: [V.se(this.draftFolga.length >= 7, 'Selecione ao menos um dia de trabalho.')],
+    });
   }
 
   toggleFolga(dia: string) {
@@ -302,6 +338,8 @@ export class EquipeComponent {
   }
 
   salvar() {
+    this.enviado = true;
+    if (temErros(this.erros)) { this.toast.error('Corrija os campos destacados.'); return; }
     const dados = { ...this.draft, folga: this.draftFolga, especialidades: this.draftEsp };
     if (this.editando) {
       this.data.updateStaff(this.editando.id, dados);
